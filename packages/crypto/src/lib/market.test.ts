@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { filterActiveMarkets, filterSpotMarkets, mapToPairs } from '../lib/market.ts'
 import { createPair, Pair } from '../lib/pair.ts'
-import { createMarket } from '../lib/test/market.ts'
+import { createMarket } from './test/market.ts'
 
 describe('Market', () => {
   describe('filterActiveMarkets', () => {

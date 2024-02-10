@@ -1,9 +1,7 @@
-import { Exchange, Market } from 'ccxt'
-import * as E from 'fp-ts/Either'
 import { describe, expect, it } from 'vitest'
 
 import { Pair } from '../lib/pair.ts'
-import { getPairs, sortedPairs, Volume, writePairs } from '../lib/pairList.ts'
+import { sortedPairs, Volume } from '../lib/pairList.ts'
 
 describe.skip('pairList', () => {
   // describe('filterWantedPairs', () => {
@@ -34,31 +32,25 @@ describe.skip('pairList', () => {
   describe('getPairs', () => {
     describe('When called with an exchange', () => {
       describe('When called with an exchange that returns a list of markets', () => {
-        it('should return an array of pairs', async () => {
-          const exchange = new Exchange()
-
-          const mockLoadMarkets = stub(exchange, 'loadMarkets', returnsNext([
-            Promise.resolve({
-              BTC: { base: 'BTC', quote: 'USDT', active: true, type: 'spot' } as Market,
-              ETH: { base: 'ETH', quote: 'USDT', active: true, type: 'spot' } as Market,
-            }),
-          ]))
-
-          const pairs = await getPairs(exchange)()
-
-          if (E.isLeft(pairs)) {
-            throw pairs.left
-          }
-
-          expect(pairs.right).toDeepEqual([
-            'BTC/USDT' as Pair,
-            'ETH/USDT' as Pair,
-          ])
-
-          assertSpyCalls(mockLoadMarkets, 1)
-
-          mockLoadMarkets.restore()
-        })
+        // it('should return an array of pairs', async () => {
+        //   const exchange = new Exchange()
+        //   const mockLoadMarkets = stub(exchange, 'loadMarkets', returnsNext([
+        //     Promise.resolve({
+        //       BTC: { base: 'BTC', quote: 'USDT', active: true, type: 'spot' } as Market,
+        //       ETH: { base: 'ETH', quote: 'USDT', active: true, type: 'spot' } as Market,
+        //     }),
+        //   ]))
+        //   const pairs = await getPairs(exchange)()
+        //   if (E.isLeft(pairs)) {
+        //     throw pairs.left
+        //   }
+        //   expect(pairs.right).toDeepEqual([
+        //     'BTC/USDT' as Pair,
+        //     'ETH/USDT' as Pair,
+        //   ])
+        //   assertSpyCalls(mockLoadMarkets, 1)
+        //   mockLoadMarkets.restore()
+        // })
       })
     })
   })
@@ -82,7 +74,7 @@ describe.skip('pairList', () => {
 
         const actual = sortedPairs(pairs, volumes)
 
-        expect(actual).toDeepEqual([
+        expect(actual).toStrictEqual([
           'DERP' as Pair,
           'ETH' as Pair,
           'SCHMERP' as Pair,
@@ -94,20 +86,17 @@ describe.skip('pairList', () => {
 
   describe('writePairs', () => {
     describe('When called with a file path and an array of pairs', () => {
-      it('should write the pairs to the file path', async () => {
-        const pairs = [
-          'BTC/USDT' as Pair,
-          'ETH/USDT' as Pair,
-        ]
-
-        const mockWriteTextFile = stub(Deno, 'writeTextFile', returnsNext([
-          Promise.resolve(),
-        ]))
-
-        await writePairs('test.json', pairs)
-
-        assertSpyCalls(mockWriteTextFile, 1)
-      })
+      // it('should write the pairs to the file path', async () => {
+      //   const pairs = [
+      //     'BTC/USDT' as Pair,
+      //     'ETH/USDT' as Pair,
+      //   ]
+      //   const mockWriteTextFile = stub(Deno, 'writeTextFile', returnsNext([
+      //     Promise.resolve(),
+      //   ]))
+      //   await writePairs('test.json', pairs)
+      //   assertSpyCalls(mockWriteTextFile, 1)
+      // })
     })
   })
 })

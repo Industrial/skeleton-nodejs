@@ -1,3 +1,5 @@
+import { sequenceArrayWritable } from '@code9/either'
+import { entries } from '@code9/record'
 import { Exchange } from 'ccxt'
 import * as A from 'fp-ts/Array'
 import * as E from 'fp-ts/Either'
@@ -9,11 +11,9 @@ import * as TE from 'fp-ts/TaskEither'
 import fs from 'fs/promises'
 import { Opaque } from 'type-fest'
 
-import { sequenceArrayWritable } from '../lib/either.ts'
-import { loadMarketsE } from '../lib/exchange.ts'
-import { filterActiveMarkets, filterSpotMarkets, mapToPairs } from '../lib/market.ts'
-import { Base, getBase, getQuote, Pair, Quote } from '../lib/pair.ts'
-import { entries } from '../lib/record.ts'
+import { loadMarketsE } from './exchange.ts'
+import { filterActiveMarkets, filterSpotMarkets, mapToPairs } from './market.ts'
+import { Base, getBase, getQuote, Pair, Quote } from './pair.ts'
 
 export type Date = Opaque<number, 'Date'>
 export type Open = Opaque<number, 'Open'>

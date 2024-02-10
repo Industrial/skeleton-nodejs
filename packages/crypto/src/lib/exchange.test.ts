@@ -5,7 +5,7 @@ import * as E from 'fp-ts/Either'
 import { describe, expect, it, vi } from 'vitest'
 
 import { loadMarketsE } from '../lib/exchange.ts'
-import { createMarket } from '../lib/test/market.ts'
+import { createMarket } from './test/market.ts'
 
 describe('Exchange', () => {
   const exchange = new Exchange()

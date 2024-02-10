@@ -3,8 +3,8 @@ import * as E from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
 import * as TE from 'fp-ts/TaskEither'
 
-import { Market } from '@/lib/market.ts'
-import { Pair } from '@/lib/pair.ts'
+import { Market } from './market.ts'
+import { Pair } from './pair.ts'
 
 export const loadMarketsE = (exchange: Exchange): TE.TaskEither<Error, Record<Pair, Market>> =>
   pipe(TE.tryCatch(async () => exchange.loadMarkets(), E.toError),
