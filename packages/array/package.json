@@ -1,0 +1,19 @@
+{
+  "name": "@code9/array",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "scripts": {
+    "lint": "eslint --fix --cache --cache-location .eslintcache .",
+    "test": "vitest"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "@vitest/coverage-v8": "^1.2.2",
+    "@vitest/spy": "^1.2.2",
+    "@vitest/ui": "^1.0.4",
+    "vitest": "^1.2.2"
+  }
+}
