@@ -38,10 +38,9 @@ testem.log
 .DS_Store
 Thumbs.db
 
-.nx/cache
-
 .coverage/
 .direnv/
+.eslintcache
 .nx/cache/
 .tsbuildinfo
 .venv/
