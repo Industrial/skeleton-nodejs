@@ -1,0 +1,7 @@
+/.coverage/
+/.direnv/
+/.dream2nix/
+/.husky/
+/.venv/
+/.vscode/
+/node_modules/

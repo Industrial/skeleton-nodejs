@@ -1,0 +1,71 @@
+import { describe, expect, it } from 'vitest'
+
+import { filterActiveMarkets, filterSpotMarkets, mapToPairs } from '../lib/market.ts'
+import { createPair, Pair } from '../lib/pair.ts'
+import { createMarket } from '../lib/test/market.ts'
+
+describe('Market', () => {
+  describe('filterActiveMarkets', () => {
+    describe('When called with an empty array', () => {
+      it('should return an empty array', async () => {
+        const actual = filterActiveMarkets([])
+        expect(actual).to.be.deep.equal([])
+      })
+    })
+
+    describe('When called with an entries array of Pair and Market', () => {
+      it('should return a filtered array', async () => {
+        const actual = filterActiveMarkets([
+          ['BTC/USDT' as Pair, createMarket('BTC', 'USDT', true, 'spot')],
+          ['ETH/USDT' as Pair, createMarket('ETH', 'USDT', false, 'spot')],
+        ])
+        expect(actual).to.be.deep.equal([
+          ['BTC/USDT' as Pair, createMarket('BTC', 'USDT', true, 'spot')],
+        ])
+      })
+    })
+  })
+
+  describe('filterSpotMarkets', () => {
+    describe('When called with an empty array', () => {
+      it('should return an empty array', async () => {
+        const actual = filterSpotMarkets([])
+        expect(actual).to.be.deep.equal([])
+      })
+    })
+
+    describe('When called with an entries array of Pair and Market', () => {
+      it('should return a filtered array', async () => {
+        const actual = filterSpotMarkets([
+          ['BTC/USDT' as Pair, createMarket('BTC', 'USDT', true, 'spot')],
+          ['ETH/USDT' as Pair, createMarket('ETH', 'USDT', false, 'margin')],
+        ])
+        expect(actual).to.be.deep.equal([
+          ['BTC/USDT' as Pair, createMarket('BTC', 'USDT', true, 'spot')],
+        ])
+      })
+    })
+  })
+
+  describe('mapToPairs', () => {
+    describe('When called with an empty array', () => {
+      it('should return an empty array', async () => {
+        const actual = mapToPairs([])
+        expect(actual).to.be.deep.equal([])
+      })
+    })
+
+    describe('When called with an entries array of Pair and Market', () => {
+      it('should return a filtered array', async () => {
+        const actual = mapToPairs([
+          ['BTC/USDT' as Pair, createMarket('BTC', 'USDT', true, 'spot')],
+          ['ETH/USDT' as Pair, createMarket('ETH', 'USDT', true, 'spot')],
+        ])
+        expect(actual).to.be.deep.equal([
+          createPair('BTC', 'USDT'),
+          createPair('ETH', 'USDT'),
+        ])
+      })
+    })
+  })
+})

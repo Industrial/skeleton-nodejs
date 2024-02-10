@@ -1,0 +1,37 @@
+{
+  "name": "autofreq",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "lint": "pnpm lint:tsc && pnpm lint:next",
+    "lint:next": "eslint --fix --cache --cache-location .eslintcache .",
+    "lint:tsc": "tsc -p . --noEmit",
+    "test": "vitest",
+    "test:staged": "vitest related --run",
+    "test:staged:coverage": "vitest related --coverage --run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.1",
+    "fp-ts": "^2.16.2",
+    "type-fest": "^4.10.2"
+  },
+  "devDependencies": {
+    "@swc-node/register": "^1.8.0",
+    "@swc/register": "^0.1.10",
+    "@types/node": "^20.11.16",
+    "@vitest/coverage-v8": "^1.2.2",
+    "@vitest/spy": "^1.2.2",
+    "eslint": "^8.56.0",
+    "eslint-config-code9": "^0.5.1",
+    "husky": "^9.0.10",
+    "lint-staged": "^15.2.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
+  }
+}

@@ -1,0 +1,5 @@
+/.coverage/
+/.direnv/
+/.dream2nix/
+/.venv/
+/node_modules/
