@@ -1,0 +1,30 @@
+{
+  "name": "@code9/test-onnx",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/test-onnx/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/test-onnx",
+        "main": "packages/test-onnx/src/index.ts",
+        "tsConfig": "packages/test-onnx/tsconfig.json",
+        "assets": []
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
+      "options": {
+        "reportsDirectory": "../../coverage/packages/test-onnx"
+      }
+    }
+  },
+  "tags": []
+}

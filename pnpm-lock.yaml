@@ -67,6 +67,37 @@ importers:
         specifier: ^2.6.2
         version: 2.8.8
 
+  applications/test-onnx:
+    dependencies:
+      '@code9/either':
+        specifier: workspace:^
+        version: link:../../packages/either
+      '@code9/record':
+        specifier: workspace:^
+        version: link:../../packages/record
+      ccxt:
+        specifier: ^4.2.41
+        version: 4.2.41
+      onnxruntime-node:
+        specifier: ^1.17.0
+        version: 1.17.0
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.16
+        version: 20.11.17
+      '@vitest/coverage-v8':
+        specifier: ^1.2.2
+        version: 1.2.2(vitest@1.2.2)
+      '@vitest/spy':
+        specifier: ^1.2.2
+        version: 1.2.2
+      '@vitest/ui':
+        specifier: ^1.0.4
+        version: 1.2.2(vitest@1.2.2)
+      vitest:
+        specifier: ^1.2.2
+        version: 1.2.2(@types/node@20.11.17)(@vitest/ui@1.2.2)
+
   packages/array:
     devDependencies:
       '@types/node':
@@ -5586,6 +5617,17 @@ packages:
     dependencies:
       mimic-fn: 4.0.0
     dev: true
+
+  /onnxruntime-common@1.17.0:
+    resolution: {integrity: sha512-Vq1remJbCPITjDMJ04DA7AklUTnbYUp4vbnm6iL7ukSt+7VErH0NGYfekRSTjxxurEtX7w41PFfnQlE6msjPJw==}
+    dev: false
+
+  /onnxruntime-node@1.17.0:
+    resolution: {integrity: sha512-pRxdqSP3a6wtiFVkVX1V3/gsEMwBRUA9D2oYmcN3cjF+j+ILS+SIY2L7KxdWapsG6z64i5rUn8ijFZdIvbojBg==}
+    os: [win32, darwin, linux]
+    dependencies:
+      onnxruntime-common: 1.17.0
+    dev: false
 
   /open@8.4.2:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}

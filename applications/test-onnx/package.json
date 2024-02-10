@@ -1,0 +1,24 @@
+{
+  "name": "@code9/test-onnx",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
+  "scripts": {
+    "lint": "eslint --fix --cache --cache-location .eslintcache .",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@code9/either": "workspace:^",
+    "@code9/record": "workspace:^",
+    "ccxt": "^4.2.41",
+    "onnxruntime-node": "^1.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "@vitest/coverage-v8": "^1.2.2",
+    "@vitest/spy": "^1.2.2",
+    "@vitest/ui": "^1.0.4",
+    "vitest": "^1.2.2"
+  }
+}
