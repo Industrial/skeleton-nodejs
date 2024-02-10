@@ -3,7 +3,7 @@ import 'dotenv/config'
 
 import { function as FN, taskEither as TE } from 'fp-ts'
 
-import { retry } from '../lib/child_process.ts'
+import { retry } from '../packages/child_process/src/lib/child_process.ts'
 
 const useDocker = process.env['AUTOFREQ_USE_DOCKER'] === 'true'
 

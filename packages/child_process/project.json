@@ -1,0 +1,30 @@
+{
+  "name": "@code9/child_process",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/child_process/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/child_process",
+        "main": "packages/child_process/src/index.ts",
+        "tsConfig": "packages/child_process/tsconfig.json",
+        "assets": []
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
+      "options": {
+        "reportsDirectory": "../../coverage/packages/child_process"
+      }
+    }
+  },
+  "tags": []
+}

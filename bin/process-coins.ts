@@ -3,8 +3,8 @@ import 'dotenv/config'
 
 import { promises as fs } from 'fs'
 
-import { $ } from '../lib/child_process.ts'
 import { fileExists } from '../lib/fs.ts'
+import { $ } from '../packages/child_process/src/lib/child_process.ts'
 import { COINS, STRATEGY, STRATEGY_DIR, TIMEFRAME, TIMERANGE } from './_config.ts'
 
 await $(`bin/delete-backtest-results.ts`)

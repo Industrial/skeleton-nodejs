@@ -1,11 +1,10 @@
-
 import { either as E } from 'fp-ts'
 import { describe, expect, it } from 'vitest'
 
 import { spawn } from './child_process.ts'
 
 describe('child_process', () => {
-  describe('$', () => {
+  describe('spawn', () => {
     describe('When called with an empty string', () => {
       it('should return an error', async () => {
         const result = await spawn('')()
