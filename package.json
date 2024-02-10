@@ -11,10 +11,11 @@
   "scripts": {
     "build": "nx run-many -t build",
     "lint": "nx run-many -t lint",
+    "postinstall": "husky install",
     "test": "nx run-many -t test",
+    "test:coverage": "vitest run --coverage",
     "test:staged": "vitest related --run",
-    "test:staged:coverage": "vitest related --coverage --run",
-    "test:coverage": "vitest run --coverage"
+    "test:staged:coverage": "vitest related --coverage --run"
   },
   "dependencies": {
     "dotenv": "^16.4.1",
