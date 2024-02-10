@@ -1,25 +1,27 @@
 {
-  inputs.dream2nix.url = "github:nix-community/dream2nix";
-  inputs.nixpkgs.follows = "dream2nix/nixpkgs";
-
-  outputs = inputs @ {
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  inputs.flake-utils.url = "github:numtide/flake-utils";
+  outputs = {
     self,
-    dream2nix,
     nixpkgs,
-    ...
-  }: let
-    system = "x86_64-linux";
-  in {
-    packages.${system}.default = dream2nix.lib.evalModules {
-      packageSets.nixpkgs = inputs.dream2nix.inputs.nixpkgs.legacyPackages.${system};
-      modules = [
-        ./default.nix
-        {
-          paths.projectRoot = ./.;
-          paths.projectRootFile = "flake.nix";
-          paths.package = ./.;
-        }
-      ];
-    };
-  };
+    flake-utils,
+  } @ inputs: let
+    nixpkgsFor = nixpkgs.lib.genAttrs flake-utils.lib.defaultSystems (system:
+      import nixpkgs {
+        inherit system;
+      });
+  in (flake-utils.lib.eachDefaultSystem (
+    system: let
+      pkgs = import nixpkgs {
+        inherit system;
+      };
+    in {
+      devShells.default = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          nodejs
+          nodePackages.pnpm
+        ];
+      };
+    }
+  ));
 }

@@ -1,7 +1,7 @@
 /.coverage/
 /.direnv/
 /.husky/
-/.nx/cache/
+/.nx/cache
 /.venv/
 /.vscode/
 /node_modules/
