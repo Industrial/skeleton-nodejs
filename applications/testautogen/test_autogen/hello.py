@@ -3,4 +3,4 @@
 
 def hello():
     """Return a friendly greeting."""
-    return "Hello test-autogen"
+    return "Hello testautogen"

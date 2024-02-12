@@ -1,14 +1,14 @@
 {
-  "name": "test-autogen",
+  "name": "testautogen",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "test-autogen/test-autogen",
+  "sourceRoot": "applications/testautogen/testautogen",
   "targets": {
     "lock": {
       "executor": "@nxlv/python:run-commands",
       "options": {
         "command": "poetry lock --no-update",
-        "cwd": "test-autogen"
+        "cwd": "applications/testautogen"
       }
     },
     "add": {
@@ -29,7 +29,7 @@
         "{projectRoot}/dist"
       ],
       "options": {
-        "outputPath": "test-autogen/dist",
+        "outputPath": "dist/applications/testautogen",
         "publish": false,
         "lockedVersions": true,
         "bundleLocalDependencies": true
@@ -48,21 +48,21 @@
     "lint": {
       "executor": "@nxlv/python:flake8",
       "outputs": [
-        "{workspaceRoot}/reports/test-autogen/pylint.txt"
+        "{workspaceRoot}/reports/applications/testautogen/pylint.txt"
       ],
       "options": {
-        "outputFile": "reports/test-autogen/pylint.txt"
+        "outputFile": "reports/applications/testautogen/pylint.txt"
       }
     },
     "test": {
       "executor": "@nxlv/python:run-commands",
       "outputs": [
-        "{workspaceRoot}/reports/test-autogen/unittests",
-        "{workspaceRoot}/coverage/test-autogen"
+        "{workspaceRoot}/reports/applications/testautogen/unittests",
+        "{workspaceRoot}/coverage/applications/testautogen"
       ],
       "options": {
         "command": "poetry run pytest tests/",
-        "cwd": "test-autogen"
+        "cwd": "applications/testautogen"
       }
     }
   },

@@ -1,3 +1,3 @@
-# test-autogen
+# testautogen
 
 Project description here.
