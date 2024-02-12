@@ -1,3 +1,4 @@
+// @ts-ignore
 import * as runtime from 'onnxruntime-node'
 
 async function main() {

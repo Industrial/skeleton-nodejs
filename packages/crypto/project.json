@@ -5,22 +5,29 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/js:swc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/packages/crypto",
         "main": "packages/crypto/src/index.ts",
+        "outputPath": "dist/packages/crypto",
+        "outputFileName": "main.js",
         "tsConfig": "packages/crypto/tsconfig.json",
-        "assets": []
+        "assets": [],
+        "platform": "node"
+      },
+      "configurations": {
+        "development": {
+          "minify": false
+        },
+        "production": {
+          "minify": true
+        }
       }
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
         "reportsDirectory": "../../coverage/packages/crypto"
       }

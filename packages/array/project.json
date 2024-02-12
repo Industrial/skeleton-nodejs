@@ -2,18 +2,29 @@
   "name": "@code9/array",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/array/src",
-  "projectType": "library",
+  "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/js:swc",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": [
         "{options.outputPath}"
       ],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/packages/array",
         "main": "packages/array/src/index.ts",
+        "outputPath": "dist/packages/array",
+        "outputFileName": "main.js",
         "tsConfig": "packages/array/tsconfig.json",
-        "assets": []
+        "assets": [],
+        "platform": "node"
+      },
+      "configurations": {
+        "development": {
+          "minify": false
+        },
+        "production": {
+          "minify": true
+        }
       }
     },
     "test": {

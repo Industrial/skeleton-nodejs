@@ -5,22 +5,29 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/js:swc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/packages/fs",
         "main": "packages/fs/src/index.ts",
+        "outputPath": "dist/packages/fs",
+        "outputFileName": "main.js",
         "tsConfig": "packages/fs/tsconfig.json",
-        "assets": []
+        "assets": [],
+        "platform": "node"
+      },
+      "configurations": {
+        "development": {
+          "minify": false
+        },
+        "production": {
+          "minify": true
+        }
       }
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
         "reportsDirectory": "../../coverage/packages/fs"
       }

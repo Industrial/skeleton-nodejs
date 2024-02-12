@@ -20,6 +20,9 @@
         buildInputs = with pkgs; [
           nodejs
           nodePackages.pnpm
+
+          python310
+          poetry
         ];
       };
     }

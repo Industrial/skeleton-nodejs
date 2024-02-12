@@ -5,22 +5,29 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/js:swc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/packages/child_process",
         "main": "packages/child_process/src/index.ts",
+        "outputPath": "dist/packages/child_process",
+        "outputFileName": "main.js",
         "tsConfig": "packages/child_process/tsconfig.json",
-        "assets": []
+        "assets": [],
+        "platform": "node"
+      },
+      "configurations": {
+        "development": {
+          "minify": false
+        },
+        "production": {
+          "minify": true
+        }
       }
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
         "reportsDirectory": "../../coverage/packages/child_process"
       }

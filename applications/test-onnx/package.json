@@ -12,7 +12,8 @@
     "@code9/either": "workspace:^",
     "@code9/record": "workspace:^",
     "ccxt": "^4.2.41",
-    "onnxruntime-node": "^1.17.0"
+    "onnxruntime-node": "^1.17.0",
+    "onnxruntime-web": "^1.17.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.16",
