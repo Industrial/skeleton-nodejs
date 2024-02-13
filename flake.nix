@@ -21,8 +21,11 @@
           nodejs
           nodePackages.pnpm
 
-          python310
+          python38
           poetry
+
+          fermyon-spin
+          wasmedge
         ];
       };
     }

@@ -10,6 +10,7 @@
   "private": true,
   "scripts": {
     "build": "nx run-many -t build",
+    "install": "nx run testautogen:update",
     "lint": "nx run-many -t lint",
     "postinstall": "husky install",
     "test": "nx run-many -t test",
