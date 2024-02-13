@@ -2,5 +2,5 @@
 set -e
 . "$(dirname -- "$0")/_/husky.sh"
 
-pnpm lint
-pnpm run test --run
+pnpm test
+pnpm build
