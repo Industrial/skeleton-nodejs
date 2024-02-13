@@ -4,6 +4,22 @@
   "sourceRoot": "packages/fs/src",
   "projectType": "library",
   "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p tsconfig.json --noEmit"],
+        "cwd": "packages/record",
+        "forwardAllArgs": false
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["pnpm lint"],
+        "cwd": "packages/record",
+        "forwardAllArgs": false
+      }
+    },
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
