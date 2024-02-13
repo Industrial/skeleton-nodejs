@@ -7,7 +7,7 @@ exclude_lines = ['if TYPE_CHECKING:']
 show_missing = true
 
 [tool.pytest.ini_options]
-addopts = "--cov --cov-report html:'../../coverage/testautogen/html' --cov-report xml:'../../coverage/testautogen/coverage.xml' --html='../../reports/testautogen/unittests/html/index.html' --junitxml='../../reports/testautogen/unittests/junit.xml'"
+addopts = "--cov --cov-report html:'../../coverage/applications/testautogen/html' --cov-report xml:'../../coverage/applications/testautogen/coverage.xml' --html='../../reports/applications/testautogen/unittests/html/index.html' --junitxml='../../reports/applications/testautogen/unittests/junit.xml'"
 
 [tool.poetry]
 name = "testautogen"
