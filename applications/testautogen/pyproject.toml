@@ -1,3 +1,31 @@
+[project]
+name = "testautogen"
+version = "2024.0.0"
+description = "testautogen"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE.txt" }
+keywords = ["Artificial Intelligence", "Machine Learning"]
+authors = [{ email = "tom.wieland@gmail.com" }, { name = "Tom Wieland" }]
+maintainers = [{ name = "Tom Wieland", email = "tom.wieland@gmail.com" }]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+]
+dependencies = [
+  "black>23.3.0",
+  "debugpy>1.6.7",
+  "flake8>6.0.0",
+  "isort>5.12.0",
+  # "pylance>0.9.8",
+
+  "pytest",
+
+  # "numpy",
+  # "pyautogen",
+  "python-dotenv",
+]
+
 [tool.coverage.run]
 branch = true
 source = ["testautogen"]
@@ -21,7 +49,8 @@ readme = 'README.md'
 include = "testautogen"
 
 [tool.poetry.dependencies]
-python = ">=3.8.1,<3.11"
+# python = ">=3.8.1,<3.11"
+python = ">=3.9,<3.13"
 pyautogen = "0.2.13"
 
 [tool.poetry.group.dev.dependencies]
