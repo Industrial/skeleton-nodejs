@@ -22,7 +22,11 @@ export type ChildProcessProps = {
 }
 
 export const createChildProcess = ([cmd, args]: [string, Array<string>]): ChildProcessProps => {
-  const child = childProcessSpawn(cmd, args)
+  const child = childProcessSpawn(cmd, args, {
+    cwd: process.cwd(),
+    env: process.env,
+    shell: true,
+  })
   let stdout = ''
 
   child.stdout.on('data', (data: Uint8Array | string) => {

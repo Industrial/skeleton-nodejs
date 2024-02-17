@@ -2,11 +2,10 @@
   "name": "@code9/child_process",
   "version": "0.1.0",
   "type": "module",
-  "main": "./src/index.js",
-  "typings": "./src/index.d.ts",
   "scripts": {
     "lint": "eslint --fix --cache --cache-location .eslintcache .",
-    "test": "vitest"
+    "test": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@types/node": "^20.11.16",

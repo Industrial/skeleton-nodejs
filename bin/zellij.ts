@@ -1,12 +1,12 @@
 #!/usr/bin/env -S node --import @swc-node/register/esm-register
 import 'dotenv/config'
 
-import { $ } from '../packages/child_process/src/lib/child_process.ts'
+import { spawn } from '../packages/child_process/src/lib/child_process.ts'
 
 try {
-  await $(`zellij kill-session autofreq`)
-} catch (_error: unknown) {
-  // console.log('No session to kill')
+  await spawn(`zellij kill-session autofreq`)()
+} catch (error) {
+  console.error(error)
 } finally {
-  await $(`zellij --layout zellij.kdl --session autofreq`)
+  await spawn(`zellij --layout zellij.kdl --session autofreq`)()
 }

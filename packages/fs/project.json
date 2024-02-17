@@ -7,22 +7,28 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["tsc -p tsconfig.json --noEmit"],
-        "cwd": "packages/record",
+        "commands": [
+          "pnpm typecheck"
+        ],
+        "cwd": "packages/fs",
         "forwardAllArgs": false
       }
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["pnpm lint"],
-        "cwd": "packages/record",
+        "commands": [
+          "pnpm lint"
+        ],
+        "cwd": "packages/fs",
         "forwardAllArgs": false
       }
     },
     "build": {
       "executor": "@nx/esbuild:esbuild",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "main": "packages/fs/src/index.ts",
@@ -43,7 +49,9 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
         "reportsDirectory": "../../coverage/packages/fs"
       }

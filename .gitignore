@@ -41,6 +41,7 @@ Thumbs.db
 .coverage
 .coverage/
 .direnv/
+.env
 .eslintcache
 .nx/cache/
 .pytest_cache/
