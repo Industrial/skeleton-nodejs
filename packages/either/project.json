@@ -1,5 +1,5 @@
 {
-  "name": "@code9/either",
+  "name": "either",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/either/src",
   "projectType": "library",
@@ -25,26 +25,17 @@
       }
     },
     "build": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "@nx/js:swc",
       "outputs": [
         "{options.outputPath}"
       ],
-      "defaultConfiguration": "production",
       "options": {
-        "main": "packages/either/src/index.ts",
         "outputPath": "dist/packages/either",
-        "outputFileName": "main.js",
+        "main": "packages/either/src/index.ts",
         "tsConfig": "packages/either/tsconfig.json",
-        "assets": [],
-        "platform": "node"
-      },
-      "configurations": {
-        "development": {
-          "minify": false
-        },
-        "production": {
-          "minify": true
-        }
+        "assets": [
+          "packages/either/*.md"
+        ]
       }
     },
     "test": {

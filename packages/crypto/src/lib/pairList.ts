@@ -1,6 +1,5 @@
-import { sequenceArrayWritable } from '@code9/either'
-import { entries } from '@code9/record'
 import { Exchange } from 'ccxt'
+import { sequenceArrayWritable } from 'either'
 import * as A from 'fp-ts/Array'
 import * as E from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
@@ -9,6 +8,8 @@ import * as Ord from 'fp-ts/Ord'
 import { contramap } from 'fp-ts/Ord'
 import * as TE from 'fp-ts/TaskEither'
 import fs from 'fs/promises'
+import { entries } from 'record'
+import { test123 } from 'test123'
 import { Opaque } from 'type-fest'
 
 import { loadMarketsE } from './exchange.ts'
@@ -21,6 +22,8 @@ export type High = Opaque<number, 'High'>
 export type Low = Opaque<number, 'Low'>
 export type Close = Opaque<number, 'Close'>
 export type Volume = Opaque<number, 'Volume'>
+
+console.log(test123)
 
 export const filterBase = (refinement: (x: Base) => boolean) =>
   (pairs: Array<Pair>): Array<Pair> =>

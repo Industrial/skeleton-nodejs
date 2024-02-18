@@ -1,0 +1,19 @@
+{
+  "jsc": {
+    "target": "esnext",
+    "parser": {
+      "syntax": "typescript",
+      "exportDefaultFrom": true,
+      "exportNamespaceFrom": true
+    }
+  },
+  "module": {
+    "type": "commonjs"
+  },
+  "sourceMaps": true,
+  "exclude": [
+    ".*\\.spec.tsx?$",
+    ".*\\.test.tsx?$",
+    ".*.js$"
+  ]
+}

@@ -1,4 +1,5 @@
-import { configDefaults, defineConfig } from 'vitest/config'
+// import { configDefaults, defineConfig } from 'vitest/config'
+const { configDefaults, defineConfig } = require('vitest/config')
 
 const exclude = [
   ...configDefaults.exclude,
@@ -16,11 +17,12 @@ export default defineConfig({
     coverage: {
       exclude,
       reporter: ['text', 'json', 'html'],
+      provider: 'v8',
     },
   },
   resolve: {
-    alias: {
-      '@': new URL('./', import.meta.url).pathname,
-    },
+    // alias: {
+    //   '@': new URL('./', import.meta.url).pathname,
+    // },
   },
 })

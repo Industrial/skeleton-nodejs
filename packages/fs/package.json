@@ -2,6 +2,8 @@
   "name": "@code9/fs",
   "version": "0.1.0",
   "type": "module",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts",
   "scripts": {
     "lint": "eslint --fix --cache --cache-location .eslintcache .",
     "test": "vitest",
@@ -12,7 +14,6 @@
     "@vitest/coverage-v8": "^1.2.2",
     "@vitest/spy": "^1.2.2",
     "@vitest/ui": "^1.0.4",
-    "typescript": "^5.3.3",
     "vitest": "^1.2.2"
   }
 }

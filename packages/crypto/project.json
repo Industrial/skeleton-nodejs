@@ -25,28 +25,18 @@
       }
     },
     "build": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "@nx/js:swc",
       "outputs": [
         "{options.outputPath}"
       ],
-      "defaultConfiguration": "production",
       "options": {
-        "main": "packages/crypto/src/index.ts",
         "outputPath": "dist/packages/crypto",
-        "outputFileName": "main.js",
+        "main": "packages/crypto/src/index.ts",
         "tsConfig": "packages/crypto/tsconfig.json",
-        "format": [
-          "esm"
+        "assets": [
+          "packages/crypto/*.md"
         ],
-        "platform": "node"
-      },
-      "configurations": {
-        "development": {
-          "minify": false
-        },
-        "production": {
-          "minify": true
-        }
+        "skipTypeCheck": true
       }
     },
     "test": {

@@ -25,26 +25,17 @@
       }
     },
     "build": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "@nx/js:swc",
       "outputs": [
         "{options.outputPath}"
       ],
-      "defaultConfiguration": "production",
       "options": {
-        "main": "packages/record/src/index.ts",
         "outputPath": "dist/packages/record",
-        "outputFileName": "main.js",
+        "main": "packages/record/src/index.ts",
         "tsConfig": "packages/record/tsconfig.json",
-        "assets": [],
-        "platform": "node"
-      },
-      "configurations": {
-        "development": {
-          "minify": false
-        },
-        "production": {
-          "minify": true
-        }
+        "assets": [
+          "packages/record/*.md"
+        ]
       }
     },
     "test": {

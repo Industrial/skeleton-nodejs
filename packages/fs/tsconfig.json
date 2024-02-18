@@ -3,9 +3,7 @@
   "compilerOptions": {
     "noEmit": false,
     "outDir": "./dist",
-    "declaration": true,
-    "composite": true,
-    "tsBuildInfoFile": "./.tsbuildinfo"
+    "declaration": true
   },
   "include": [
     "./**/*.ts"
