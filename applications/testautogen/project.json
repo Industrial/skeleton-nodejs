@@ -31,7 +31,7 @@
         "{workspaceRoot}/coverage/applications/testautogen"
       ],
       "options": {
-        "command": "pytest",
+        "command": "nix develop -c pytest",
         "cwd": "applications/testautogen"
       }
     }
