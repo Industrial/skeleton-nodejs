@@ -1,19 +1,13 @@
 {
+  "$schema": "https://json.schemastore.org/swcrc",
   "jsc": {
     "target": "esnext",
     "parser": {
-      "syntax": "typescript",
-      "exportDefaultFrom": true,
-      "exportNamespaceFrom": true
+      "syntax": "typescript"
     }
-  },
-  "module": {
-    "type": "commonjs"
   },
   "sourceMaps": true,
   "exclude": [
-    ".*\\.spec.tsx?$",
-    ".*\\.test.tsx?$",
-    ".*.js$"
+    "node_modules"
   ]
 }

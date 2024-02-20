@@ -4,45 +4,27 @@
   "sourceRoot": "packages/child_process/src",
   "projectType": "library",
   "targets": {
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "pnpm typecheck"
-        ],
-        "cwd": "packages/child_process",
-        "forwardAllArgs": false
-      }
-    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "pnpm lint"
-        ],
+        "commands": ["pnpm lint"],
         "cwd": "packages/child_process",
         "forwardAllArgs": false
       }
     },
     "build": {
       "executor": "@nx/js:swc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/child_process",
         "main": "packages/child_process/src/index.ts",
         "tsConfig": "packages/child_process/tsconfig.json",
-        "assets": [
-          "packages/child_process/*.md"
-        ]
+        "assets": ["packages/child_process/*.md"]
       }
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
         "reportsDirectory": "../../coverage/packages/child_process"
       }

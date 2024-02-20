@@ -4,45 +4,27 @@
   "sourceRoot": "packages/fs/src",
   "projectType": "library",
   "targets": {
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "pnpm typecheck"
-        ],
-        "cwd": "packages/fs",
-        "forwardAllArgs": false
-      }
-    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "pnpm lint"
-        ],
+        "commands": ["pnpm lint"],
         "cwd": "packages/fs",
         "forwardAllArgs": false
       }
     },
     "build": {
       "executor": "@nx/js:swc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/fs",
         "main": "packages/fs/src/index.ts",
         "tsConfig": "packages/fs/tsconfig.json",
-        "assets": [
-          "packages/fs/*.md"
-        ]
+        "assets": ["packages/fs/*.md"]
       }
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
         "reportsDirectory": "../../coverage/packages/fs"
       }

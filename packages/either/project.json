@@ -4,45 +4,27 @@
   "sourceRoot": "packages/either/src",
   "projectType": "library",
   "targets": {
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "pnpm typecheck"
-        ],
-        "cwd": "packages/either",
-        "forwardAllArgs": false
-      }
-    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "pnpm lint"
-        ],
+        "commands": ["pnpm lint"],
         "cwd": "packages/either",
         "forwardAllArgs": false
       }
     },
     "build": {
       "executor": "@nx/js:swc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/either",
         "main": "packages/either/src/index.ts",
         "tsConfig": "packages/either/tsconfig.json",
-        "assets": [
-          "packages/either/*.md"
-        ]
+        "assets": ["packages/either/*.md"]
       }
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
         "reportsDirectory": "../../coverage/packages/either"
       }

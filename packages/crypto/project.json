@@ -4,46 +4,27 @@
   "sourceRoot": "packages/crypto/src",
   "projectType": "library",
   "targets": {
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "pnpm typecheck"
-        ],
-        "cwd": "packages/crypto",
-        "forwardAllArgs": false
-      }
-    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "pnpm lint"
-        ],
+        "commands": ["pnpm lint"],
         "cwd": "packages/crypto",
         "forwardAllArgs": false
       }
     },
     "build": {
       "executor": "@nx/js:swc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/crypto",
         "main": "packages/crypto/src/index.ts",
         "tsConfig": "packages/crypto/tsconfig.json",
-        "assets": [
-          "packages/crypto/*.md"
-        ],
-        "skipTypeCheck": true
+        "assets": ["packages/crypto/*.md"]
       }
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
         "reportsDirectory": "../../coverage/packages/crypto"
       }

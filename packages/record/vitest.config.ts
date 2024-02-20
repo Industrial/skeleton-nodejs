@@ -1,5 +1,4 @@
-// import { configDefaults, defineConfig } from 'vitest/config'
-const { configDefaults, defineConfig } = require('vitest/config')
+import { configDefaults, defineConfig } from 'vitest/config'
 
 const exclude = [
   ...configDefaults.exclude,

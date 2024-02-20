@@ -180,18 +180,15 @@ importers:
 
   packages/crypto:
     dependencies:
-      ccxt:
-        specifier: ^4.2.41
-        version: 4.2.41
-      either:
+      '@code9/either':
         specifier: workspace:^
         version: link:../either
-      record:
+      '@code9/record':
         specifier: workspace:^
         version: link:../record
-      test123:
-        specifier: workspace:^
-        version: link:../test123
+      ccxt:
+        specifier: ^4.0.3
+        version: 4.0.3
     devDependencies:
       '@types/node':
         specifier: ^20.11.16
@@ -262,18 +259,6 @@ importers:
       vitest:
         specifier: ^1.2.2
         version: 1.2.2(@types/node@20.11.17)(@vitest/ui@1.2.2)
-
-  packages/test123:
-    dependencies:
-      '@swc/helpers':
-        specifier: ~0.5.2
-        version: 0.5.6
-
-  packages/test456:
-    dependencies:
-      test123:
-        specifier: workspace:^
-        version: link:../test123
 
 packages:
 
@@ -3028,6 +3013,7 @@ packages:
     resolution: {integrity: sha512-aYX01Ke9hunpoCexYAgQucEpARGQ5w/cqHFrIR+e9gdKb1QWTsVJuTJ2ozQzIAxLyRQe/m+2RqzkyOOGiMKRQA==}
     dependencies:
       tslib: 2.6.2
+    dev: true
 
   /@swc/jest@0.2.20(@swc/core@1.3.107):
     resolution: {integrity: sha512-5qSUBYY1wyIMn7p0Vl9qqV4hMI69oJwZCIPUpBsTFWN2wlwn6RDugzdgCn+bLXVYh+Cxi8bJcZ1uumDgsoL+FA==}
@@ -4221,8 +4207,8 @@ packages:
     resolution: {integrity: sha512-yr2BWR1yLXQ8fMpdS/4ZZXpseBgE7o4g41x3a6AJOqZuOi+iE/WdJYAuZ6Y95i4Ohd2Y+9MzIWRR+uGABH4s3Q==}
     dev: true
 
-  /ccxt@4.2.41:
-    resolution: {integrity: sha512-WaQDQGu2m9RASoEGGd59fgUQnASR1UkEtOH3mVp5Vlu29yB8lijGtLSMouLTF562d6BeIwQg0KBDU3WHZ+iPZQ==}
+  /ccxt@4.0.3:
+    resolution: {integrity: sha512-3oF+9lLxQnBW8cZRzp6zrBxrPxac0mbIY9nl638mKaH3IEdzWGPXj7Hbup74tWEwgtLM1Qe3zuAKynCY9EMjuw==}
     engines: {node: '>=15.0.0'}
     requiresBuild: true
     dependencies:

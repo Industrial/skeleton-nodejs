@@ -6,8 +6,7 @@
   "typings": "./src/index.d.ts",
   "scripts": {
     "lint": "eslint --fix --cache --cache-location .eslintcache .",
-    "test": "vitest",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "test": "vitest"
   },
   "devDependencies": {
     "@types/node": "^20.11.16",

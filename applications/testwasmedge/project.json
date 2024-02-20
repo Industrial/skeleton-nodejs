@@ -4,31 +4,17 @@
   "sourceRoot": "applications/testwasmedge/src",
   "projectType": "application",
   "targets": {
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "pnpm typecheck"
-        ],
-        "cwd": "applications/testwasmedge",
-        "forwardAllArgs": false
-      }
-    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "pnpm lint"
-        ],
+        "commands": ["pnpm lint"],
         "cwd": "applications/testwasmedge",
         "forwardAllArgs": false
       }
     },
     "build": {
       "executor": "@nx/esbuild:esbuild",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "main": "applications/testwasmedge/src/main.ts",
@@ -49,9 +35,7 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
         "reportsDirectory": "../../coverage/applications/testwasmedge"
       }

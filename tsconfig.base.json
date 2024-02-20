@@ -3,16 +3,7 @@
     "allowImportingTsExtensions": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "target": "ESNext"
-  },
-  "exclude": [
-    "/.coverage/**/*",
-    "/.direnv/**/*",
-    "/.freqtrade/**/*",
-    "/.husky/**/*",
-    "/.nx/cache/**/*",
-    "/.venv/**/*",
-    "/.vscode/**/*",
-    "/node_modules/**/*"
-  ]
+    "target": "ESNext",
+    "strictNullChecks": true
+  }
 }

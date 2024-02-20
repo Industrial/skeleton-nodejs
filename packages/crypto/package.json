@@ -6,14 +6,12 @@
   "typings": "./src/index.d.ts",
   "scripts": {
     "lint": "eslint --fix --cache --cache-location .eslintcache .",
-    "test": "vitest",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "test": "vitest"
   },
   "dependencies": {
-    "either": "workspace:^",
-    "record": "workspace:^",
-    "test123": "workspace:^",
-    "ccxt": "^4.2.41"
+    "@code9/either": "workspace:^",
+    "@code9/record": "workspace:^",
+    "ccxt": "^4.0.3"
   },
   "devDependencies": {
     "@types/node": "^20.11.16",
