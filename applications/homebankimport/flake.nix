@@ -46,8 +46,11 @@
     in {
       devShells.default = pkgs.mkShell {
         shellHook = shellHook;
-        buildInputs = [
+        packages = with pkgs; [
+          # Python
           pythonEnvironment
+          # virtualenv
+          # poetry
         ];
       };
     }

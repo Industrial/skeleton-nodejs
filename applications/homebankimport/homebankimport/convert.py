@@ -1,10 +1,7 @@
-import pandas as pd
-
-input_file_path = "/home/tom/Downloads/transactions.csv"
-output_file_path = "/home/tom/Downloads/transactions_out.csv"
+from pandas import DataFrame, Series
 
 
-def payment(x):
+def payment(x: str) -> int:
     return {
         "AC": 4,  # AC = Acceptgiro => 4 = Transfer
         "IC": 11,  # IC = Incasso => 11 = Direct Debit
@@ -23,14 +20,14 @@ def payment(x):
     )  # DV = Diversen => 0 = no payment type assigned
 
 
-def map_row(row):
+def map_row(row: Series) -> Series:
     date = row["Date"]
     payee = row["Counterparty"]
     debitcredit = row["Debit/credit"]
     amount = float(row["Amount (EUR)"].replace(",", "."))
     if debitcredit == "Credit":
         amount = -abs(amount)
-    return pd.Series(
+    new_row = Series(
         {
             "date": date,
             "payment": payment(row["Code"]),
@@ -42,14 +39,9 @@ def map_row(row):
             "tags": "",
         }
     )
+    return new_row
 
 
-df_in = pd.read_csv(input_file_path, delimiter=",")
-df_in["Date"] = pd.to_datetime(df_in["Date"], format="%Y%m%d")
-# df_in.set_index("Date", inplace=True)
-
-print(df_in["Debit/credit"].value_counts())
-
-
-df_out = df_in.apply(map_row, axis=1)
-df_out.to_csv(output_file_path, index=False, sep=";")
+def convert_dataframe(df_in: DataFrame) -> DataFrame:
+    df_out = df_in.apply(map_row, axis=1)
+    return df_out

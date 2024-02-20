@@ -27,7 +27,7 @@
 
           # Python
           # pythonEnvironment
-          poetry
+          # poetry
 
           # WASM
           fermyon-spin

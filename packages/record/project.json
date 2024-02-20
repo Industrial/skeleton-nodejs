@@ -7,14 +7,18 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["pnpm lint"],
+        "commands": [
+          "pnpm lint"
+        ],
         "cwd": "packages/record",
-        "forwardAllArgs": false
+        "forwardAllArgs": true
       }
     },
     "build": {
       "executor": "@nx/js:swc",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/packages/record",
         "main": "packages/record/src/index.ts",
@@ -24,7 +28,9 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
         "reportsDirectory": "../../coverage/packages/record"
       }

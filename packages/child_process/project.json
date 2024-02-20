@@ -7,14 +7,18 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["pnpm lint"],
-        "cwd": "packages/child_process",
-        "forwardAllArgs": false
+        "commands": [
+          "pnpm lint"
+        ],
+        "cwd": "packages/crypto",
+        "forwardAllArgs": true
       }
     },
     "build": {
       "executor": "@nx/js:swc",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/packages/child_process",
         "main": "packages/child_process/src/index.ts",
@@ -24,7 +28,9 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
         "reportsDirectory": "../../coverage/packages/child_process"
       }

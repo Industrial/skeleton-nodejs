@@ -1,27 +1,16 @@
 {
   "name": "homebankimport",
-  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "applications/homebankimport",
   "projectType": "application",
-  "sourceRoot": "applications/homebankimport/homebankimport",
   "targets": {
-    "lock": {
-      "executor": "@nxlv/python:run-commands",
+    "lint": {
+      "executor": "nx:run-commands",
       "options": {
-        "command": "poetry lock --no-update",
-        "cwd": "applications/homebankimport"
+        "command": "nix develop -c flake8 .",
+        "cwd": "applications/homebankimport",
+        "forwardAllArgs": false
       }
-    },
-    "add": {
-      "executor": "@nxlv/python:add",
-      "options": {}
-    },
-    "update": {
-      "executor": "@nxlv/python:update",
-      "options": {}
-    },
-    "remove": {
-      "executor": "@nxlv/python:remove",
-      "options": {}
     },
     "build": {
       "executor": "@nxlv/python:build",
@@ -35,25 +24,6 @@
         "bundleLocalDependencies": true
       }
     },
-    "install": {
-      "executor": "@nxlv/python:install",
-      "options": {
-        "silent": false,
-        "args": "",
-        "cacheDir": ".cache/pypoetry",
-        "verbose": false,
-        "debug": false
-      }
-    },
-    "lint": {
-      "executor": "@nxlv/python:flake8",
-      "outputs": [
-        "{workspaceRoot}/reports/applications/homebankimport/pylint.txt"
-      ],
-      "options": {
-        "outputFile": "reports/applications/homebankimport/pylint.txt"
-      }
-    },
     "test": {
       "executor": "@nxlv/python:run-commands",
       "outputs": [
@@ -61,7 +31,7 @@
         "{workspaceRoot}/coverage/applications/homebankimport"
       ],
       "options": {
-        "command": "poetry run pytest tests/",
+        "command": "pytest",
         "cwd": "applications/homebankimport"
       }
     }
