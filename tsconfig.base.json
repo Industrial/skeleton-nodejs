@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "allowImportingTsExtensions": true,
+    "baseUrl": "./",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "target": "ESNext",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "target": "ESNext"
   }
 }
