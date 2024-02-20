@@ -19,7 +19,7 @@
         "outputPath": "dist/packages/crypto",
         "main": "packages/crypto/src/index.ts",
         "tsConfig": "packages/crypto/tsconfig.json",
-        "assets": ["packages/crypto/*.md"]
+        "assets": []
       }
     },
     "test": {

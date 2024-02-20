@@ -19,7 +19,7 @@
         "outputPath": "dist/packages/fs",
         "main": "packages/fs/src/index.ts",
         "tsConfig": "packages/fs/tsconfig.json",
-        "assets": ["packages/fs/*.md"]
+        "assets": []
       }
     },
     "test": {

@@ -2,7 +2,7 @@
   "name": "@code9/array",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/array/src",
-  "projectType": "application",
+  "projectType": "library",
   "targets": {
     "lint": {
       "executor": "nx:run-commands",
@@ -19,7 +19,7 @@
         "outputPath": "dist/packages/array",
         "main": "packages/array/src/index.ts",
         "tsConfig": "packages/array/tsconfig.json",
-        "assets": ["packages/array/*.md"]
+        "assets": []
       }
     },
     "test": {

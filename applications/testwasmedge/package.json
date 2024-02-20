@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "lint": "eslint --fix --cache --cache-location .eslintcache .",
+    "lint": "eslint --fix .",
     "test": "vitest"
   },
   "devDependencies": {

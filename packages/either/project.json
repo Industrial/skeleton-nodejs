@@ -1,5 +1,5 @@
 {
-  "name": "either",
+  "name": "@code9/either",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/either/src",
   "projectType": "library",
@@ -19,7 +19,7 @@
         "outputPath": "dist/packages/either",
         "main": "packages/either/src/index.ts",
         "tsConfig": "packages/either/tsconfig.json",
-        "assets": ["packages/either/*.md"]
+        "assets": []
       }
     },
     "test": {

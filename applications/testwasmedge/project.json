@@ -2,7 +2,7 @@
   "name": "@code9/testwasmedge",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "applications/testwasmedge/src",
-  "projectType": "application",
+  "projectType": "library",
   "targets": {
     "lint": {
       "executor": "nx:run-commands",
@@ -13,24 +13,13 @@
       }
     },
     "build": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "@nx/js:swc",
       "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
       "options": {
-        "main": "applications/testwasmedge/src/main.ts",
         "outputPath": "dist/applications/testwasmedge",
-        "outputFileName": "main.js",
+        "main": "applications/testwasmedge/src/index.ts",
         "tsConfig": "applications/testwasmedge/tsconfig.json",
-        "assets": [],
-        "platform": "node"
-      },
-      "configurations": {
-        "development": {
-          "minify": false
-        },
-        "production": {
-          "minify": true
-        }
+        "assets": []
       }
     },
     "test": {

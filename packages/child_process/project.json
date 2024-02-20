@@ -19,7 +19,7 @@
         "outputPath": "dist/packages/child_process",
         "main": "packages/child_process/src/index.ts",
         "tsConfig": "packages/child_process/tsconfig.json",
-        "assets": ["packages/child_process/*.md"]
+        "assets": []
       }
     },
     "test": {
