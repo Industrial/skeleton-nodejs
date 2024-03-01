@@ -10,9 +10,7 @@
   "private": true,
   "scripts": {
     "build": "nx run-many -t build",
-    "install:autogen": "nx run homebankimport:update",
     "lint": "nx run-many -t lint",
-    "postinstall": "pnpm install:autogen",
     "prepare": "husky",
     "test": "nx run-many -t test",
     "test:coverage": "vitest run --coverage",

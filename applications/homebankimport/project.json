@@ -13,15 +13,15 @@
       }
     },
     "build": {
-      "executor": "@nxlv/python:build",
-      "outputs": [
-        "{projectRoot}/dist"
-      ],
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/applications/homebankimport",
-        "publish": false,
-        "lockedVersions": true,
-        "bundleLocalDependencies": true
+        "commands": [
+          "nix build .#default",
+          "rm ../../dist/applications/homebankimport || true",
+          "ln -sn $(readlink -f ./result) ../../dist/applications/homebankimport"
+        ],
+        "cwd": "applications/homebankimport",
+        "forwardAllArgs": false
       }
     },
     "test": {

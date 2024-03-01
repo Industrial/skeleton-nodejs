@@ -8,12 +8,7 @@
     nixpkgs,
     flake-utils,
     pyproject-nix,
-  } @ inputs: let
-    nixpkgsFor = nixpkgs.lib.genAttrs flake-utils.lib.defaultSystems (system:
-      import nixpkgs {
-        inherit system;
-      });
-  in (flake-utils.lib.eachDefaultSystem (
+  } @ inputs: (flake-utils.lib.eachDefaultSystem (
     system: let
       pkgs = import nixpkgs {
         inherit system;
@@ -28,6 +23,8 @@
       };
 
       projectPythonPackages = project.renderers.withPackages {inherit python;};
+
+      projectPythonApplication = project.renderers.buildPythonPackage {inherit python;};
 
       extraPythonPackages = ps: let
       in [
@@ -47,12 +44,14 @@
       devShells.default = pkgs.mkShell {
         shellHook = shellHook;
         packages = with pkgs; [
-          # Python
           pythonEnvironment
-          # virtualenv
-          # poetry
         ];
       };
+
+      packages.default = python.pkgs.buildPythonPackage (projectPythonApplication
+        // {
+          env.CUSTOM_ENVVAR = "hello";
+        });
     }
   ));
 }

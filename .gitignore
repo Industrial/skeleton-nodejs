@@ -51,3 +51,4 @@ __pycache__/
 coverage/
 node_modules/
 reports/
+result

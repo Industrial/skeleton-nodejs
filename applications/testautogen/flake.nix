@@ -8,94 +8,94 @@
     nixpkgs,
     flake-utils,
     pyproject-nix,
-  } @ inputs: let
-    nixpkgsFor = nixpkgs.lib.genAttrs flake-utils.lib.defaultSystems (system:
-      import nixpkgs {
-        inherit system;
-      });
-  in (flake-utils.lib.eachDefaultSystem (
+  } @ inputs: (flake-utils.lib.eachDefaultSystem (
     system: let
-      pkgs = import nixpkgs {
-        inherit system;
-      };
+      pkgs = import nixpkgs {inherit system;};
 
-      python = pkgs.python3.override {
-        packageOverrides = self: super: {};
-      };
+      extraPackages = ps: let
+        openai = pkgs.python311Packages.buildPythonPackage {
+          pname = "openai";
+          version = "1.13.3";
+          pyproject = true;
+          doCheck = false;
+          src = pkgs.python311Packages.fetchPypi {
+            pname = "openai";
+            version = "1.13.3";
+            sha256 = "sha256-/2xrO8cyfnFeSzWSqSOlocdRn/XddkqD1p9jPUnnens=";
+          };
+          buildInputs = with pkgs.python311Packages; [
+            hatchling
+            anyio
+            distro
+            httpx
+            pydantic
+            sniffio
+            tqdm
+            typing-extensions
+          ];
+        };
+        flaml = pkgs.python311Packages.buildPythonPackage {
+          pname = "FLAML";
+          version = "2.1.1";
+          pyproject = true;
+          doCheck = false;
+          src = pkgs.python311Packages.fetchPypi {
+            pname = "FLAML";
+            version = "2.1.1";
+            sha256 = "sha256-U+lKrMmW2oD+d5vGgz07JcgMd/4RZn0JEnmOSSkygus=";
+          };
+          buildInputs = with pkgs.python311Packages; [
+            setuptools
+            numpy
+          ];
+        };
+        pyautogen = pkgs.python311Packages.buildPythonPackage {
+          pname = "pyautogen";
+          version = "0.2.14";
+          pyproject = true;
+          doCheck = false;
+          src = pkgs.python311Packages.fetchPypi {
+            pname = "pyautogen";
+            version = "0.2.14";
+            sha256 = "sha256-lpMfGOnwg3zlPlKRi8nIFdm9JGONQwyQQGWE0mpWG2g=";
+          };
+          buildInputs = with pkgs.python311Packages; [
+            diskcache
+            docker
+            flaml
+            openai
+            pydantic
+            python-dotenv
+            setuptools
+            termcolor
+            tiktoken
+          ];
+        };
+      in [
+        pyautogen
+      ];
+
+      python =
+        pkgs
+        .python311
+        .override {
+          packageOverrides = self: super: {
+            inherit (pkgs.python311Packages) all;
+          };
+        };
 
       project = pyproject-nix.lib.project.loadPyproject {
         projectRoot = ./.;
       };
 
-      projectPythonPackages = project.renderers.withPackages {inherit python;};
+      projectPythonPackages = project.renderers.withPackages {
+        inherit python;
+        inherit extraPackages;
+      };
 
-      extraPythonPackages = ps: let
-        # scikit-learn = ps.buildPythonPackage {
-        #   pname = "scikit-learn";
-        #   version = "1.4.0";
-        #   src = ps.fetchPypi {
-        #     pname = "scikit-learn";
-        #     version = "1.4.0";
-        #     sha256 = "sha256-1Dc8mE66IOOTIW7dUaPj7t5Wy+k9QkdRbSBWQ8O5MSE=";
-        #   };
-        #   buildInputs = with ps; [
-        #     numpy
-        #     pyspark
-        #     pandas
-        #     scipy
-        #     pytest
-        #   ];
-        #   nativeBuildInputs = with ps; [
-        #     cython
-        #     pytest
-        #   ];
-        # };
-        flaml = ps.buildPythonPackage {
-          pname = "FLAML";
-          version = "2.1.1";
-          src = ps.fetchPypi {
-            pname = "FLAML";
-            version = "2.1.1";
-            sha256 = "sha256-U+lKrMmW2oD+d5vGgz07JcgMd/4RZn0JEnmOSSkygus=";
-          };
-          buildInputs = with ps; [
-            numpy
-            pyspark
-            pandas
-            scipy
-            scikit-learn
-            transformers
-            tiktoken
-          ];
-        };
+      projectPythonApplication = project.renderers.buildPythonPackage {inherit python;};
 
-        pyautogen = ps.buildPythonPackage {
-          pname = "pyautogen";
-          version = "0.2.13";
-          src = ps.fetchPypi {
-            pname = "pyautogen";
-            version = "0.2.13";
-            sha256 = "sha256-nsjYER/tEghgw3Lx2WKjPosPwmV8YkMy9AsSBO7B+fk=";
-          };
-          buildInputs = with ps; [
-            pip
-            docker
-            pydantic
-            tiktoken
-            python-dotenv
-            flaml
-          ];
-        };
-      in [
-        ps.numpy
-        ps.pandas
-        pyautogen
-      ];
-
-      pythonEnvironment = pkgs.python3.withPackages (
-        ps:
-          (projectPythonPackages ps) ++ (extraPythonPackages ps)
-      );
+      pythonEnvironment = python.withPackages projectPythonPackages;
 
       shellHook = with pkgs; ''
         export LD_LIBRARY_PATH=${stdenv.cc.cc.lib.outPath}/lib/:$LD_LIBRARY_PATH
@@ -104,12 +104,14 @@
       devShells.default = pkgs.mkShell {
         shellHook = shellHook;
         packages = with pkgs; [
-          # Python
           pythonEnvironment
-          # virtualenv
-          # poetry
         ];
       };
+
+      packages.default = python.pkgs.buildPythonApplication (projectPythonApplication
+        // {
+          env.CUSTOM_ENVVAR = "hello";
+        });
     }
   ));
 }

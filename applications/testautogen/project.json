@@ -13,15 +13,15 @@
       }
     },
     "build": {
-      "executor": "@nxlv/python:build",
-      "outputs": [
-        "{projectRoot}/dist"
-      ],
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/applications/testautogen",
-        "publish": false,
-        "lockedVersions": true,
-        "bundleLocalDependencies": true
+        "commands": [
+          "nix build .#default",
+          "rm ../../dist/applications/testautogen || true",
+          "ln -sn $(readlink -f ./result) ../../dist/applications/testautogen"
+        ],
+        "cwd": "applications/testautogen",
+        "forwardAllArgs": false
       }
     },
     "test": {
