@@ -12,18 +12,18 @@
     system: let
       pkgs = import nixpkgs {inherit system;};
 
-      extraPackages = ps: let
-        openai = pkgs.python311Packages.buildPythonPackage {
+      pythonPackageOverrides = self: super: {
+        openai = self.buildPythonPackage {
           pname = "openai";
           version = "1.13.3";
           pyproject = true;
           doCheck = false;
-          src = pkgs.python311Packages.fetchPypi {
+          src = self.fetchPypi {
             pname = "openai";
             version = "1.13.3";
             sha256 = "sha256-/2xrO8cyfnFeSzWSqSOlocdRn/XddkqD1p9jPUnnens=";
           };
-          buildInputs = with pkgs.python311Packages; [
+          buildInputs = with self; [
             hatchling
             anyio
             distro
@@ -34,32 +34,32 @@
             typing-extensions
           ];
         };
-        flaml = pkgs.python311Packages.buildPythonPackage {
+        flaml = self.buildPythonPackage {
           pname = "FLAML";
           version = "2.1.1";
           pyproject = true;
           doCheck = false;
-          src = pkgs.python311Packages.fetchPypi {
+          src = self.fetchPypi {
             pname = "FLAML";
             version = "2.1.1";
             sha256 = "sha256-U+lKrMmW2oD+d5vGgz07JcgMd/4RZn0JEnmOSSkygus=";
           };
-          buildInputs = with pkgs.python311Packages; [
+          buildInputs = with self; [
             setuptools
             numpy
           ];
         };
-        pyautogen = pkgs.python311Packages.buildPythonPackage {
+        pyautogen = self.buildPythonPackage {
           pname = "pyautogen";
           version = "0.2.14";
           pyproject = true;
           doCheck = false;
-          src = pkgs.python311Packages.fetchPypi {
+          src = self.fetchPypi {
             pname = "pyautogen";
             version = "0.2.14";
             sha256 = "sha256-lpMfGOnwg3zlPlKRi8nIFdm9JGONQwyQQGWE0mpWG2g=";
           };
-          buildInputs = with pkgs.python311Packages; [
+          buildInputs = with self; [
             diskcache
             docker
             flaml
@@ -71,17 +71,13 @@
             tiktoken
           ];
         };
-      in [
-        pyautogen
-      ];
+      };
 
       python =
         pkgs
         .python311
         .override {
-          packageOverrides = self: super: {
-            inherit (pkgs.python311Packages) all;
-          };
+          packageOverrides = pythonPackageOverrides;
         };
 
       project = pyproject-nix.lib.project.loadPyproject {
@@ -90,7 +86,6 @@
 
       projectPythonPackages = project.renderers.withPackages {
         inherit python;
-        inherit extraPackages;
       };
 
       projectPythonApplication = project.renderers.buildPythonPackage {inherit python;};
