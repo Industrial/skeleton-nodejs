@@ -111,7 +111,7 @@
         ];
       };
 
-      packages.default = python.pkgs.buildPythonPackage (projectPythonAttributes
+      packages.default = python.pkgs.buildPythonApplication (projectPythonAttributes
         // {
           env.CUSTOM_ENVVAR = "hello";
         });
