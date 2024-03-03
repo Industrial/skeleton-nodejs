@@ -93,7 +93,10 @@
         inherit extraPackages;
       };
 
-      projectPythonApplication = project.renderers.buildPythonPackage {inherit python;};
+      projectPythonAttributes = project.renderers.buildPythonPackage {
+        inherit python;
+        extras = extraPackages;
+      };
 
       pythonEnvironment = python.withPackages projectPythonPackages;
 
@@ -108,7 +111,7 @@
         ];
       };
 
-      packages.default = python.pkgs.buildPythonApplication (projectPythonApplication
+      packages.default = python.pkgs.buildPythonPackage (projectPythonAttributes
         // {
           env.CUSTOM_ENVVAR = "hello";
         });
