@@ -11,77 +11,93 @@
   } @ inputs: (flake-utils.lib.eachDefaultSystem (
     system: let
       pkgs = import nixpkgs {inherit system;};
-      pythonPackages = pkgs.python311Packages;
-
-      openai = pythonPackages.buildPythonPackage {
-        pname = "openai";
-        version = "1.13.3";
-        pyproject = true;
-        doCheck = false;
-        src = pythonPackages.fetchPypi {
-          pname = "openai";
-          version = "1.13.3";
-          sha256 = "sha256-/2xrO8cyfnFeSzWSqSOlocdRn/XddkqD1p9jPUnnens=";
-        };
-        buildInputs = with pythonPackages; [
-          hatchling
-          anyio
-          distro
-          httpx
-          pydantic
-          sniffio
-          tqdm
-          typing-extensions
-        ];
-      };
-
-      flaml = pythonPackages.buildPythonPackage {
-        pname = "FLAML";
-        version = "2.1.1";
-        pyproject = true;
-        doCheck = false;
-        src = pythonPackages.fetchPypi {
-          pname = "FLAML";
-          version = "2.1.1";
-          sha256 = "sha256-U+lKrMmW2oD+d5vGgz07JcgMd/4RZn0JEnmOSSkygus=";
-        };
-        buildInputs = with pythonPackages; [
-          setuptools
-          numpy
-        ];
-      };
-
-      pyautogen = pythonPackages.buildPythonPackage {
-        pname = "pyautogen";
-        version = "0.2.14";
-        pyproject = true;
-        doCheck = false;
-        src = pythonPackages.fetchPypi {
-          pname = "pyautogen";
-          version = "0.2.14";
-          sha256 = "sha256-lpMfGOnwg3zlPlKRi8nIFdm9JGONQwyQQGWE0mpWG2g=";
-        };
-        buildInputs = with pythonPackages; [
-          diskcache
-          docker
-          flaml
-          openai
-          pydantic
-          python-dotenv
-          setuptools
-          termcolor
-          tiktoken
-        ];
-      };
 
       python =
         pkgs
         .python311
         .override {
-          packageOverrides = self: super: {
-            openai = openai;
-            flaml = flaml;
-            pyautogen = pyautogen;
+          packageOverrides = self: super: let
+            pythonPackages = self;
+          in {
+            # langchain = self.buildPythonPackage {
+            #   pname = "langchain";
+            #   version = "0.1.10";
+            #   pyproject = true;
+            #   doCheck = false;
+            #   src = self.fetchPypi {
+            #     pname = "langchain";
+            #     version = "0.1.10";
+            #     sha256 = "sha256-F5UbzW10rcdKoIHyYO9VFMRJSIgVMUQgt+D4NJ8V2TI=";
+            #   };
+            #   nativeBuildInputs = with self; [
+            #     pkgs.poetry
+            #   ];
+            #   buildInputs = with self; [
+            #     pkgs.poetry
+            #     # pkgs.poetry
+            #   ];
+            # };
+
+            openai = self.buildPythonPackage {
+              pname = "openai";
+              version = "1.13.3";
+              pyproject = true;
+              doCheck = false;
+              src = self.fetchPypi {
+                pname = "openai";
+                version = "1.13.3";
+                sha256 = "sha256-/2xrO8cyfnFeSzWSqSOlocdRn/XddkqD1p9jPUnnens=";
+              };
+              buildInputs = with self; [
+                hatchling
+                anyio
+                distro
+                httpx
+                pydantic
+                sniffio
+                tqdm
+                typing-extensions
+              ];
+            };
+
+            flaml = self.buildPythonPackage {
+              pname = "FLAML";
+              version = "2.1.1";
+              pyproject = true;
+              doCheck = false;
+              src = self.fetchPypi {
+                pname = "FLAML";
+                version = "2.1.1";
+                sha256 = "sha256-U+lKrMmW2oD+d5vGgz07JcgMd/4RZn0JEnmOSSkygus=";
+              };
+              buildInputs = with self; [
+                setuptools
+                numpy
+              ];
+            };
+
+            pyautogen = self.buildPythonPackage {
+              pname = "pyautogen";
+              version = "0.2.14";
+              pyproject = true;
+              doCheck = false;
+              src = self.fetchPypi {
+                pname = "pyautogen";
+                version = "0.2.14";
+                sha256 = "sha256-lpMfGOnwg3zlPlKRi8nIFdm9JGONQwyQQGWE0mpWG2g=";
+              };
+              buildInputs = with self; [
+                diskcache
+                docker
+                flaml
+                openai
+                pydantic
+                python-dotenv
+                setuptools
+                termcolor
+                tiktoken
+              ];
+            };
           };
         };
 
@@ -97,7 +113,16 @@
         inherit python;
       };
 
-      pythonEnvironment = python.withPackages projectPythonPackages;
+      pythonEnvironment = python.withPackages (ps: let
+        packages =
+          ps
+          // {
+            chromadb = pkgs.python311Packages.chromadb;
+            flaml = pkgs.python311Packages.flaml;
+            numpy = pkgs.python311Packages.numpy;
+          };
+      in
+        projectPythonPackages packages);
 
       shellHook = with pkgs; ''
         export LD_LIBRARY_PATH=${stdenv.cc.cc.lib.outPath}/lib/:$LD_LIBRARY_PATH
