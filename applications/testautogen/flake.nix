@@ -113,16 +113,7 @@
         inherit python;
       };
 
-      pythonEnvironment = python.withPackages (ps: let
-        packages =
-          ps
-          // {
-            chromadb = pkgs.python311Packages.chromadb;
-            flaml = pkgs.python311Packages.flaml;
-            numpy = pkgs.python311Packages.numpy;
-          };
-      in
-        projectPythonPackages packages);
+      pythonEnvironment = python.withPackages projectPythonPackages;
 
       shellHook = with pkgs; ''
         export LD_LIBRARY_PATH=${stdenv.cc.cc.lib.outPath}/lib/:$LD_LIBRARY_PATH

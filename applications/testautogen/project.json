@@ -16,6 +16,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
+          "nix flake update",
           "nix build .#default",
           "rm ../../dist/applications/testautogen || true",
           "ln -sn $(readlink -f ./result) ../../dist/applications/testautogen"

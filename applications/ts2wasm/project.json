@@ -1,0 +1,40 @@
+{
+  "name": "@code9/ts2wasm",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "applications/ts2wasm/src",
+  "projectType": "application",
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "pnpm lint"
+        ],
+        "cwd": "applications/ts2wasm",
+        "forwardAllArgs": true
+      }
+    },
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/applications/ts2wasm",
+        "main": "applications/ts2wasm/src/index.ts",
+        "tsConfig": "applications/ts2wasm/tsconfig.json",
+        "assets": []
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
+      "options": {
+        "reportsDirectory": "../../coverage/applications/ts2wasm"
+      }
+    }
+  },
+  "tags": []
+}
