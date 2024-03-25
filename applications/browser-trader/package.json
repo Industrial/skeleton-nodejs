@@ -1,0 +1,34 @@
+{
+  "name": "@code9/browser-trader",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "lint": "eslint --fix .",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@code9/simulated-annealing": "workspace:*",
+    "@code9/trader-backtest": "workspace:*",
+    "@code9/number": "workspace:*",
+    "@code9/trader-core": "workspace:*",
+    "@code9/trader-indicator": "workspace:*",
+    "discord.js": "^14.12.1",
+    "fp-ts": "^2.16.1",
+    "tslog": "^4.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "@vitest/coverage-v8": "^1.2.2",
+    "@vitest/spy": "^1.2.2",
+    "@vitest/ui": "^1.0.4",
+    "concurrently": "^8.2.1",
+    "esbuild": "^0.17.19",
+    "eslint": "^8.46.0",
+    "eslint-config-code9": "^0.3.0",
+    "eslint-plugin-prettier": "5.0.0",
+    "jsdom": "^22.1.0",
+    "typescript": "^5.1.6",
+    "vitest": "^1.2.2"
+  }
+}

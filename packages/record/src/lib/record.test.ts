@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { entries } from '../lib/record.ts'
+import { entries } from './record.ts'
 
 describe('Record module', () => {
   describe('entries', () => {

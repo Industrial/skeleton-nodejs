@@ -8,8 +8,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "nix develop -c flake8 .",
-        "cwd": "applications/homebankimport",
-        "forwardAllArgs": false
+        "cwd": "applications/homebankimport"
       }
     },
     "build": {
@@ -21,8 +20,7 @@
           "rm ../../dist/applications/homebankimport || true",
           "ln -sn $(readlink -f ./result) ../../dist/applications/homebankimport"
         ],
-        "cwd": "applications/homebankimport",
-        "forwardAllArgs": false
+        "cwd": "applications/homebankimport"
       }
     },
     "test": {

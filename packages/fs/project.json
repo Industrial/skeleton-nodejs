@@ -10,8 +10,7 @@
         "commands": [
           "pnpm lint"
         ],
-        "cwd": "packages/fs",
-        "forwardAllArgs": true
+        "cwd": "packages/fs"
       }
     },
     "build": {

@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [
+    "src/date.ts"
+  ],
+  "include": [
+    "./src/**/*.ts"
+  ]
+}

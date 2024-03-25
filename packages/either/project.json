@@ -10,8 +10,7 @@
         "commands": [
           "pnpm lint"
         ],
-        "cwd": "packages/either",
-        "forwardAllArgs": true
+        "cwd": "packages/either"
       }
     },
     "build": {

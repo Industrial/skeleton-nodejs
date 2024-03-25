@@ -10,8 +10,7 @@
         "commands": [
           "pnpm lint"
         ],
-        "cwd": "packages/crypto",
-        "forwardAllArgs": true
+        "cwd": "packages/array"
       }
     },
     "build": {

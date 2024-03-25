@@ -1,0 +1,39 @@
+{
+  "name": "@code9/simulated-annealing",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/simulated-annealing/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "pnpm lint"
+        ],
+        "cwd": "packages/simulated-annealing"
+      }
+    },
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/simulated-annealing",
+        "main": "packages/simulated-annealing/src/index.ts",
+        "tsConfig": "packages/simulated-annealing/tsconfig.json",
+        "assets": []
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
+      "options": {
+        "reportsDirectory": "../../coverage/packages/simulated-annealing"
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,23 +1,25 @@
 import ts from 'typescript'
-import { type Func, func, i64, type Local, Module, ValueType } from 'wasmati'
+import { type Func, type Local, func, i64, Module, ValueType } from 'wasmati'
 
 export type OutputFunction = Func<ReadonlyArray<ValueType>, ReadonlyArray<ValueType>>
 
-const getKind = (node: ts.Node) => ts.SyntaxKind[node.kind]
+const getKind = (node: ts.Node) => {
+  return ts.SyntaxKind[node.kind]
+}
 
 const handleBinaryExpression = (node: ts.BinaryExpression, leftValue: Local<'i64'>, rightValue: Local<'i64'>) => {
   const { operatorToken } = node
   switch (operatorToken.kind) {
-    case ts.SyntaxKind.PlusToken:
-      return i64.add(leftValue, rightValue)
-    case ts.SyntaxKind.MinusToken:
-      return i64.sub(leftValue, rightValue)
-    case ts.SyntaxKind.AsteriskToken:
-      return i64.mul(leftValue, rightValue)
-    case ts.SyntaxKind.SlashToken:
-      return i64.div_s(leftValue, rightValue)
-    default:
-      return undefined
+  case ts.SyntaxKind.PlusToken:
+    return i64.add(leftValue, rightValue)
+  case ts.SyntaxKind.MinusToken:
+    return i64.sub(leftValue, rightValue)
+  case ts.SyntaxKind.AsteriskToken:
+    return i64.mul(leftValue, rightValue)
+  case ts.SyntaxKind.SlashToken:
+    return i64.div_s(leftValue, rightValue)
+  default:
+    return undefined
   }
 }
 
@@ -41,7 +43,9 @@ const handleFunctionDeclaration = (node: ts.FunctionDeclaration): [string, Outpu
     throw new Error('Expected function name')
   }
   const name = node.name.getText()
-  const block = node.getChildren().find((child) => getKind(child) === 'Block')
+  const block = node.getChildren().find((child) => {
+    return getKind(child) === 'Block'
+  })
   if (!block) {
     throw new Error('Expected block')
   }
@@ -58,12 +62,13 @@ const handleFunctionDeclaration = (node: ts.FunctionDeclaration): [string, Outpu
   return [name, wasmFunc]
 }
 
-const visitRootNode = (nodes: Array<[string, OutputFunction]>) =>
-  (_context: ts.TransformationContext) => (node: ts.SourceFile): ts.Node => {
-    const visitNodes = (statements: Array<ts.Node>) => {
-      for (const statement of statements) {
-        const kind = getKind(statement)
-        switch (kind) {
+const visitRootNode = (nodes: Array<[string, OutputFunction]>) => {
+  return (_context: ts.TransformationContext) => {
+    return (node: ts.SourceFile): ts.Node => {
+      const visitNodes = (statements: Array<ts.Node>) => {
+        for (const statement of statements) {
+          const kind = getKind(statement)
+          switch (kind) {
           case 'FirstStatement':
           case 'SyntaxList':
           case 'VariableDeclarationList':
@@ -79,11 +84,13 @@ const visitRootNode = (nodes: Array<[string, OutputFunction]>) =>
           case 'ConstKeyword':
           default:
             break
+          }
         }
       }
+      visitNodes([...node.statements])
+      return node
     }
-    visitNodes([...node.statements])
-    return node
+  }
 }
 
 const compile = (sourceFile: ts.SourceFile) => {

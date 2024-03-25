@@ -10,8 +10,7 @@
         "commands": [
           "pnpm lint"
         ],
-        "cwd": "applications/testwasmedge",
-        "forwardAllArgs": true
+        "cwd": "applications/testwasmedge"
       }
     },
     "build": {

@@ -10,8 +10,7 @@
         "commands": [
           "pnpm lint"
         ],
-        "cwd": "applications/ts2wasm",
-        "forwardAllArgs": true
+        "cwd": "applications/ts2wasm"
       }
     },
     "build": {

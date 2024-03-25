@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [
+    "src/lib/simulated-annealing.ts"
+  ],
+  "include": [
+    "./src/**/*.ts"
+  ]
+}

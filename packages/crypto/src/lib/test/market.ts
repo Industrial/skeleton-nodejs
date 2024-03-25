@@ -1,9 +1,11 @@
 import { Market } from '../market.ts'
 
-export const createMarket = (base: string,
+export const createMarket = (
+  base: string,
   quote: string,
   active: boolean,
-  type: 'future' | 'margin' | 'option' | 'spot' | 'swap'): Market => {
+  type: 'future' | 'margin' | 'option' | 'spot' | 'swap',
+): Market => {
   return {
     id: `${base}/${quote}`,
     base,

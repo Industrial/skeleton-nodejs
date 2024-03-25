@@ -23,44 +23,81 @@ export type Close = Opaque<number, 'Close'>
 export type Volume = Opaque<number, 'Volume'>
 
 export const filterBase =
-  (refinement: (x: Base) => boolean) =>
-  (pairs: Array<Pair>): Array<Pair> =>
-    pipe(pairs,
-      A.filter((pair) =>
-        pipe(getBase(pair),
-          E.map(refinement),
-          E.match(() => true, Boolean))))
+  (refinement: (x: Base) => boolean) => {
+    return (pairs: Array<Pair>): Array<Pair> => {
+      return pipe(
+        pairs,
+        A.filter((pair) => {
+          return pipe(
+            getBase(pair),
+            E.map(refinement),
+            E.match(() => {
+              return true
+            }, Boolean),
+          )
+        }),
+      )
+    }
+  }
 
 export const filterQuote =
-  (refinement: (x: Quote) => boolean) =>
-  (pairs: Array<Pair>): Array<Pair> =>
-    pipe(pairs,
-      A.filter((pair) =>
-        pipe(getQuote(pair),
-          E.map(refinement),
-          E.match(() => true, Boolean))))
+  (refinement: (x: Quote) => boolean) => {
+    return (pairs: Array<Pair>): Array<Pair> => {
+      return pipe(
+        pairs,
+        A.filter((pair) => {
+          return pipe(
+            getQuote(pair),
+            E.map(refinement),
+            E.match(() => {
+              return true
+            }, Boolean),
+          )
+        }),
+      )
+    }
+  }
 
-export const filterByUnwantedBase = (base: Base): boolean => ['3L', '3S', 'UP', 'DOWN'].some((x) => base.endsWith(x))
+export const filterByUnwantedBase = (base: Base): boolean => {
+  return ['3L', '3S', 'UP', 'DOWN'].some((x) => {
+    return base.endsWith(x)
+  })
+}
 
-export const getPairs = (exchange: Exchange): TE.TaskEither<Error, Array<Pair>> =>
-  pipe(loadMarketsE(exchange),
-    TE.chain((markets) =>
-      pipe(entries(markets),
+export const getPairs = (exchange: Exchange): TE.TaskEither<Error, Array<Pair>> => {
+  return pipe(
+    loadMarketsE(exchange),
+    TE.chain((markets) => {
+      return pipe(
+        entries(markets),
         filterActiveMarkets,
         filterSpotMarkets,
         mapToPairs,
         sequenceArrayWritable,
         E.map(filterBase(filterByUnwantedBase)),
-        TE.fromEither)))
+        TE.fromEither,
+      )
+    }),
+  )
+}
 
-export const ordByVolume = pipe(N.Ord,
+export const ordByVolume = pipe(
+  N.Ord,
   Ord.reverse,
-  contramap(([_, volume]: [Pair, Volume]) => volume))
+  contramap(([_, volume]: [Pair, Volume]) => {
+    return volume
+  }),
+)
 
-export const sortedPairs = (pairs: Array<Pair>, volumes: Array<Volume>): Array<Pair> =>
-  pipe(A.zip(pairs, volumes),
+export const sortedPairs = (pairs: Array<Pair>, volumes: Array<Volume>): Array<Pair> => {
+  return pipe(
+    A.zip(pairs, volumes),
     A.sort(ordByVolume),
-    A.map(([pair]) => pair))
+    A.map(([pair]) => {
+      return pair
+    }),
+  )
+}
 
 export const writePairs = async (filePath: string, pairs: Array<Pair>): Promise<void> => {
   await fs.writeFile(filePath, JSON.stringify({ pairs }, null, 2))

@@ -2,15 +2,14 @@
   "name": "@code9/crypto",
   "version": "0.1.0",
   "type": "module",
-  "main": "./src/index.js",
-  "typings": "./src/index.d.ts",
+  "main": "src/index.ts",
   "scripts": {
     "lint": "eslint --fix .",
     "test": "vitest"
   },
   "dependencies": {
-    "@code9/either": "workspace:^",
-    "@code9/record": "workspace:^",
+    "@code9/either": "workspace:*",
+    "@code9/record": "workspace:*",
     "ccxt": "^4.0.3"
   },
   "devDependencies": {

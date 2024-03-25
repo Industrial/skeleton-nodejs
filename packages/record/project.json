@@ -10,8 +10,7 @@
         "commands": [
           "pnpm lint"
         ],
-        "cwd": "packages/record",
-        "forwardAllArgs": true
+        "cwd": "packages/record"
       }
     },
     "build": {
