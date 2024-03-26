@@ -1,9 +1,5 @@
 {
   "extends": "../../tsconfig.base.json",
-  "files": [
-    "src/lib/index.ts"
-  ],
-  "include": [
-    "./src/**/*.ts"
-  ]
+  "files": ["src/index.ts"],
+  "include": ["./src/**/*.ts"]
 }

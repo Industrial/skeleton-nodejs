@@ -15,6 +15,7 @@ export const createMarket = (
     symbol: `${base}/${quote}`,
     active,
     type,
+    created: 0,
     spot: true,
     margin: false,
     swap: false,

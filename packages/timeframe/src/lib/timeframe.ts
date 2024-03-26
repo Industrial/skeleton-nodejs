@@ -23,7 +23,7 @@ export const toMs = (timeframe: Timeframe): O.Option<number> => {
 export const fromMs = (milliseconds: number, unit: TimeframeUnit): O.Option<Timeframe> =>
   pipe(
     convertTime(milliseconds, 'ms', unit),
-    O.map((value) =>
+    O.map((value): Timeframe =>
       `${value}${unit}`),
   )
 

@@ -18,10 +18,12 @@ describe('calculateBuyPrices function', () => {
     })
 
     // Assert
-    expect(actual).toEqual(E.right({
+    expect(actual).toEqual(
+      E.right({
         base: 20 / 1.5,
         quote: 0,
-      }))
+      }),
+    )
   })
 
   test('should handle zero quote correctly', () => {
@@ -81,10 +83,12 @@ describe('calculateBuyPrices function', () => {
     })
 
     // Assert
-    expect(actual).toEqual(E.right({
+    expect(actual).toEqual(
+      E.right({
         base: 20 / 1.5,
         quote: 0,
-      }))
+      }),
+    )
   })
 
   test('should handle transactionCostPercentage > 0', () => {
@@ -99,10 +103,12 @@ describe('calculateBuyPrices function', () => {
     })
 
     // Assert
-    expect(actual).toEqual(E.right({
+    expect(actual).toEqual(
+      E.right({
         base: 20 / 1.5 - (0.5 / 100) * (20 / 1.5),
         quote: 0,
-      }))
+      }),
+    )
   })
 })
 
@@ -119,10 +125,12 @@ describe('calculateSellPrices function', () => {
     })
 
     // Assert
-    expect(actual).toEqual(E.right({
+    expect(actual).toEqual(
+      E.right({
         base: 0,
         quote: 10 * 1.5,
-      }))
+      }),
+    )
   })
 
   test('should handle zero base correctly', () => {
@@ -182,10 +190,12 @@ describe('calculateSellPrices function', () => {
     })
 
     // Assert
-    expect(actual).toEqual(E.right({
+    expect(actual).toEqual(
+      E.right({
         base: 0,
         quote: 10 * 1.5,
-      }))
+      }),
+    )
   })
 
   test('should handle transactionCostPercentage > 0', () => {
@@ -200,10 +210,12 @@ describe('calculateSellPrices function', () => {
     })
 
     // Assert
-    expect(actual).toEqual(E.right({
+    expect(actual).toEqual(
+      E.right({
         base: 0,
         quote: 10 * 1.5 - (0.5 / 100) * (10 * 1.5),
-      }))
+      }),
+    )
   })
 })
 
@@ -340,7 +352,8 @@ describe('backtest function', () => {
     const result = backtest(bars, positions, initialAmount)
 
     expect(E.isRight(result)).toBe(true)
-    expect(result).toMatchObject(E.right([
+    expect(result).toMatchObject(
+      E.right([
         {
           startDate: 1,
           endDate: 2,
@@ -349,7 +362,8 @@ describe('backtest function', () => {
           base: 0,
           quote: (1000 / 105) * 112,
         },
-      ]))
+      ]),
+    )
   })
 
   test('should handle missing bars', () => {

@@ -4,14 +4,15 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "lint": "eslint --fix .",
+    "lint": "tsc -p . --noEmit && eslint --fix .",
     "test": "vitest"
   },
   "devDependencies": {
-    "@types/node": "^20.11.16",
-    "@vitest/coverage-v8": "^1.2.2",
-    "@vitest/spy": "^1.2.2",
-    "@vitest/ui": "^1.0.4",
-    "vitest": "^1.2.2"
+    "@types/node": "^20.11.30",
+    "@vitest/coverage-v8": "^1.4.0",
+    "@vitest/spy": "^1.4.0",
+    "@vitest/ui": "^1.4.0",
+    "typescript": "^5.4.3",
+    "vitest": "^1.4.0"
   }
 }

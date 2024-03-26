@@ -1,5 +1,4 @@
 import { sequenceArrayWritable } from '@code9/either'
-import { entries } from '@code9/record'
 import { Exchange } from 'ccxt'
 import * as A from 'fp-ts/Array'
 import * as E from 'fp-ts/Either'
@@ -59,7 +58,7 @@ export const getPairs = (exchange: Exchange): TE.TaskEither<Error, Array<Pair>> 
     loadMarketsE(exchange),
     TE.chain((markets) =>
       pipe(
-        entries(markets),
+        Object.entries(markets),
         filterActiveMarkets,
         filterSpotMarkets,
         mapToPairs,

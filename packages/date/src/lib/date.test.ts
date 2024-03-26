@@ -1,7 +1,7 @@
 import * as O from 'fp-ts/Option'
 import { describe, expect, test } from 'vitest'
 
-import { convertTime } from '.'
+import { convertTime } from './date.ts'
 
 describe('Time Conversion with convertTime Function', () => {
   test('Convert milliseconds to seconds', () => {

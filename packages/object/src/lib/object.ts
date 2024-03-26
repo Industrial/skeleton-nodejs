@@ -1,3 +1,13 @@
+import { PrefixedString, SuffixedString } from '@code9/string'
+
+export type PrefixedKeyObject<Prefix extends string, Value> = {
+  [Key in PrefixedString<Prefix>]: Value
+}
+
+export type SuffixedKeyObject<Suffix extends string, Value> = {
+  [Key in SuffixedString<Suffix>]: Value
+}
+
 export const entriesValues = <T>(entries: Array<[string, T]>): Array<T> =>
   entries.map(([, value]) =>
     value)

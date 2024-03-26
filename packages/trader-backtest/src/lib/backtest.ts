@@ -139,8 +139,14 @@ export const buy: BacktestOperation = ({ state, bar, transactionCostPercentage }
       )),
   )
 
-const positionHasTradeE = E.fromPredicate<BacktestState, Error>(
-  (state) =>
+// const positionHasTradeE = E.fromPredicate<BacktestState, Error>(
+//   (state) =>
+//     state.currentTrade !== undefined,
+//   () =>
+//     new Error(`Cannot sell when currentTrade is not defined`),
+// )
+const positionHasTradeE = E.fromPredicate<BacktestState, BacktestState & { currentTrade: Trade }, Error>(
+  (state): state is BacktestState & { currentTrade: Trade } =>
     state.currentTrade !== undefined,
   () =>
     new Error(`Cannot sell when currentTrade is not defined`),

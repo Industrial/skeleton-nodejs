@@ -4,23 +4,23 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "lint": "eslint --fix .",
+    "lint": "tsc -p . --noEmit && eslint --fix .",
     "test": "vitest"
   },
   "dependencies": {
     "@code9/trader-core": "workspace:*",
-    "fp-ts": "^2.16.1"
+    "fp-ts": "^2.16.5"
   },
   "devDependencies": {
-    "@effect/language-service": "^0.0.21",
-    "@types/node": "^20.4.8",
-    "concurrently": "^8.2.1",
-    "esbuild": "^0.17.19",
-    "eslint": "^8.46.0",
-    "eslint-config-code9": "^0.3.0",
-    "eslint-plugin-prettier": "5.0.0",
-    "jsdom": "^22.1.0",
-    "typescript": "^5.1.6",
-    "vitest": "^0.34.1"
+    "@effect/language-service": "^0.1.0",
+    "@types/node": "^20.11.30",
+    "concurrently": "^8.2.2",
+    "esbuild": "^0.20.2",
+    "eslint": "^8.57.0",
+    "eslint-config-code9": "^0.6.0",
+    "eslint-plugin-prettier": "5.1.3",
+    "jsdom": "^24.0.0",
+    "typescript": "^5.4.3",
+    "vitest": "^1.4.0"
   }
 }
