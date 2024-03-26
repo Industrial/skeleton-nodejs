@@ -21,13 +21,11 @@ export const convertTime = (
 
   return pipe(
     O.fromNullable(conversions[sourceUnit]),
-    O.chain((source) => {
-      return pipe(
+    O.chain((source) =>
+      pipe(
         O.fromNullable(conversions[targetUnit]),
-        O.chain((target) => {
-          return safeDivide(value * source, target)
-        }),
-      )
-    }),
+        O.chain((target) =>
+          safeDivide(value * source, target)),
+      )),
   )
 }

@@ -110,9 +110,8 @@ export const strategySimulatedAnnealing = async <Options extends StrategyOptions
     initialState: getInitialState(),
     maximumTemperature: 15,
     minimumTemperature: 0.01,
-    temperature: (previousTemperature) => {
-      return previousTemperature - 0.01
-    },
+    temperature: (previousTemperature) =>
+      previousTemperature - 0.01,
     state: (state: Options) => {
       const keys = Object.keys(state)
       const randomKey = keys[Math.floor(Math.random() * keys.length)] as keyof typeof state

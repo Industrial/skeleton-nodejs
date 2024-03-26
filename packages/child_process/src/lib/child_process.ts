@@ -1,19 +1,16 @@
 import { ChildProcessWithoutNullStreams, spawn as childProcessSpawn } from 'child_process'
 import { either as E, function as FN, taskEither as TE } from 'fp-ts'
 
-export const validateCommand = (command: string): TE.TaskEither<Error, string> => {
-  return FN.pipe(
+export const validateCommand = (command: string): TE.TaskEither<Error, string> =>
+  FN.pipe(
     command,
     TE.fromPredicate(
-      (a) => {
-        return a.length > 0
-      },
-      () => {
-        return new Error('No command provided')
-      },
+      (a) =>
+        a.length > 0,
+      () =>
+        new Error('No command provided'),
     ),
   )
-}
 
 export const splitCommand = (command: string): [string, Array<string>] => {
   const [cmd, ...args] = command.split(' ')
@@ -44,8 +41,8 @@ export const spawnChildProcess = ([cmd, args]: [string, Array<string>]): ChildPr
   return { child, stdout }
 }
 
-export const handleChildProcess = async ({ child, stdout }: ChildProcessProps): Promise<string> => {
-  return new Promise((resolve, reject) => {
+export const handleChildProcess = async ({ child, stdout }: ChildProcessProps): Promise<string> =>
+  new Promise((resolve, reject) => {
     child.once('error', (error) => {
       reject(error)
     })
@@ -58,16 +55,15 @@ export const handleChildProcess = async ({ child, stdout }: ChildProcessProps): 
       }
     })
   })
-}
 
-export const spawn = (command: string): TE.TaskEither<Error, void> => {
-  return FN.pipe(
+export const spawn = (command: string): TE.TaskEither<Error, void> =>
+  FN.pipe(
     command,
     validateCommand,
-    TE.chain((a) => {
-      return TE.tryCatch(
-        async () => {
-          return new Promise<void>((resolve, reject) => {
+    TE.chain((a) =>
+      TE.tryCatch(
+        async () =>
+          new Promise<void>((resolve, reject) => {
             const process = childProcessSpawn(a, {
               shell: true,
               stdio: 'inherit',
@@ -84,20 +80,15 @@ export const spawn = (command: string): TE.TaskEither<Error, void> => {
                 resolve(undefined)
               }
             })
-          })
-        },
+          }),
         E.toError,
-      )
-    }),
+      )),
   )
-}
 
-export const retrySpawn = (command: string): TE.TaskEither<Error, void> => {
-  return FN.pipe(
+export const retrySpawn = (command: string): TE.TaskEither<Error, void> =>
+  FN.pipe(
     command,
     spawn,
-    TE.orElse(() => {
-      return retrySpawn(command)
-    }),
+    TE.orElse(() =>
+      retrySpawn(command)),
   )
-}

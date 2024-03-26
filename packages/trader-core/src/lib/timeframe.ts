@@ -6,63 +6,63 @@ export type Timeframe = '1d' | '1h' | '1m' | '2h' | '3m' | '4h' | '5m' | '6h' | 
 
 export const toMs = (timeframe: Timeframe): number => {
   switch (timeframe) {
-    case '1m':
-      return 60 * 1000
-    case '3m':
-      return 3 * toMs('1m')
-    case '5m':
-      return 5 * toMs('1m')
-    case '15m':
-      return 15 * toMs('1m')
-    case '30m':
-      return 30 * toMs('1m')
-    case '1h':
-      return 60 * toMs('1m')
-    case '2h':
-      return 2 * toMs('1h')
-    case '4h':
-      return 4 * toMs('1h')
-    case '6h':
-      return 6 * toMs('1h')
-    case '8h':
-      return 8 * toMs('1h')
-    case '12h':
-      return 12 * toMs('1h')
-    case '1d':
-      return 24 * toMs('1h')
-    default:
-      throw new Error(`Invalid Timeframe: ${String(timeframe)}`)
+  case '1m':
+    return 60 * 1000
+  case '3m':
+    return 3 * toMs('1m')
+  case '5m':
+    return 5 * toMs('1m')
+  case '15m':
+    return 15 * toMs('1m')
+  case '30m':
+    return 30 * toMs('1m')
+  case '1h':
+    return 60 * toMs('1m')
+  case '2h':
+    return 2 * toMs('1h')
+  case '4h':
+    return 4 * toMs('1h')
+  case '6h':
+    return 6 * toMs('1h')
+  case '8h':
+    return 8 * toMs('1h')
+  case '12h':
+    return 12 * toMs('1h')
+  case '1d':
+    return 24 * toMs('1h')
+  default:
+    throw new Error(`Invalid Timeframe: ${String(timeframe)}`)
   }
 }
 
 export const fromMs = (milliseconds: number): Timeframe => {
   switch (milliseconds) {
-    case 60 * 1000:
-      return '1m'
-    case 3 * toMs('1m'):
-      return '3m'
-    case 5 * toMs('1m'):
-      return '5m'
-    case 15 * toMs('1m'):
-      return '15m'
-    case 30 * toMs('1m'):
-      return '30m'
-    case 60 * toMs('1m'):
-      return '1h'
-    case 2 * toMs('1h'):
-      return '2h'
-    case 4 * toMs('1h'):
-      return '4h'
-    case 6 * toMs('1h'):
-      return '6h'
-    case 8 * toMs('1h'):
-      return '8h'
-    case 12 * toMs('1h'):
-      return '12h'
-    case 24 * toMs('1h'):
-      return '1d'
-    default:
-      throw new Error(`Invalid Timeframe: ${milliseconds}`)
+  case 60 * 1000:
+    return '1m'
+  case 3 * toMs('1m'):
+    return '3m'
+  case 5 * toMs('1m'):
+    return '5m'
+  case 15 * toMs('1m'):
+    return '15m'
+  case 30 * toMs('1m'):
+    return '30m'
+  case 60 * toMs('1m'):
+    return '1h'
+  case 2 * toMs('1h'):
+    return '2h'
+  case 4 * toMs('1h'):
+    return '4h'
+  case 6 * toMs('1h'):
+    return '6h'
+  case 8 * toMs('1h'):
+    return '8h'
+  case 12 * toMs('1h'):
+    return '12h'
+  case 24 * toMs('1h'):
+    return '1d'
+  default:
+    throw new Error(`Invalid Timeframe: ${milliseconds}`)
   }
 }
 

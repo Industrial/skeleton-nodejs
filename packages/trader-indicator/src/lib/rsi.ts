@@ -1,13 +1,12 @@
 import { rma } from './rma.ts'
 
-export const returns = (values: Array<number>): Array<number> => {
-  return values
+export const returns = (values: Array<number>): Array<number> =>
+  values
     .map((value, index) => {
       const lastValue = values[index - 1] ?? 0
       return index === 0 ? 0 : value - lastValue
     })
     .slice(1)
-}
 
 // Function that returns the RSI.
 export const rsi = (length: number, values: Array<number>): Array<number> => {
@@ -15,16 +14,14 @@ export const rsi = (length: number, values: Array<number>): Array<number> => {
 
   const ups = rma(
     length,
-    changes.map((value) => {
-      return Math.max(value, 0)
-    }),
+    changes.map((value) =>
+      Math.max(value, 0)),
   )
 
   const downs = rma(
     length,
-    changes.map((value) => {
-      return -Math.min(value, 0)
-    }),
+    changes.map((value) =>
+      -Math.min(value, 0)),
   )
 
   const rsis = downs.map((value, index) => {

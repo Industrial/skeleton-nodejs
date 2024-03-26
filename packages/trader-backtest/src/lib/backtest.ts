@@ -17,43 +17,35 @@ export type CalculatePricesResult = {
 }
 
 export const isntBaseZeroE = E.fromPredicate<CalculatePricesProps, Error>(
-  (b) => {
-    return !(b.base === 0)
-  },
-  () => {
-    return new Error('Base is zero')
-  },
+  (b) =>
+    !(b.base === 0),
+  () =>
+    new Error('Base is zero'),
 )
 
 export const isntQuoteZeroE = E.fromPredicate<CalculatePricesProps, Error>(
-  (b) => {
-    return !(b.quote === 0)
-  },
-  () => {
-    return new Error('Quote is zero')
-  },
+  (b) =>
+    !(b.quote === 0),
+  () =>
+    new Error('Quote is zero'),
 )
 
 export const isntPriceZeroE = E.fromPredicate<CalculatePricesProps, Error>(
-  (b) => {
-    return !(b.price === 0)
-  },
-  () => {
-    return new Error('Price is zero')
-  },
+  (b) =>
+    !(b.price === 0),
+  () =>
+    new Error('Price is zero'),
 )
 
 export const isntTransactionCostPercentageNegativeE = E.fromPredicate<CalculatePricesProps, Error>(
-  (b) => {
-    return !(b.transactionCostPercentage < 0)
-  },
-  () => {
-    return new Error('transactionCostPercentage is negative')
-  },
+  (b) =>
+    !(b.transactionCostPercentage < 0),
+  () =>
+    new Error('transactionCostPercentage is negative'),
 )
 
-export const calculateBuyPrices: RE.ReaderEither<CalculatePricesProps, Error, CalculatePricesResult> = (a) => {
-  return pipe(
+export const calculateBuyPrices: RE.ReaderEither<CalculatePricesProps, Error, CalculatePricesResult> = (a) =>
+  pipe(
     a,
     isntQuoteZeroE,
     E.chain(isntPriceZeroE),
@@ -68,10 +60,9 @@ export const calculateBuyPrices: RE.ReaderEither<CalculatePricesProps, Error, Ca
       }
     }),
   )
-}
 
-export const calculateSellPrices: RE.ReaderEither<CalculatePricesProps, Error, CalculatePricesResult> = (a) => {
-  return pipe(
+export const calculateSellPrices: RE.ReaderEither<CalculatePricesProps, Error, CalculatePricesResult> = (a) =>
+  pipe(
     a,
     isntBaseZeroE,
     E.chain(isntPriceZeroE),
@@ -86,7 +77,6 @@ export const calculateSellPrices: RE.ReaderEither<CalculatePricesProps, Error, C
       }
     }),
   )
-}
 
 export type BacktestState = {
   currentPosition: Position
@@ -105,12 +95,10 @@ export type BacktestOperationProps = {
 export type BacktestOperation = (props: BacktestOperationProps) => E.Either<Error, BacktestState>
 
 const positionIsntBuyE = E.fromPredicate<BacktestState, Error>(
-  (state) => {
-    return state.currentPosition !== Position.Buy
-  },
-  () => {
-    return new Error('Cannot buy when currentPosition is Buy.')
-  },
+  (state) =>
+    state.currentPosition !== Position.Buy,
+  () =>
+    new Error('Cannot buy when currentPosition is Buy.'),
 )
 
 /**
@@ -119,12 +107,12 @@ const positionIsntBuyE = E.fromPredicate<BacktestState, Error>(
  * @param {BacktestOperationProps} props - The properties for the buy operation.
  * @returns {E.Either<Error, BacktestState>} Either containing the updated backtesting state or an error.
  */
-export const buy: BacktestOperation = ({ state, bar, transactionCostPercentage }) => {
-  return pipe(
+export const buy: BacktestOperation = ({ state, bar, transactionCostPercentage }) =>
+  pipe(
     state,
     E.chain(positionIsntBuyE),
-    E.chain((currentState) => {
-      return pipe(
+    E.chain((currentState) =>
+      pipe(
         calculateBuyPrices({
           base: currentState.currentAmountBase,
           quote: currentState.currentAmountQuote,
@@ -148,18 +136,14 @@ export const buy: BacktestOperation = ({ state, bar, transactionCostPercentage }
             trades: currentState.trades,
           }
         }),
-      )
-    }),
+      )),
   )
-}
 
 const positionHasTradeE = E.fromPredicate<BacktestState, Error>(
-  (state) => {
-    return state.currentTrade !== undefined
-  },
-  () => {
-    return new Error(`Cannot sell when currentTrade is not defined`)
-  },
+  (state) =>
+    state.currentTrade !== undefined,
+  () =>
+    new Error(`Cannot sell when currentTrade is not defined`),
 )
 
 /**
@@ -168,12 +152,12 @@ const positionHasTradeE = E.fromPredicate<BacktestState, Error>(
  * @param {BacktestOperationProps} props - The properties for the sell operation.
  * @returns {E.Either<Error, BacktestState>} Either containing the updated backtesting state or an error.
  */
-export const sell: BacktestOperation = ({ state, bar, transactionCostPercentage }) => {
-  return pipe(
+export const sell: BacktestOperation = ({ state, bar, transactionCostPercentage }) =>
+  pipe(
     state,
     E.chain(positionHasTradeE),
-    E.chain((currentState) => {
-      return pipe(
+    E.chain((currentState) =>
+      pipe(
         calculateSellPrices({
           base: currentState.currentAmountBase,
           quote: currentState.currentAmountQuote,
@@ -200,10 +184,8 @@ export const sell: BacktestOperation = ({ state, bar, transactionCostPercentage 
             ],
           }
         }),
-      )
-    }),
+      )),
   )
-}
 
 /**
  * Simulates a hold operation in a backtesting environment using fp-ts.
@@ -211,9 +193,8 @@ export const sell: BacktestOperation = ({ state, bar, transactionCostPercentage 
  * @param {BacktestOperationProps} props - The properties for the hold operation.
  * @returns {E.Either<Error, BacktestState>} The updated backtesting state after the hold operation.
  */
-export const hold: BacktestOperation = ({ state }) => {
-  return state
-}
+export const hold: BacktestOperation = ({ state }) =>
+  state
 
 const backtestOperations = {
   [Position.Buy]: buy,
@@ -226,8 +207,8 @@ export const backtest = (
   positions: RNEA.ReadonlyNonEmptyArray<Position>,
   initialAmount: number,
   transactionCostPercentage = 0,
-): E.Either<Error, Array<Trade>> => {
-  return pipe(
+): E.Either<Error, Array<Trade>> =>
+  pipe(
     positions,
     RNEA.reduceWithIndex<Position, E.Either<Error, BacktestState>>(
       E.right({
@@ -237,8 +218,8 @@ export const backtest = (
         currentAmountQuote: initialAmount,
         trades: [],
       }),
-      (index, state, position) => {
-        return pipe(
+      (index, state, position) =>
+        pipe(
           E.fromNullable(new Error(`Invalid position: ${position}`))(bars[index]),
           E.chain((bar) => {
             const operation = backtestOperations[position]
@@ -249,14 +230,11 @@ export const backtest = (
               }),
             )
           }),
-        )
-      },
+        ),
     ),
-    E.map((resultState) => {
-      return resultState.trades
-    }),
+    E.map((resultState) =>
+      resultState.trades),
   )
-}
 
 export const logTrades = (trades: Array<Trade>, initialAmount: number): void => {
   if (trades.length === 0) {
@@ -264,9 +242,8 @@ export const logTrades = (trades: Array<Trade>, initialAmount: number): void => 
     return
   }
 
-  const quotes = [initialAmount].concat(trades.map((trade) => {
-    return trade.quote
-  }))
+  const quotes = [initialAmount].concat(trades.map((trade) =>
+    trade.quote))
 
   for (let index = 1; index < quotes.length; index += 1) {
     const previousQuote = quotes[index - 1]
@@ -306,15 +283,12 @@ export const logProfitPercentages = (trades: Array<Trade>, initialAmount: number
   }
 
   const profitPercentage = (lastTrade.quote / initialAmount) * 100
-  const profitPercentages = trades.map((entry) => {
-    return 100 - (entry.endPrice / entry.startPrice) * 100
-  })
-  const winningTrades = profitPercentages.filter((entry) => {
-    return entry > 0
-  })
+  const profitPercentages = trades.map((entry) =>
+    100 - (entry.endPrice / entry.startPrice) * 100)
+  const winningTrades = profitPercentages.filter((entry) =>
+    entry > 0)
   const profitabilityPercentage = (winningTrades.length / trades.length) * 100
 
   log.info(`Profit Percentage: ${profitPercentage.toFixed(2)}%`)
   log.info(`Profitability Percentage: ${profitabilityPercentage.toFixed(2)}%`)
 }
-

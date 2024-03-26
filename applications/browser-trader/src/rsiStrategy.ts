@@ -6,27 +6,26 @@ export type RSIStrategyProps = {
   rsiLowerLimit: number
   rsiUpperLimit: number
 }
-export const rsiStrategy: Strategy<RSIStrategyProps> = ({ rsiLength, rsiLowerLimit, rsiUpperLimit }) => {
-  return (bars) => {
-    const rsiValues = rsi(
-      rsiLength,
-      bars.map((b) => {
-        return b.close
-      }),
-    )
+export const rsiStrategy: Strategy<RSIStrategyProps> =
+  ({ rsiLength, rsiLowerLimit, rsiUpperLimit }) =>
+    (bars) => {
+      const rsiValues = rsi(
+        rsiLength,
+        bars.map((b) =>
+          b.close),
+      )
 
-    const positions = rsiValues.map((_currentValue, index) => {
-      if (hasCrossedBoundaryUpwardsAtIndex(rsiValues, rsiLowerLimit, index - 1)) {
-        return Position.Buy
-      } else if (hasCrossedBoundaryDownwardsAtIndex(rsiValues, rsiUpperLimit, index - 1)) {
-        return Position.Sell
-      }
-      return Position.Hold
-    })
+      const positions = rsiValues.map((_currentValue, index) => {
+        if (hasCrossedBoundaryUpwardsAtIndex(rsiValues, rsiLowerLimit, index - 1)) {
+          return Position.Buy
+        } else if (hasCrossedBoundaryDownwardsAtIndex(rsiValues, rsiUpperLimit, index - 1)) {
+          return Position.Sell
+        }
+        return Position.Hold
+      })
 
-    return positions
-  }
-}
+      return positions
+    }
 
 export type RSISMAStrategyProps = {
   rsiLength: number
@@ -34,30 +33,24 @@ export type RSISMAStrategyProps = {
   rsiUpperLimit: number
   smaLength: number
 }
-export const rsiSmaStrategy: Strategy<RSISMAStrategyProps> = ({
-  rsiLength,
-  rsiLowerLimit,
-  rsiUpperLimit,
-  smaLength,
-}) => {
-  return (bars) => {
-    const rsiValues = rsi(
-      rsiLength,
-      bars.map((b) => {
-        return b.close
-      }),
-    )
-    const smaValues = sma(smaLength, rsiValues)
+export const rsiSmaStrategy: Strategy<RSISMAStrategyProps> =
+  ({ rsiLength, rsiLowerLimit, rsiUpperLimit, smaLength }) =>
+    (bars) => {
+      const rsiValues = rsi(
+        rsiLength,
+        bars.map((b) =>
+          b.close),
+      )
+      const smaValues = sma(smaLength, rsiValues)
 
-    const positions = smaValues.map((_currentValue, index) => {
-      if (hasCrossedBoundaryUpwardsAtIndex(smaValues, rsiLowerLimit, index - 1)) {
-        return Position.Buy
-      } else if (hasCrossedBoundaryDownwardsAtIndex(smaValues, rsiUpperLimit, index - 1)) {
-        return Position.Sell
-      }
-      return Position.Hold
-    })
+      const positions = smaValues.map((_currentValue, index) => {
+        if (hasCrossedBoundaryUpwardsAtIndex(smaValues, rsiLowerLimit, index - 1)) {
+          return Position.Buy
+        } else if (hasCrossedBoundaryDownwardsAtIndex(smaValues, rsiUpperLimit, index - 1)) {
+          return Position.Sell
+        }
+        return Position.Hold
+      })
 
-    return positions
-  }
-}
+      return positions
+    }

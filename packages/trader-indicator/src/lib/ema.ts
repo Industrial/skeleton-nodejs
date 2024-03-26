@@ -1,8 +1,7 @@
 export type Alpha = (length: number) => number
 
-export const emaAlpha = (length: number): number => {
-  return 2 / (length + 1)
-}
+export const emaAlpha = (length: number): number =>
+  2 / (length + 1)
 
 // Function that returns the Exponential Moving Average.
 export const ema = (length: number, values: Array<number>, alpha: Alpha = emaAlpha): Array<number> => {

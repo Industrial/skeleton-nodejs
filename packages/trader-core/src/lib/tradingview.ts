@@ -11,7 +11,8 @@ type SymbolInfo = unknown
 // tradingViewApi.chart(t)
 // this._iFrame.contentWindow
 export const getTradingView = (): TV => {
-  const [tvKey] = Object.keys(globalThis).filter((x) => x.startsWith('tradingview_'))
+  const [tvKey] = Object.keys(globalThis).filter((x) =>
+    x.startsWith('tradingview_'))
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   const tv = globalThis[tvKey]
   if (!tv) {
@@ -22,14 +23,13 @@ export const getTradingView = (): TV => {
 }
 
 export const getSymbolInfo = async (tv: TV, symbolName: string): Promise<SymbolInfo> =>
-  // eslint-disable-next-line require-atomic-updates
-   await new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     // @ts-expect-error untyped
     tv.datafeed.resolveSymbol(symbolName, resolve, reject)
   })
 
 export const fetchBarsInBatches = async (
-tv: TV,
+  tv: TV,
   symbolInfo: SymbolInfo,
   timeframe: Timeframe,
   countBack: number,
@@ -43,22 +43,24 @@ tv: TV,
   let currentFrom = from
   let currentTo = to
 
-  while (currentCountBack > 0) {
-    // eslint-disable-next-line @typescript-eslint/no-loop-func
-    const batchBars: Array<OHLCV> = await new Promise((resolve, reject) => {
+  const createBatchBars = async (batchFrom: Date, batchTo: Date): Promise<Array<OHLCV>> =>
+    new Promise((resolve, reject) => {
       // @ts-expect-error type
       tv.datafeed.getBars(
-symbolInfo,
+        symbolInfo,
         String(toMs(timeframe) / 1000 / 60),
         {
-          from: currentFrom.valueOf() / 1000,
-          to: currentTo.valueOf() / 1000,
+          from: batchFrom.valueOf() / 1000,
+          to: batchTo.valueOf() / 1000,
           countBack: limit,
         },
         resolve,
         reject,
-)
+      )
     })
+
+  while (currentCountBack > 0) {
+    const batchBars = await createBatchBars(currentFrom, currentTo)
 
     if (batchBars.length === 0) {
       currentCountBack = 0
@@ -86,12 +88,16 @@ symbolInfo,
 }
 
 // TODO: Test.
-export const getSymbol = (): string => document.title
+export const getSymbol = (): string =>
+  document.title
     .split('/')
     .slice(0, 2)
-    .map((entry) => entry.split(' '))
-    .map((entry) => entry
-        .filter((word) => word !== '')
+    .map((entry) =>
+      entry.split(' '))
+    .map((entry) =>
+      entry
+        .filter((word) =>
+          word !== '')
         .slice(0, 1)
         .pop())
     .join('/')

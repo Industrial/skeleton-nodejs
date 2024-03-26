@@ -1,6 +1,7 @@
 import { Maybe } from './maybe.ts'
 
-export const createKey = (key: string): string => `browser_trader_${key}`
+export const createKey = (key: string): string =>
+  `browser_trader_${key}`
 
 export const get = (key: string): Maybe<string> => {
   const result = localStorage.getItem(createKey(key))

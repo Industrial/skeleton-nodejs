@@ -83,7 +83,8 @@ const javascriptConfiguration = {
     'accessor-pairs': ['error'],
     'arrow-body-style': [
       'error',
-      'always',
+      'as-needed',
+      { requireReturnForObjectLiteral: true },
     ],
     'block-scoped-var': ['error'],
     camelcase: ['error'],
@@ -250,7 +251,7 @@ const javascriptConfiguration = {
     '@stylistic/js/function-call-spacing': ['error', 'never'],
     '@stylistic/js/function-paren-newline': ['error', 'multiline'],
     '@stylistic/js/generator-star-spacing': ['error', { before: true, after: false }],
-    '@stylistic/js/implicit-arrow-linebreak': ['off'],
+    '@stylistic/js/implicit-arrow-linebreak': ['error', 'below'],
     '@stylistic/js/indent': ['error', 2],
     '@stylistic/js/jsx-quotes': ['error', 'prefer-double'],
     '@stylistic/js/key-spacing': ['error'],
@@ -527,53 +528,40 @@ const typescriptConfiguration = {
     // '@stylistic/ts/space-infix-ops': ['error'],
     // '@stylistic/ts/type-annotation-spacing': ['error'],
 
-    // ...[
-    //   '@typescript-eslint/brace-style',
-    //   '@typescript-eslint/comma-dangle',
-    //   '@typescript-eslint/comma-spacing',
-    //   '@typescript-eslint/default-param-last',
-    //   '@typescript-eslint/dot-notation',
-    //   '@typescript-eslint/func-call-spacing',
-    //   '@typescript-eslint/indent',
-    //   '@typescript-eslint/init-declarations',
-    //   '@typescript-eslint/keyword-spacing',
-    //   '@typescript-eslint/lines-between-class-members',
-    //   '@typescript-eslint/no-array-constructor',
-    //   '@typescript-eslint/no-dupe-class-members',
-    //   '@typescript-eslint/no-empty-function',
-    //   '@typescript-eslint/no-extra-parens',
-    //   '@typescript-eslint/no-extra-semi',
-    //   '@typescript-eslint/no-implied-eval',
-    //   '@typescript-eslint/no-invalid-this',
-    //   '@typescript-eslint/no-loop-func',
-    //   '@typescript-eslint/no-loss-of-precision',
-    //   '@typescript-eslint/no-magic-numbers',
-    //   '@typescript-eslint/no-redeclare',
-    //   '@typescript-eslint/no-restricted-imports',
-    //   '@typescript-eslint/no-shadow',
-    //   '@typescript-eslint/no-throw-literal',
-    //   '@typescript-eslint/no-unused-expressions',
-    //   '@typescript-eslint/no-unused-vars',
-    //   '@typescript-eslint/no-use-before-define',
-    //   '@typescript-eslint/no-useless-constructor',
-    //   '@typescript-eslint/object-curly-spacing',
-    //   '@typescript-eslint/padding-line-between-statements',
-    //   '@typescript-eslint/quotes',
-    //   '@typescript-eslint/require-await',
-    //   '@typescript-eslint/return-await',
-    //   '@typescript-eslint/semi',
-    //   '@typescript-eslint/space-before-blocks',
-    //   '@typescript-eslint/space-before-function-paren',
-    //   '@typescript-eslint/space-infix-ops',
-    // ].reduce((acc, rule) => {
-    //   const [prefix, name] = rule.split('/')
-    //   const baseValue = javascriptConfiguration.rules[name] || javascriptConfiguration.rules[`no-${name}`]
-    //   // Turn off the base rule
-    //   acc[name] = ['off']
-    //   // Set the value of the extension rule to that of the base rule
-    //   acc[`${prefix}/${name}`] = baseValue
-    //   return acc
-    // }, {}),
+    // This turns off the javascript options and enables the typescript options
+    // (with the same values).
+    ...[
+      '@typescript-eslint/default-param-last',
+      '@typescript-eslint/dot-notation',
+      '@typescript-eslint/init-declarations',
+      '@typescript-eslint/no-array-constructor',
+      '@typescript-eslint/no-dupe-class-members',
+      '@typescript-eslint/no-empty-function',
+      '@typescript-eslint/no-extra-semi',
+      '@typescript-eslint/no-implied-eval',
+      '@typescript-eslint/no-invalid-this',
+      '@typescript-eslint/no-loop-func',
+      '@typescript-eslint/no-loss-of-precision',
+      '@typescript-eslint/no-magic-numbers',
+      '@typescript-eslint/no-redeclare',
+      '@typescript-eslint/no-restricted-imports',
+      '@typescript-eslint/no-shadow',
+      '@typescript-eslint/no-throw-literal',
+      '@typescript-eslint/no-unused-expressions',
+      '@typescript-eslint/no-unused-vars',
+      '@typescript-eslint/no-use-before-define',
+      '@typescript-eslint/no-useless-constructor',
+      '@typescript-eslint/require-await',
+      '@typescript-eslint/return-await',
+    ].reduce((acc, rule) => {
+      const [prefix, name] = rule.split('/')
+      const baseValue = javascriptConfiguration.rules[name] || javascriptConfiguration.rules[`no-${name}`]
+      // Turn off the base rule
+      acc[name] = ['off']
+      // Set the value of the extension rule to that of the base rule
+      acc[`${prefix}/${name}`] = baseValue
+      return acc
+    }, {}),
   },
 }
 

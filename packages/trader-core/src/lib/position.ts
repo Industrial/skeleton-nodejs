@@ -1,9 +1,9 @@
 import { Maybe } from './maybe.ts'
 
 export enum Position {
-  'Buy' = 'Buy',
-  'Sell' = 'Sell',
-  'Hold' = 'Hold',
+  Buy = 'Buy',
+  Sell = 'Sell',
+  Hold = 'Hold',
 }
 
 export const getNextPosition = (next: Position, current?: Position): [Position, Position] => {

@@ -1,14 +1,13 @@
 import type { ReaderTask } from 'fp-ts/ReaderTask'
 
-export const delay: ReaderTask<number, void> = (ms) => {
-  return async () => {
+export const delay: ReaderTask<number, void> = (ms) =>
+  async () => {
     await new Promise<void>((resolve) => {
       setTimeout(() => {
         resolve()
       }, ms)
     })
   }
-}
 
 export const retryTimes = async <T>(retries: number, fn: () => Promise<T>): Promise<T> => {
   try {
@@ -44,6 +43,5 @@ export const retryUntil = async <T>(fn: () => Promise<T>, predicate: (value: T) 
   }
 }
 
-export const retry = async <T>(fn: () => Promise<T>): Promise<T> => {
-  return retryForever(fn)
-}
+export const retry = async <T>(fn: () => Promise<T>): Promise<T> =>
+  retryForever(fn)
