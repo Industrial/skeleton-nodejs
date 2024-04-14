@@ -1,7 +1,0 @@
-.env
-/.cache/
-/.coverage
-/.direnv/
-/.pytest_cache/
-/result/
-__pycache__/
