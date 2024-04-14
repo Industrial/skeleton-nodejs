@@ -29,6 +29,7 @@ export const baseVitestConfig: UserConfig = {
       reporter: ['text', 'json', 'html'],
       provider: 'v8',
     },
+    environment: 'jsdom',
   },
   resolve: {
     // alias: {
