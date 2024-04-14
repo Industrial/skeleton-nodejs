@@ -5,20 +5,12 @@ import * as O from 'fp-ts/Option'
 export type TimeframeUnit = 'd' | 'h' | 'm' | 's'
 export type Timeframe = `${number}${TimeframeUnit}`
 
-export const toMs = (timeframe: Timeframe): O.Option<number> => {
-  const numberPart = parseInt(timeframe, 10)
-  const unitPart = timeframe.slice(-1) as TimeframeUnit
-
-  if (isNaN(numberPart)) {
-    return O.none
-  }
-
-  return O.some(pipe(
-    convertTime(numberPart, unitPart, 'ms'),
-    O.getOrElse(() =>
-      0),
-  ))
-}
+export const toMs = (timeframe: Timeframe): O.Option<number> =>
+  convertTime(
+    parseInt(timeframe.slice(0, -1), 10),
+      timeframe.slice(-1) as TimeframeUnit,
+      'ms',
+  )
 
 export const fromMs = (milliseconds: number, unit: TimeframeUnit): O.Option<Timeframe> =>
   pipe(
@@ -64,22 +56,19 @@ export const millisecondsUntilNextTimeframe = (timeframe: Timeframe, date: Date)
       O.some(timeframeMs - (date.valueOf() % timeframeMs))),
   )
 
-export const generateDateRange = (
+const generateDateRange = (
   timeframe: Timeframe,
   currentDate: Date,
   endDate: Date,
   dates: Array<Date>,
-): O.Option<Array<Date>> => {
-  if (currentDate >= endDate) {
-    return O.some(dates)
-  }
-
-  return pipe(
-    add(timeframe, currentDate),
-    O.chain((nextDate) =>
-      generateDateRange(timeframe, nextDate, endDate, [...dates, currentDate])),
-  )
-}
+): O.Option<Array<Date>> =>
+  currentDate >= endDate
+    ? O.some(dates)
+    : pipe(
+      add(timeframe, currentDate),
+      O.chain((nextDate) =>
+        generateDateRange(timeframe, nextDate, endDate, [...dates, currentDate])),
+    )
 
 export const between = (timeframe: Timeframe, startDate: Date, endDate: Date): O.Option<Array<Date>> =>
   pipe(

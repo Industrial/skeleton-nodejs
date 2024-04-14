@@ -14,15 +14,16 @@
       }
     },
     "build": {
-      "executor": "@nx/js:swc",
+      "executor": "@nx/rspack:rspack",
       "outputs": [
         "{options.outputPath}"
       ],
       "options": {
         "outputPath": "dist/applications/browser-trader",
         "main": "applications/browser-trader/src/index.ts",
-        "tsConfig": "applications/browser-trader/tsconfig.json",
-        "assets": []
+        "tsConfig": "applications/browser-trader/tsconfig.build.json",
+        "rspackConfig": "applications/browser-trader/rspack.config.cjs",
+        "target": "web"
       }
     },
     "test": {

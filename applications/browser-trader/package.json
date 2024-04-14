@@ -8,11 +8,12 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@code9/number": "workspace:*",
     "@code9/simulated-annealing": "workspace:*",
     "@code9/trader-backtest": "workspace:*",
-    "@code9/number": "workspace:*",
     "@code9/trader-core": "workspace:*",
     "@code9/trader-indicator": "workspace:*",
+    "@rollup/plugin-typescript": "^11.1.6",
     "discord.js": "^14.12.1",
     "fp-ts": "^2.16.1",
     "tslog": "^4.9.1"

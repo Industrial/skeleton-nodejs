@@ -6,25 +6,13 @@
     },
     "test": {
       "cache": true,
-      "dependsOn": ["^lint"]
+      "dependsOn": [
+        "^lint"
+      ]
     },
     "build": {
-      "cache": true,
-      "dependsOn": ["^test"]
-    },
-    "@nx/esbuild:esbuild": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^default"]
-    },
-    "@nx/js:swc": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^default"]
-    },
-    "@nx/vite:test": {
-      "cache": true,
-      "inputs": ["default", "^default"]
+      "cache": true
+      // "dependsOn": ["^test"]
     }
   },
   "plugins": [

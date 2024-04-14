@@ -16,46 +16,17 @@ export type RSISMAAnnealingState = {
   smaLength: number
 }
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-  interface Window {
-    // Timeframe used for backtest
-    BT_TIMEFRAME: Timeframe
-
-    // Amount of bars to fetch.
-    BT_COUNTBACK: number
-
-    // Transaction cost percentage.
-    BT_TRANSACTION_COST_PERCENTAGE: number
-
-    // Initial quote currency (We start with 0 for base).
-    BT_INITIAL_QUOTE: number
-
-    // Webhook for Discord messages
-    BT_DISCORD_WEBHOOK_URL: string
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-window.BT_TIMEFRAME ||= '15m'
-
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-window.BT_COUNTBACK ||= 3000
-
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-window.BT_TRANSACTION_COST_PERCENTAGE ||= 0.25
-
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-window.BT_INITIAL_QUOTE ||= 1
-
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-window.BT_DISCORD_WEBHOOK_URL ||= `https://discord.com/api/webhooks/1141642017584185356/Y_mHZDhzzG1JGS6SA7vZ7UdZagTrgLhAYB7dXfOcw2xTt_PlBoPqcom_k0IQvtYhNzm-`
+const BT_TIMEFRAME: Timeframe = '15m'
+const BT_COUNTBACK = 3000
+const BT_TRANSACTION_COST_PERCENTAGE = 0.25
+const BT_INITIAL_QUOTE = 1
+const BT_DISCORD_WEBHOOK_URL = `https://discord.com/api/webhooks/1141642017584185356/Y_mHZDhzzG1JGS6SA7vZ7UdZagTrgLhAYB7dXfOcw2xTt_PlBoPqcom_k0IQvtYhNzm-`
 
 const main = async (): Promise<void> => {
   const symbol = getSymbol()
-  const optionsKey = `${symbol}_${window.BT_TIMEFRAME}_options`
-  const tradesKey = `${symbol}_${window.BT_TIMEFRAME}_trades`
-  const discordBotWebhookURL = window.BT_DISCORD_WEBHOOK_URL
+  const optionsKey = `${symbol}_${BT_TIMEFRAME}_options`
+  const tradesKey = `${symbol}_${BT_TIMEFRAME}_trades`
+  const discordBotWebhookURL = BT_DISCORD_WEBHOOK_URL
 
   const tv = getTradingView()
   const symbolInfo = await getSymbolInfo(tv, symbol)
@@ -76,18 +47,18 @@ const main = async (): Promise<void> => {
 
   const work = async () => {
     try {
-      const bars = await fetchBarsInBatches(tv, symbolInfo, window.BT_TIMEFRAME, window.BT_COUNTBACK, 1000)
-      const maximumAnnealingIterations = window.BT_COUNTBACK - bars.length + 1000
+      const bars = await fetchBarsInBatches(tv, symbolInfo, BT_TIMEFRAME, BT_COUNTBACK, 1000)
+      const maximumAnnealingIterations = BT_COUNTBACK - bars.length + 1000
 
-      log.info(`Transaction Cost Percentage: ${window.BT_TRANSACTION_COST_PERCENTAGE}%`)
+      log.info(`Transaction Cost Percentage: ${BT_TRANSACTION_COST_PERCENTAGE}%`)
       log.info(`Bars: ${bars.length}`)
-      log.info(`Timeframe: ${window.BT_TIMEFRAME}`)
-      log.info(`Initial Quote: ${window.BT_INITIAL_QUOTE}`)
+      log.info(`Timeframe: ${BT_TIMEFRAME}`)
+      log.info(`Initial Quote: ${BT_INITIAL_QUOTE}`)
       log.info(`Maximum Annealing Iterations: ${maximumAnnealingIterations}`)
 
-      // let newOptions: Maybe<RSISMAAnnealingState>
-      // let newTrades: Maybe<Array<Trade>>
       if (!options || trades.length === 0) {
+        log.info(`Starting annealing...`)
+
         const bounds: StrategyOptionsBounds<RSISMAAnnealingState> = {
           rsiLength: [2, 20],
           rsiLowerLimit: [20, 40],
@@ -108,8 +79,8 @@ const main = async (): Promise<void> => {
         options = await strategySimulatedAnnealing<RSISMAAnnealingState>(
           bars,
           maximumAnnealingIterations,
-          window.BT_INITIAL_QUOTE,
-          window.BT_TRANSACTION_COST_PERCENTAGE,
+          BT_INITIAL_QUOTE,
+          BT_TRANSACTION_COST_PERCENTAGE,
           bounds,
           getInitialState,
           rsiSmaStrategy,
@@ -122,8 +93,8 @@ const main = async (): Promise<void> => {
         const newTrades = backtest(
           bars,
           positions.value,
-          window.BT_INITIAL_QUOTE,
-          window.BT_TRANSACTION_COST_PERCENTAGE,
+          BT_INITIAL_QUOTE,
+          BT_TRANSACTION_COST_PERCENTAGE,
         )
         if (E.isLeft(newTrades)) {
           throw newTrades.left
@@ -132,6 +103,8 @@ const main = async (): Promise<void> => {
         trades = newTrades.right
         log.info('Options: ', options)
       } else {
+        log.info(`No annealing`)
+
         // // Temporarily turn off anealing, just take the localstorage values.
         // const lastTrade: Maybe<Trade> = trades[trades.length - 1]
         // if (typeof lastTrade === 'undefined') {
@@ -140,11 +113,11 @@ const main = async (): Promise<void> => {
         //   newOptions = await performAnnealing(
         //     bars,
         //     maximumAnnealingIterations,
-        //     window.BT_INITIAL_QUOTE,
-        //     window.BT_TRANSACTION_COST_PERCENTAGE,
+        //     BT_INITIAL_QUOTE,
+        //     BT_TRANSACTION_COST_PERCENTAGE,
         //   )
         //   const positions = normalizePositions(rsiSmaStrategy(newOptions)(bars))
-        //   newTrades = backtest(bars, positions, window.BT_INITIAL_QUOTE, window.BT_TRANSACTION_COST_PERCENTAGE)
+        //   newTrades = backtest(bars, positions, BT_INITIAL_QUOTE, BT_TRANSACTION_COST_PERCENTAGE)
         //   const newLastTrade: Maybe<Trade> = newTrades[newTrades.length - 1]
         //   if (typeof newLastTrade !== 'undefined') {
         //     if (newLastTrade.quote > lastTrade.quote) {
@@ -164,8 +137,8 @@ const main = async (): Promise<void> => {
         const newTrades = backtest(
           bars,
           positions.value,
-          window.BT_INITIAL_QUOTE,
-          window.BT_TRANSACTION_COST_PERCENTAGE,
+          BT_INITIAL_QUOTE,
+          BT_TRANSACTION_COST_PERCENTAGE,
         )
         if (E.isLeft(newTrades)) {
           throw newTrades.left
@@ -177,14 +150,14 @@ const main = async (): Promise<void> => {
       localstorage.set(optionsKey, JSON.stringify(options))
       localstorage.set(tradesKey, JSON.stringify(trades))
 
-      logTrades(trades, window.BT_INITIAL_QUOTE)
-      logProfitPercentages(trades, window.BT_INITIAL_QUOTE)
+      logTrades(trades, BT_INITIAL_QUOTE)
+      logProfitPercentages(trades, BT_INITIAL_QUOTE)
       const lastTrade = trades[trades.length - 1]
       if (typeof lastTrade === 'undefined') {
         throw new Error(`No trades`)
       } else {
         const now = new Date(Date.now())
-        const startOfCurrentTimeframe = start(window.BT_TIMEFRAME, new Date(Date.now()))
+        const startOfCurrentTimeframe = start(BT_TIMEFRAME, new Date(Date.now()))
         log.info(startOfCurrentTimeframe.toISOString(), 'startOfCurrentTimeframe')
         const startDate = new Date(lastTrade.startDate)
         log.info(startDate.toISOString(), 'startDate')
@@ -217,10 +190,10 @@ const main = async (): Promise<void> => {
   }
 
   const now = new Date(Date.now())
-  const timeout = millisecondsUntilNextTimeframe(window.BT_TIMEFRAME, now)
+  const timeout = millisecondsUntilNextTimeframe(BT_TIMEFRAME, now)
   log.info(`Waiting for ${timeout / 1000 / 60} minutes...`)
   setTimeout(async () => {
-    const interval = toMs(window.BT_TIMEFRAME)
+    const interval = toMs(BT_TIMEFRAME)
     log.info(`Setting interval for ${interval / 1000 / 60} minutes...`)
     setInterval(async () => {
       await work()
@@ -240,11 +213,11 @@ main().catch((error) => {
 // document.body.appendChild(divElement)
 // // Create TradingView widget
 // // @ts-expect-error error
-// const widget = new window.TradingView.widget({
+// const widget = new TradingView.widget({
 //   width: 980,
 //   height: 610,
 //   symbol,
-//   interval: window.BT_TIMEFRAME,
+//   interval: BT_TIMEFRAME,
 //   timezone: 'Etc/UTC',
 //   theme: 'Dark',
 //   style: '1',
