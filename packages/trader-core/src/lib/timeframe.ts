@@ -1,4 +1,5 @@
 // For now, assume that the timeframe is always 1m, since we cannot pass this
+
 // Through the Tradingview Alert.
 export const TIMEFRAME = '1m'
 

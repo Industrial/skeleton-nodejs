@@ -106,6 +106,13 @@ export const strategySimulatedAnnealing = async <Options extends StrategyOptions
   getInitialState: () => Options,
   strategy: Strategy<Options>,
 ): Promise<Options> => {
+  console.log('strategySimulatedAnnealing')
+  console.log('strategySimulatedAnnealing:bars', bars)
+  console.log('strategySimulatedAnnealing:maximumIterations', maximumIterations)
+  console.log('strategySimulatedAnnealing:initialQuote', initialQuote)
+  console.log('strategySimulatedAnnealing:transactionCostPercentage', transactionCostPercentage)
+  console.log('strategySimulatedAnnealing:bounds', bounds)
+
   const annealingState = cachedSimulatedAnnealing<Options>({
     initialState: getInitialState(),
     maximumTemperature: 15,
@@ -135,6 +142,8 @@ export const strategySimulatedAnnealing = async <Options extends StrategyOptions
       return newState
     },
     energy: (state: Options) => {
+      console.log('strategySimulatedAnnealing:energy:state', state)
+
       const positions = RNEA.fromArray(normalizePositions(strategy(state)(bars)))
       if (O.isNone(positions)) {
         throw new Error(`Invalid positions`)

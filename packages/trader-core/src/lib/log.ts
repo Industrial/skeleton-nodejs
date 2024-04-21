@@ -18,6 +18,9 @@ export const log = {
   info: (...args: Array<unknown>): void => {
     console.log(...args)
   },
+  debug: (...args: Array<unknown>): void => {
+    console.log(...args)
+  },
   error: (...args: Array<unknown>): void => {
     console.error(...args)
   },

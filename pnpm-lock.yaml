@@ -162,6 +162,12 @@ importers:
       '@rollup/plugin-typescript':
         specifier: ^11.1.6
         version: 11.1.6(rollup@2.79.1)(tslib@2.6.2)(typescript@5.4.2)
+      '@types/chartjs':
+        specifier: ^0.0.31
+        version: 0.0.31
+      chartjs:
+        specifier: ^0.3.24
+        version: 0.3.24
       discord.js:
         specifier: ^14.12.1
         version: 14.14.1
@@ -4634,6 +4640,11 @@ packages:
       '@types/responselike': 1.0.3
     dev: true
 
+  /@types/chartjs@0.0.31:
+    resolution: {integrity: sha512-eF1AgrIO0qP9KJYwM2dTKL2pczTjiLa0hfmZdQfKiqFq5WIvFTKPn1gkgADitF5sT4byEyq4EFdMVvuPIk6zeQ==}
+    deprecated: '''@types/chartjs'' is now ''@types/chart.js'''
+    dev: false
+
   /@types/eslint-scope@3.7.7:
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
     dependencies:
@@ -6133,6 +6144,10 @@ packages:
     resolution: {integrity: sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==}
     engines: {node: '>=10'}
     dev: true
+
+  /chartjs@0.3.24:
+    resolution: {integrity: sha512-h6G9qcDqmFYnSWqjWCzQMeOLiypS+pM6Fq2Rj7LPty8Kjx5yHonwwJ7oEHImZpQ2u9Pu36XGYfardvvBiQVrhg==}
+    dev: false
 
   /check-error@1.0.3:
     resolution: {integrity: sha512-iKEoDYaRmd1mxM90a2OEfWhjsjPpYPuQ+lMYsoxB126+t8fw7ySEO48nmDg5COTjxDI65/Y2OWpeEHk3ZOe8zg==}
