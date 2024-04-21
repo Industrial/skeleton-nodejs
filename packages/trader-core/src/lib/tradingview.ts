@@ -1,3 +1,7 @@
+import * as E from 'fp-ts/Either'
+import * as FN from 'fp-ts/function'
+import * as TE from 'fp-ts/TaskEither'
+
 import { OHLCV } from './ohlcv.ts'
 import { start, subtract, Timeframe, toMs } from './timeframe.ts'
 
@@ -53,65 +57,83 @@ export const getSymbolInfo = async (tv: TV, symbolName: string): Promise<TVSymbo
     tv.datafeed.resolveSymbol(symbolName, resolve, reject)
   })
 
-export const createGetBatchBars = (tv: TV, symbolInfo: TVSymbolInfo, timeframe: Timeframe, limit: number) =>
-  async (batchFrom: Date, batchTo: Date): Promise<Array<OHLCV>> =>
-    new Promise((resolve, reject) => {
-      tv.datafeed.getBars(
-        symbolInfo,
-        String(toMs(timeframe) / 1000 / 60),
-        {
-          from: batchFrom.valueOf() / 1000,
-          to: batchTo.valueOf() / 1000,
-          countBack: limit,
-        },
-        resolve,
-        reject,
-      )
-    })
+export const createGetBatchBarsTE = (
+  tv: TV,
+  symbolInfo: TVSymbolInfo,
+  timeframe: Timeframe,
+  limit: number,
+): ((batchFrom: Date, batchTo: Date) => TE.TaskEither<Error, Array<OHLCV>>) =>
+  (batchFrom: Date, batchTo: Date) =>
+    TE.tryCatch(
+      async () =>
+        new Promise<Array<OHLCV>>((resolve, reject) => {
+          tv.datafeed.getBars(
+            symbolInfo,
+            String(toMs(timeframe) / 1000 / 60),
+            {
+              from: batchFrom.valueOf() / 1000,
+              to: batchTo.valueOf() / 1000,
+              countBack: limit,
+            },
+            resolve,
+            reject,
+          )
+        }),
+      E.toError,
+    )
 
-export const fetchBarsInBatches = async (
+export const processBatchBars = (
+  timeframe: Timeframe,
+  limit: number, batchBars: Array<OHLCV>, bars: Array<OHLCV>,
+): [Date, Date, Array<OHLCV>] => {
+  const newTo = subtract(timeframe, new Date(batchBars[0].time), 1)
+  const newFrom = subtract(timeframe, newTo, limit)
+  return [
+    newFrom,
+    newTo,
+    [
+      ...batchBars,
+      ...bars,
+    ],
+  ]
+}
+
+export const fetchBatch = (
+  getBatchBarsTE: (batchFrom: Date, batchTo: Date) => TE.TaskEither<Error, Array<OHLCV>>,
+  timeframe: Timeframe,
+  limit: number,
+  currentCountBack: number,
+  currentFrom: Date,
+  currentTo: Date,
+  bars: Array<OHLCV> = [],
+): TE.TaskEither<Error, Array<OHLCV>> =>
+  currentCountBack <= 0
+    ? TE.right(bars)
+    : FN.pipe(
+      getBatchBarsTE(currentFrom, currentTo),
+      TE.chain((batchBars) =>
+        batchBars.length === 0
+          ? TE.right(bars)
+          : fetchBatch(
+            getBatchBarsTE,
+            timeframe,
+            limit,
+            currentCountBack - limit,
+            ...processBatchBars(timeframe, limit, batchBars, bars),
+          )),
+    )
+
+export const fetchBarsInBatches = (
   tv: TV,
   symbolInfo: TVSymbolInfo,
   timeframe: Timeframe,
   countBack: number,
   limit: number,
-): Promise<Array<OHLCV>> => {
-  const getBatchBars = createGetBatchBars(tv, symbolInfo, timeframe, limit)
-
-  const fetchBatch = async (
-    currentCountBack: number,
-    currentFrom: Date,
-    currentTo: Date,
-    bars: Array<OHLCV> = [],
-  ): Promise<Array<OHLCV>> => {
-    if (currentCountBack <= 0) {
-      return bars
-    }
-
-    const batchBars = await getBatchBars(currentFrom, currentTo)
-
-    if (batchBars.length === 0) {
-      return bars
-    }
-
-    const [firstBar] = batchBars
-    if (typeof firstBar === 'undefined') {
-      return bars
-    }
-
-    // Adding to the front to maintain correct order
-    const newBars = [...batchBars, ...bars]
-
-    const newTo = subtract(timeframe, new Date(firstBar.time), 1)
-    const newFrom = subtract(timeframe, newTo, limit)
-
-    return fetchBatch(currentCountBack - limit, newFrom, newTo, newBars)
-  }
-
+): TE.TaskEither<Error, Array<OHLCV>> => {
+  const getBatchBarsTE = createGetBatchBarsTE(tv, symbolInfo, timeframe, limit)
   const to = start(timeframe, new Date(Date.now()))
   const from = subtract(timeframe, to, limit)
-
-  return fetchBatch(countBack, from, to)
+  return fetchBatch(getBatchBarsTE, timeframe, limit, countBack, from, to)
 }
 
 // TODO: Test.

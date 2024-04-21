@@ -1,6 +1,8 @@
+import * as E from 'fp-ts/Either'
+import * as FN from 'fp-ts/function'
 import { describe, expect, it } from 'vitest'
 
-import { createGetBatchBars, fetchBarsInBatches, getSymbolInfo, getTradingView, TV, TVSymbolInfo } from './tradingview.ts'
+import { createGetBatchBarsTE, fetchBarsInBatches, getSymbolInfo, getTradingView, TV, TVSymbolInfo } from './tradingview.ts'
 
 const createGetBars = (): TV['datafeed']['getBars'] =>
   async (symbolInfo, resolution, range, resolve, _reject) => {
@@ -104,7 +106,7 @@ describe('tradingview', () => {
     })
   })
 
-  describe('createGetBatchBars', () => {
+  describe('createGetBatchBarsTE', () => {
     describe('When passed the TradingView object, symbol info, timeframe, and limit', () => {
       it('should return a function that fetches one batch of bars', async () => {
         const tv = createTV()
@@ -123,9 +125,19 @@ describe('tradingview', () => {
             volume: 100,
           },
         ]
-        const getBatchBars = createGetBatchBars(tv, symbolInfo, timeframe, limit)
-        const actual = await getBatchBars(new Date(), new Date())
-        expect(actual).toEqual(expected)
+        const getBatchBarsTE = createGetBatchBarsTE(tv, symbolInfo, timeframe, limit)
+        const actualTE = await getBatchBarsTE(new Date(), new Date())()
+        FN.pipe(
+          actualTE,
+          E.fold(
+            (error) => {
+              throw error
+            },
+            (actual) => {
+              expect(actual).toEqual(expected)
+            },
+          ),
+        )
       })
     })
   })
@@ -150,8 +162,11 @@ describe('tradingview', () => {
             volume: 100,
           },
         ]
-        const actual = await fetchBarsInBatches(tv, symbolInfo, timeframe, countBack, limit)
-        expect(actual).toEqual(expected)
+        const actual = await fetchBarsInBatches(tv, symbolInfo, timeframe, countBack, limit)()
+        if (E.isLeft(actual)) {
+          throw actual.left
+        }
+        expect(actual.right).toEqual(expected)
       })
     })
   })

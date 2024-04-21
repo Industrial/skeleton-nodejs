@@ -3,7 +3,6 @@ import { strategySimulatedAnnealing } from '@code9/simulated-annealing'
 import { backtest, logProfitPercentages, logTrades } from '@code9/trader-backtest'
 import * as localstorage from '@code9/trader-core'
 import { fetchBarsInBatches, getSymbol, getSymbolInfo, getTradingView, log, Maybe, millisecondsUntilNextTimeframe, normalizePositions, start, StrategyOptionsBounds, Timeframe, toMs, Trade } from '@code9/trader-core'
-import Chart from 'chartjs'
 import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import * as RNEA from 'fp-ts/ReadonlyNonEmptyArray'
@@ -129,37 +128,37 @@ export const chartTrades = (trades: Array<Trade>, initialAmount: number): void =
   canvasElement.style.width = '100%'
   canvasElement.style.height = '100%'
 
-  const chart = new Chart(canvasElement, {
-    type: 'bar',
-    data: {
-      labels: dates,
-      datasets: [
-        {
-          label: 'Percentages',
-          data: percentages,
-          borderWidth: 1,
-        },
-        {
-          label: 'Quotes',
-          data: quotes,
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-    },
-  })
+  // const chart = new Chart(canvasElement, {
+  //   type: 'bar',
+  //   data: {
+  //     labels: dates,
+  //     datasets: [
+  //       {
+  //         label: 'Percentages',
+  //         data: percentages,
+  //         borderWidth: 1,
+  //       },
+  //       {
+  //         label: 'Quotes',
+  //         data: quotes,
+  //         borderWidth: 1,
+  //       },
+  //     ],
+  //   },
+  //   options: {
+  //     scales: {
+  //       y: {
+  //         beginAtZero: true,
+  //       },
+  //     },
+  //   },
+  // })
 
-  divElement.appendChild(canvasElement)
+  // divElement.appendChild(canvasElement)
 
-  if (!document.querySelector(`#${id}`)) {
-    document.body.appendChild(divElement)
-  }
+  // if (!document.querySelector(`#${id}`)) {
+  //   document.body.appendChild(divElement)
+  // }
 
   // const csv = [
   //   'Date,Percentage,Quote',
@@ -180,11 +179,14 @@ const main = async (): Promise<void> => {
 
   const work = async () => {
     try {
-      const bars = await fetchBarsInBatches(tv, symbolInfo, BT_TIMEFRAME, BT_COUNTBACK, 1000)
-      const maximumAnnealingIterations = BT_COUNTBACK - bars.length + 1000
+      const bars = await fetchBarsInBatches(tv, symbolInfo, BT_TIMEFRAME, BT_COUNTBACK, 1000)()
+      if (E.isLeft(bars)) {
+        throw bars.left
+      }
+      const maximumAnnealingIterations = BT_COUNTBACK - bars.right.length + 1000
 
       log.info(`Transaction Cost Percentage: ${BT_TRANSACTION_COST_PERCENTAGE}%`)
-      log.info(`Bars: ${bars.length}`)
+      log.info(`Bars: ${bars.right.length}`)
       log.info(`Timeframe: ${BT_TIMEFRAME}`)
       log.info(`Initial Quote: ${BT_INITIAL_QUOTE}`)
       log.info(`Maximum Annealing Iterations: ${maximumAnnealingIterations}`)
@@ -194,7 +196,7 @@ const main = async (): Promise<void> => {
 
         // eslint-disable-next-line require-atomic-updates
         options = await strategySimulatedAnnealing<RSISMAAnnealingState>(
-          bars,
+          bars.right,
           maximumAnnealingIterations,
           BT_INITIAL_QUOTE,
           BT_TRANSACTION_COST_PERCENTAGE,
@@ -203,13 +205,13 @@ const main = async (): Promise<void> => {
           rsiSmaStrategy,
         )
         log.debug('options', options)
-        const positions = RNEA.fromArray(normalizePositions(rsiSmaStrategy(options)(bars)))
+        const positions = RNEA.fromArray(normalizePositions(rsiSmaStrategy(options)(bars.right)))
         if (O.isNone(positions)) {
           throw new Error('No positions found')
         }
 
         const newTrades = backtest(
-          bars,
+          bars.right,
           positions.value,
           BT_INITIAL_QUOTE,
           BT_TRANSACTION_COST_PERCENTAGE,
@@ -230,7 +232,7 @@ const main = async (): Promise<void> => {
         }
 
         const newOptions = await strategySimulatedAnnealing(
-          bars,
+          bars.right,
           maximumAnnealingIterations,
           BT_INITIAL_QUOTE,
           BT_TRANSACTION_COST_PERCENTAGE,
@@ -240,13 +242,13 @@ const main = async (): Promise<void> => {
         )
         log.debug('newOptions', newOptions)
 
-        const positions = RNEA.fromArray(normalizePositions(rsiSmaStrategy(options)(bars)))
+        const positions = RNEA.fromArray(normalizePositions(rsiSmaStrategy(options)(bars.right)))
         log.debug('positions', positions)
         if (O.isNone(positions)) {
           throw new Error('No positions found')
         }
 
-        const newTrades = backtest(bars, positions.value, BT_INITIAL_QUOTE, BT_TRANSACTION_COST_PERCENTAGE)
+        const newTrades = backtest(bars.right, positions.value, BT_INITIAL_QUOTE, BT_TRANSACTION_COST_PERCENTAGE)
         log.debug('newTrades', newTrades)
         if (E.isLeft(newTrades)) {
           throw newTrades.left
