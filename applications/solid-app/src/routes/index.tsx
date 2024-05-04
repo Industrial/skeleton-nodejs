@@ -1,36 +1,19 @@
-import { createSession, signIn } from "@solid-mediakit/auth/client";
-import { Navigate } from "@solidjs/router";
-import { Show, createSignal, onCleanup } from "solid-js";
-
+import { Title } from "@solidjs/meta";
+import Counter from "~/components/Counter";
 
 export default function Home() {
-  const session = createSession();
-
-  const [redirectIn, setRedirectIn] = createSignal(3);
-
-  const int = setInterval(() => {
-    setRedirectIn(prev => prev - 1);
-  }, 1000);
-
-  onCleanup(() => clearInterval(int));
-
   return (
     <main>
-      <h1>Home</h1>
-      <Show
-        when={session()}
-        fallback={
-          <>
-            <span>You are not signed in.</span>
-            <button onClick={() => signIn("discord")}>Sign In</button>
-          </>
-        }
-      >
-        <span>Redirecting to protected page in {redirectIn()} seconds...</span>
-        <Show when={redirectIn() <= 0}>
-          <Navigate href="/protected" />
-        </Show>
-      </Show>
+      <Title>Hello World</Title>
+      <h1>Hello world!</h1>
+      <Counter />
+      <p>
+        Visit{" "}
+        <a href="https://start.solidjs.com" target="_blank">
+          start.solidjs.com
+        </a>{" "}
+        to learn how to build SolidStart apps.
+      </p>
     </main>
   );
 }

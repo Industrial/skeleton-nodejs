@@ -1,14 +1,32 @@
-# SolidStart + AuthJS
+# SolidStart
 
-## Setup a Discord app
+Everything you need to build a Solid project, powered by [`solid-start`](https://start.solidjs.com);
 
-In order to run this example, you need to setup i.e. a Discord app in here: https://discord.com/developers/applications/, to get a client secret and client id which should be added to the .env file. Also, in the Discord app settings under OAuth2, set the Return URL to: http://localhost:3000/api/auth/callback/discord
+## Creating a project
 
-## AuthJS
+```bash
+# create a new project in the current directory
+npm init solid@latest
 
-Everything you need to build an [AuthJS](https://authjs.dev/) authenticated Solid project, powered by [`solid-start`](https://start.solidjs.com);
+# create a new project in my-app
+npm init solid@latest my-app
+```
 
+## Developing
 
-Note that Discord is just one of many auth providers supported by Auth.js.
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
+```bash
+npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
+
+## Building
+
+Solid apps are built with _presets_, which optimise your project for deployment to different environments.
+
+By default, `npm run build` will generate a Node app that you can run with `npm start`. To use a different preset, add it to the `devDependencies` in `package.json` and specify in your `app.config.js`.
 
 ## This project was created with the [Solid CLI](https://solid-cli.netlify.app)
