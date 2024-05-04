@@ -1,2 +1,2 @@
-export * from './lib/component-compositor.test.ts'
+// export * from './lib/component-compositor.test.ts'
 

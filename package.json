@@ -30,7 +30,7 @@
   ],
   "scripts": {
     "build": "nx run-many -t build",
-    "lint": "nx run-many -t lint",
+    "lint": "tsc -p . --noEmit && eslint --fix .",
     "prepare": "husky",
     "test": "nx run-many -t test",
     "test:coverage": "vitest run --coverage",
