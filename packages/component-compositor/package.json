@@ -1,5 +1,5 @@
 {
-  "name": "@code9/either",
+  "name": "@code9/component-compositor",
   "version": "0.1.0",
   "type": "module",
   "module": "src/index.ts",
@@ -10,10 +10,18 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
     "@vitest/coverage-v8": "^1.4.0",
     "@vitest/spy": "^1.4.0",
     "@vitest/ui": "^1.4.0",
     "typescript": "^5.4.3",
     "vitest": "^1.4.0"
+  },
+  "dependencies": {
+    "@preact/signals": "^1.2.3",
+    "@stylexjs/stylex": "^0.6.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }

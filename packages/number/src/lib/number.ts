@@ -3,6 +3,12 @@ import { pipe } from 'fp-ts/function'
 import * as O from 'fp-ts/Option'
 import * as RE from 'fp-ts/ReaderEither'
 
+export const factorial = (n: number): number =>
+  n === 0 ? 1 : n * factorial(n - 1)
+
+export const factorialByIteration = (maxCount = 0, counter = 0, product = 0): number =>
+  counter > maxCount ? product : factorialByIteration(maxCount, counter + 1, counter * product)
+
 export const safeDivide = (a: number, b: number): O.Option<number> =>
   (b === 0 ? O.none : O.some(a / b))
 

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
-import { delay, retryForever, retryTimes } from './async.ts'
+import { delay, retryForever, retryTimes } from './index.ts'
 
 describe('delay function tests', () => {
   beforeEach(() => {
@@ -29,7 +29,8 @@ describe('delay function tests', () => {
 
 describe('retryTimes function', () => {
   test('should resolve if the function succeeds on first try', async () => {
-    const result = await retryTimes(3, async () => 'Success')
+    const result = await retryTimes(3, async () =>
+      'Success')
 
     expect(result).toBe('Success')
   })

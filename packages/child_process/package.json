@@ -2,6 +2,7 @@
   "name": "@code9/child_process",
   "version": "0.1.0",
   "type": "module",
+  "module": "src/index.ts",
   "main": "src/index.ts",
   "scripts": {
     "lint": "tsc -p . --noEmit && eslint --fix .",

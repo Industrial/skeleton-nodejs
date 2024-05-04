@@ -1,2 +1,2 @@
-export * as async from './lib/async.ts'
+export * from './lib/index.ts'
 

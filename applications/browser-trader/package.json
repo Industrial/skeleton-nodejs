@@ -4,10 +4,13 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
+    "build": "mkdir -p dist && bun build src/index.ts > dist/index.js",
+    "start": "bun run dist/index.js",
     "lint": "eslint --fix .",
     "test": "vitest"
   },
   "dependencies": {
+    "@code9/async": "workspace:*",
     "@code9/number": "workspace:*",
     "@code9/simulated-annealing": "workspace:*",
     "@code9/trader-backtest": "workspace:*",

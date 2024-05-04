@@ -16,7 +16,6 @@ export const retryTimes = async <T>(retries: number, fn: () => Promise<T>): Prom
     if (retries > 0) {
       return retryTimes(retries - 1, fn)
     }
-
     throw error
   }
 }
@@ -29,17 +28,15 @@ export const retryForever = async <T>(fn: () => Promise<T>): Promise<T> => {
   }
 }
 
-export const retryUntil = async <T>(fn: () => Promise<T>, predicate: (value: T) => boolean): Promise<T> => {
+export const retryUntil = async <T>(predicate: (value: T) => boolean, fn: () => Promise<T>): Promise<T> => {
   try {
     const value = await fn()
-
     if (predicate(value)) {
       return value
     }
-
-    return retryUntil(fn, predicate)
+    return retryUntil(predicate, fn)
   } catch (error: unknown) {
-    return retryUntil(fn, predicate)
+    return retryUntil(predicate, fn)
   }
 }
 

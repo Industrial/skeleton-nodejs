@@ -106,12 +106,12 @@ export const strategySimulatedAnnealing = async <Options extends StrategyOptions
   getInitialState: () => Options,
   strategy: Strategy<Options>,
 ): Promise<Options> => {
-  console.log('strategySimulatedAnnealing')
-  console.log('strategySimulatedAnnealing:bars', bars)
-  console.log('strategySimulatedAnnealing:maximumIterations', maximumIterations)
-  console.log('strategySimulatedAnnealing:initialQuote', initialQuote)
-  console.log('strategySimulatedAnnealing:transactionCostPercentage', transactionCostPercentage)
-  console.log('strategySimulatedAnnealing:bounds', bounds)
+  // console.log('strategySimulatedAnnealing')
+  // console.log('strategySimulatedAnnealing:bars', bars)
+  // console.log('strategySimulatedAnnealing:maximumIterations', maximumIterations)
+  // console.log('strategySimulatedAnnealing:initialQuote', initialQuote)
+  // console.log('strategySimulatedAnnealing:transactionCostPercentage', transactionCostPercentage)
+  // console.log('strategySimulatedAnnealing:bounds', bounds)
 
   const annealingState = cachedSimulatedAnnealing<Options>({
     initialState: getInitialState(),
@@ -142,7 +142,7 @@ export const strategySimulatedAnnealing = async <Options extends StrategyOptions
       return newState
     },
     energy: (state: Options) => {
-      console.log('strategySimulatedAnnealing:energy:state', state)
+      // console.log('strategySimulatedAnnealing:energy:state', state)
 
       const positions = RNEA.fromArray(normalizePositions(strategy(state)(bars)))
       if (O.isNone(positions)) {

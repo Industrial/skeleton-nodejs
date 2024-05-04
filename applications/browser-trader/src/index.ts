@@ -1,3 +1,4 @@
+import { retryUntil } from '@code9/async'
 import { getRandomNumber } from '@code9/number'
 import { strategySimulatedAnnealing } from '@code9/simulated-annealing'
 import { backtest, logProfitPercentages, logTrades } from '@code9/trader-backtest'
@@ -69,7 +70,7 @@ const saveTrades = (trades: Array<Trade>): void => {
   localstorage.set(tradesKey, JSON.stringify(trades))
 }
 
-export const chartTrades = (trades: Array<Trade>, initialAmount: number): void => {
+const chartTrades = (trades: Array<Trade>, initialAmount: number): void => {
   if (trades.length === 0) {
     log.info(`No trades found`)
     return
@@ -179,7 +180,13 @@ const main = async (): Promise<void> => {
 
   const work = async () => {
     try {
-      const bars = await fetchBarsInBatches(tv, symbolInfo, BT_TIMEFRAME, BT_COUNTBACK, 1000)()
+      const bars = await retryUntil(
+        (a) =>
+          E.isRight(a) && a.right.length > 0,
+        async () =>
+          await fetchBarsInBatches(tv, symbolInfo, BT_TIMEFRAME, BT_COUNTBACK, 1000)(),
+      )
+      // const bars = await fetchBarsInBatches(tv, symbolInfo, BT_TIMEFRAME, BT_COUNTBACK, 1000)()
       if (E.isLeft(bars)) {
         throw bars.left
       }
