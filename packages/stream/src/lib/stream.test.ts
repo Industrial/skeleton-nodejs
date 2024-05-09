@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { either as E } from 'fp-ts'
 import { Readable } from 'stream'
 
-import { createReadableStreamProperty, streamToString } from './stream.test.ts'
+import { createReadableStreamProperty, streamToString } from './stream.ts'
 
 describe('stream', () => {
   describe('streamToString', () => {
@@ -74,10 +74,19 @@ describe('stream', () => {
             },
           })
           const property = createReadableStreamProperty(stream)
+
+          let called = false
           property.subscribe({
             next: () => {
-              expect(property.get()).toEqual(E.right(new Uint8Array()))
+              called = true
             },
+          })
+
+          return new Promise<void>((resolve) => {
+            setTimeout(() => {
+              expect(called).toBe(false)
+              resolve()
+            }, 100)
           })
         })
       })
@@ -112,6 +121,66 @@ describe('stream', () => {
                   counter += 1
                 } else {
                   expect(property.get()).toEqual(E.right(new TextEncoder().encode('world')))
+                  resolve()
+                }
+              },
+            })
+          })
+        })
+      })
+
+      describe('When the stream emits an end', () => {
+        it('should return an empty buffer', async () => {
+          const stream = new ReadableStream({
+            start(controller) {
+              controller.enqueue(new TextEncoder().encode('hello'))
+              controller.close()
+            },
+          })
+          const property = createReadableStreamProperty(stream)
+
+          return new Promise<void>((resolve) => {
+            property.subscribe({
+              next: () => {
+                expect(property.get()).toEqual(E.right(new TextEncoder().encode('hello')))
+                resolve()
+              },
+            })
+          })
+        })
+      })
+
+      describe('When the property is unsubscribed from', () => {
+        it('should stop emitting values', async () => {
+          const stream = new ReadableStream({
+            start(controller) {
+              // eslint-disable-next-line @typescript-eslint/no-floating-promises
+              (async () => {
+                controller.enqueue(new TextEncoder().encode('hello'))
+                await new Promise((resolve) =>
+                  // eslint-disable-next-line no-promise-executor-return
+                  setTimeout(resolve, 100))
+                controller.enqueue(new TextEncoder().encode('world'))
+                await new Promise((resolve) =>
+                  // eslint-disable-next-line no-promise-executor-return
+                  setTimeout(resolve, 100))
+                controller.close()
+              })()
+            },
+          })
+
+          const property = createReadableStreamProperty(stream)
+
+          let counter = 0
+          return new Promise<void>((resolve) => {
+            const subscription = property.subscribe({
+              next: () => {
+                if (counter === 0) {
+                  expect(property.get()).toEqual(E.right(new TextEncoder().encode('hello')))
+                  counter += 1
+                  subscription.unsubscribe()
+                } else {
+                  expect(property.get()).toEqual(E.right(new TextEncoder().encode('hello')))
                   resolve()
                 }
               },

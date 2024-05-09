@@ -47,6 +47,7 @@ export const streamToString = (stream: Readable): TE.TaskEither<Error, string> =
 export const createReadableStreamProperty = (stream: ReadableStream): Property<E.Either<Error, Uint8Array>> => {
   const reader = stream.getReader()
   let currentValue: E.Either<Error, Uint8Array> = E.right(new Uint8Array())
+  let subscribed = false
   const handleError = (error: Error) => {
     currentValue = E.left(error)
   }
@@ -56,8 +57,15 @@ export const createReadableStreamProperty = (stream: ReadableStream): Property<E
     (observer) => {
       (async () => {
         try {
-          // eslint-disable-next-line no-constant-condition, @typescript-eslint/no-unnecessary-condition
+          subscribed = true
+          // eslint-disable-next-line @stylistic/js/max-len
+          // eslint-disable-next-line no-constant-condition, @typescript-eslint/no-unnecessary-condition, no-unmodified-loop-condition
           while (true) {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (!subscribed) {
+              observer.next(0)
+              break
+            }
             const { done, value } = await reader.read()
             if (done) {
               break
@@ -72,7 +80,7 @@ export const createReadableStreamProperty = (stream: ReadableStream): Property<E
       })().catch(handleError)
       return {
         unsubscribe: () => {
-          // Unsubscribe logic here, if needed
+          subscribed = false
         },
       }
     },
