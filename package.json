@@ -30,7 +30,7 @@
   ],
   "scripts": {
     "build": "nx run-many -t build",
-    "lint": "tsc -p . --noEmit && eslint --fix .",
+    "lint": "nx run-many -t lint",
     "prepare": "husky",
     "test": "nx run-many -t test",
     "test:coverage": "vitest run --coverage",
@@ -39,6 +39,8 @@
     "update": "pnpx npm-check-updates -p pnpm -u && pnpm i"
   },
   "dependencies": {
+    "@frp-ts/core": "^1.0.0-beta.6",
+    "@frp-ts/fp-ts": "^1.0.0-beta.6",
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
     "fp-ts": "^2.16.5",
@@ -66,6 +68,7 @@
     "@swc/cli": "~0.3.10",
     "@swc/core": "~1.4.8",
     "@swc/helpers": "~0.5.7",
+    "@types/bun": "^1.1.1",
     "@types/node": "^20.11.30",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",

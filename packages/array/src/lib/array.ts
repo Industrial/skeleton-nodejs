@@ -2,6 +2,7 @@ import * as A from 'fp-ts/Array'
 import * as E from 'fp-ts/Either'
 import { identity, pipe } from 'fp-ts/function'
 import * as N from 'fp-ts/number'
+import * as TE from 'fp-ts/TaskEither'
 
 /**
  * Find all indexes of a specified item in an array.
@@ -46,3 +47,7 @@ export const average = (values: Array<number>): number =>
 
 export const firstElement = <X>([a]: Array<X>): X | undefined =>
   a
+
+export const fromAsyncTE = <T>(iter: ArrayLike<T> | AsyncIterable<T> | Iterable<T>): TE.TaskEither<Error, Array<T>> =>
+  TE.tryCatch(async () =>
+    await Array.fromAsync(iter), E.toError)

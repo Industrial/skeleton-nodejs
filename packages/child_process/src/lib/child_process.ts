@@ -1,94 +1,118 @@
-import { ChildProcessWithoutNullStreams, spawn as childProcessSpawn } from 'child_process'
-import { either as E, function as FN, taskEither as TE } from 'fp-ts'
+import { newProperty, type Property } from '@frp-ts/core'
+import * as E from 'fp-ts/Either'
+import * as TE from 'fp-ts/TaskEither'
+import { Readable } from 'stream'
 
-export const validateCommand = (command: string): TE.TaskEither<Error, string> =>
-  FN.pipe(
-    command,
-    TE.fromPredicate(
-      (a) =>
-        a.length > 0,
-      () =>
-        new Error('No command provided'),
-    ),
-  )
-
-export const splitCommand = (command: string): [string, Array<string>] => {
-  const [cmd, ...args] = command.split(' ')
-  if (typeof cmd === 'undefined' || cmd === '') {
-    throw new Error('No command provided')
+export const createHandleError = (writer: WritableStreamDefaultWriter<Uint8Array>) =>
+  (error: Error): void => {
+    // Made this promise 'floating' because there is no way to handle the error.
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    writer.abort(error)
   }
-  return [cmd, args]
+
+export const createHandleData = (writer: WritableStreamDefaultWriter<Uint8Array>) =>
+  async (chunk: Buffer): Promise<void> => {
+    const uint8Array = new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength)
+    await writer.write(uint8Array)
+  }
+
+export const createHandleEnd = (writer: WritableStreamDefaultWriter<Uint8Array>) =>
+  async (): Promise<void> => {
+    await writer.close()
+  }
+
+export const nodeReadableToReadableStream = (nodeStream: Readable): ReadableStream => {
+  const transformStream = new TransformStream<Uint8Array, Uint8Array>()
+  const writer = transformStream.writable.getWriter()
+
+  nodeStream.on('error', createHandleError(writer))
+  nodeStream.on('data', createHandleData(writer))
+  nodeStream.on('end', createHandleData(writer))
+
+  return transformStream.readable
 }
 
-export type ChildProcessProps = {
-  child: ChildProcessWithoutNullStreams
-  stdout: string
-}
-
-export const spawnChildProcess = ([cmd, args]: [string, Array<string>]): ChildProcessProps => {
-  const child = childProcessSpawn(cmd, args)
-  let stdout = ''
-
-  child.stdout.on('data', (data: Uint8Array | string) => {
-    process.stdout.write(data)
-    stdout += String(data)
-  })
-
-  child.stderr.on('data', (data: Uint8Array | string) => {
-    process.stderr.write(data)
-  })
-
-  return { child, stdout }
-}
-
-export const handleChildProcess = async ({ child, stdout }: ChildProcessProps): Promise<string> =>
-  new Promise((resolve, reject) => {
-    child.once('error', (error) => {
-      reject(error)
-    })
-
-    child.once('close', (code) => {
-      if (code !== 0) {
-        reject(new Error(`Command exited with code ${code}`))
-      } else {
-        resolve(stdout)
+export const streamToString = (stream: Readable): TE.TaskEither<Error, string> =>
+  TE.tryCatch(
+    async () => {
+      let data = ''
+      for await (const chunk of stream) {
+        data += chunk
       }
-    })
-  })
-
-export const spawn = (command: string): TE.TaskEither<Error, void> =>
-  FN.pipe(
-    command,
-    validateCommand,
-    TE.chain((a) =>
-      TE.tryCatch(
-        async () =>
-          new Promise<void>((resolve, reject) => {
-            const process = childProcessSpawn(a, {
-              shell: true,
-              stdio: 'inherit',
-            })
-
-            process.once('error', (error) => {
-              reject(error)
-            })
-
-            process.once('exit', (code) => {
-              if (code !== 0) {
-                reject(new Error(`Command "${command}" exited with code ${code}`))
-              } else {
-                resolve(undefined)
-              }
-            })
-          }),
-        E.toError,
-      )),
+      return data
+    },
+    E.toError,
   )
 
-export const retrySpawn = (command: string): TE.TaskEither<Error, void> =>
-  FN.pipe(
-    command,
-    spawn,
-    TE.orElse(() =>
-      retrySpawn(command)),
+export const createReadableStreamProperty = (stream: ReadableStream): Property<E.Either<Error, Uint8Array>> => {
+  const reader = stream.getReader()
+  let currentValue: E.Either<Error, Uint8Array> = E.right(new Uint8Array())
+  const handleError = (error: Error) => {
+    currentValue = E.left(error)
+  }
+  return newProperty(
+    () =>
+      currentValue,
+    (observer) => {
+      (async () => {
+        try {
+          // eslint-disable-next-line no-constant-condition, @typescript-eslint/no-unnecessary-condition
+          while (true) {
+            const { done, value } = await reader.read()
+            if (done) {
+              break
+            }
+            currentValue = E.right(value)
+            observer.next(0)
+          }
+        } catch (error: unknown) {
+          handleError(error as Error)
+          observer.next(0)
+        }
+      })().catch(handleError)
+      return {
+        unsubscribe: () => {
+          // Unsubscribe logic here, if needed
+        },
+      }
+    },
   )
+}
+
+// export const spawnChildProcessStream = (
+//   command: string,
+//   args: Array<string>,
+//   options?: SpawnOptionsWithoutStdio,
+// ): TE.TaskEither<Error, string> =>
+//   FN.pipe(
+//     E.tryCatch(
+//       () =>
+//         spawn(command, args, options),
+//       E.toError,
+//     ),
+//     E.map((child) => ({
+//       stdout: streamToString(child.stdout)
+//       stderr: streamToString(child.stderr)
+//     }),
+//     TE.map((task) =>)
+//   )
+// TE.tryCatch(
+//   async () => {
+//     try {
+//       const child = spawn(command, args, options)
+//       let data = ''
+//       for await (const chunk of child.stdout) {
+//         data += chunk
+//       }
+//       const [error] = await once(child, 'error')
+//       if (error) {
+//         throw error
+//       }
+//       return data
+//     } catch (error) {
+//       console.error('error', error)
+//       throw error
+//     }
+//   },
+//   E.toError,
+// )

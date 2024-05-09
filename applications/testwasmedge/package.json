@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "lint": "eslint --fix .",
+    "lint": "bun tsc -p . --noEmit && bun eslint --fix .",
     "test": "vitest"
   },
   "devDependencies": {

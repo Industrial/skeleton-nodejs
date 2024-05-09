@@ -5,13 +5,14 @@ import { Router, type RouteSectionProps } from '@solidjs/router'
 import { FileRoutes } from '@solidjs/start/router'
 import { type JSX, Suspense } from 'solid-js'
 
-export const App = ({ children }: RouteSectionProps): JSX.Element =>
+export const App = (props: RouteSectionProps): JSX.Element =>
   (
     <MetaProvider>
-      <Title>SolidStart - Basic</Title>
+      <Title>Derp</Title>
       <a href="/">Index</a>
       <a href="/about">About</a>
-      <Suspense>{children}</Suspense>
+      {/* eslint-disable-next-line react/destructuring-assignment */}
+      <Suspense>{props.children}</Suspense>
     </MetaProvider>
   )
 
