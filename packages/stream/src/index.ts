@@ -1,2 +1,2 @@
-export * from './lib/stream.test.ts'
+export * from './lib/stream.ts'
 

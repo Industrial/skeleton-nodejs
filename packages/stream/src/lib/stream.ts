@@ -1,6 +1,6 @@
 import { isNull } from '@code9/null'
 import { isUndefined } from '@code9/undefined'
-import { newProperty, type Property } from '@frp-ts/core'
+import { newProperty, type Observer, type Property } from '@frp-ts/core'
 import * as E from 'fp-ts/Either'
 import * as TE from 'fp-ts/TaskEither'
 import { Readable } from 'stream'
@@ -57,38 +57,39 @@ export const createReadableStreamProperty = (stream: ReadableStream): Property<E
   const handleError = (error: Error) => {
     currentValue = E.left(error)
   }
-  return newProperty(
-    () =>
-      currentValue,
-    (observer) => {
-      (async () => {
-        try {
-          subscribed = true
-          // eslint-disable-next-line @stylistic/js/max-len
-          // eslint-disable-next-line no-constant-condition, @typescript-eslint/no-unnecessary-condition, no-unmodified-loop-condition
-          while (true) {
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (!subscribed) {
-              observer.next(0)
-              break
-            }
-            const { done, value } = await reader.read()
-            if (done) {
-              break
-            }
-            currentValue = E.right(value)
-            observer.next(0)
+  const get = () =>
+    currentValue
+  const subscribe = (observer: Observer<E.Either<Error, Uint8Array>>) => {
+    (async () => {
+      try {
+        subscribed = true
+        // eslint-disable-next-line @stylistic/js/max-len
+        // eslint-disable-next-line no-constant-condition, @typescript-eslint/no-unnecessary-condition, no-unmodified-loop-condition
+        while (true) {
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          if (!subscribed) {
+            // observer.next(E.right(new Uint8Array()))
+            break
           }
-        } catch (error: unknown) {
-          handleError(error as Error)
-          observer.next(0)
+          const { done, value } = await reader.read()
+          if (done) {
+            break
+          }
+          currentValue = E.right(value)
+          observer.next(currentValue)
         }
-      })().catch(handleError)
-      return {
-        unsubscribe: () => {
-          subscribed = false
-        },
+      } catch (error: unknown) {
+        handleError(error as Error)
+        observer.next(currentValue)
       }
-    },
-  )
+    })().catch(handleError)
+    return {
+      unsubscribe: () => {
+        subscribed = false
+      },
+    }
+  }
+
+  // @ts-expect-error why only number
+  return newProperty(get, subscribe)
 }

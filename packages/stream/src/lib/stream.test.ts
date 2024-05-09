@@ -135,7 +135,7 @@ describe('stream', () => {
           return new Promise<void>((resolve) => {
             property.subscribe({
               next: () => {
-                expect(property.get()).toEqual(E.left(new Error('error')))
+                expect(property.get()).toStrictEqual(E.left(new Error('error')))
                 resolve()
               },
             })
@@ -256,8 +256,8 @@ describe('stream', () => {
                   expect(property.get()).toEqual(E.right(new TextEncoder().encode('hello')))
                   counter += 1
                   subscription.unsubscribe()
-                } else {
-                  expect(property.get()).toEqual(E.right(new TextEncoder().encode('hello')))
+                  // It's untestable wether next is called again, because it is
+                  // not. I'm drunk right now. Streams rock.
                   resolve()
                 }
               },
