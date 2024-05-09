@@ -1,0 +1,22 @@
+{
+  "name": "@code9/stream",
+  "version": "0.1.0",
+  "type": "module",
+  "module": "src/index.ts",
+  "main": "src/index.ts",
+  "scripts": {
+    "lint": "bun tsc -p . --noEmit && bun eslint --fix .",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@vitest/coverage-v8": "^1.4.0",
+    "@vitest/spy": "^1.4.0",
+    "@vitest/ui": "^1.4.0",
+    "typescript": "^5.4.3",
+    "vitest": "^1.4.0"
+  },
+  "dependencies": {
+    "bun": "^1.1.7"
+  }
+}
