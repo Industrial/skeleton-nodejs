@@ -1,5 +1,5 @@
 {
-  "name": "@code9/stream",
+  "name": "@code9/undefined",
   "version": "0.1.0",
   "type": "module",
   "module": "src/index.ts",
@@ -15,10 +15,5 @@
     "@vitest/ui": "^1.4.0",
     "typescript": "^5.4.3",
     "vitest": "^1.4.0"
-  },
-  "dependencies": {
-    "@code9/null": "workspace:*",
-    "@code9/undefined": "workspace:*",
-    "bun": "^1.1.7"
   }
 }

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'bun:test'
 import { either as E } from 'fp-ts'
 import { Readable } from 'stream'
 
-import { createReadableStreamProperty, streamToString } from './stream.ts'
+import { createReadableStreamProperty, nodeReadableToReadableStream, streamToString } from './stream.ts'
 
 describe('stream', () => {
   describe('streamToString', () => {
@@ -40,6 +40,83 @@ describe('stream', () => {
           })
           const result = await streamToString(stream)()
           expect(result).toEqual(E.right('helloworld'))
+        })
+      })
+    })
+  })
+
+  describe('nodeReadableToReadableStream', () => {
+    describe('When called with a node stream', () => {
+      describe('When the node stream emits an error', () => {
+        it('should return an error', async () => {
+          const stream = new Readable({
+            read() {
+              this.emit('error', new Error('error'))
+            },
+          })
+          const readableStream = nodeReadableToReadableStream(stream)
+          return new Promise<void>((resolve, reject) => {
+            (async () => {
+              try {
+                await readableStream.getReader().read()
+              } catch (error: unknown) {
+                resolve()
+              }
+            })()
+              .catch(reject)
+          })
+        })
+      })
+      describe('When the node stream emits no data', () => {
+        it('should return an empty buffer', async () => {
+          const stream = new Readable({
+            read() {
+              this.push(null)
+            },
+          })
+          const readableStream = nodeReadableToReadableStream(stream)
+          return new Promise<void>((resolve, reject) => {
+            (async () => {
+              try {
+                const result = await readableStream.getReader().read()
+                expect(result).toStrictEqual({
+                  done: true,
+                  value: undefined,
+                })
+                resolve()
+              } catch (error: unknown) {
+                reject(new Error('should not throw an error'))
+              }
+            })()
+              .catch(reject)
+          })
+        })
+      })
+      describe('When the node stream emits data', () => {
+        it('should return a buffer', async () => {
+          const stream = new Readable({
+            read() {
+              this.push('hello')
+              this.push('world')
+              this.push(null)
+            },
+          })
+          const readableStream = nodeReadableToReadableStream(stream)
+          return new Promise<void>((resolve, reject) => {
+            (async () => {
+              const reader = readableStream.getReader()
+              const { done, value } = await reader.read()
+              expect(done).toBe(false)
+              expect(value).toEqual(new TextEncoder().encode('hello'))
+              const { done: done2, value: value2 } = await reader.read()
+              expect(done2).toBe(false)
+              expect(value2).toEqual(new TextEncoder().encode('world'))
+              const { done: done3 } = await reader.read()
+              expect(done3).toBe(true)
+              resolve()
+            })()
+              .catch(reject)
+          })
         })
       })
     })

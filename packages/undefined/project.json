@@ -1,0 +1,39 @@
+{
+  "name": "@code9/undefined",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/undefined/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "pnpm lint"
+        ],
+        "cwd": "packages/undefined"
+      }
+    },
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/packages/undefined",
+        "main": "packages/undefined/src/index.ts",
+        "tsConfig": "packages/undefined/tsconfig.json",
+        "assets": []
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
+      "options": {
+        "reportsDirectory": "../../coverage/packages/undefined"
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,3 +1,5 @@
+import { isNull } from '@code9/null'
+import { isUndefined } from '@code9/undefined'
 import { newProperty, type Property } from '@frp-ts/core'
 import * as E from 'fp-ts/Either'
 import * as TE from 'fp-ts/TaskEither'
@@ -11,7 +13,11 @@ export const createHandleError = (writer: WritableStreamDefaultWriter<Uint8Array
   }
 
 export const createHandleData = (writer: WritableStreamDefaultWriter<Uint8Array>) =>
-  async (chunk: Buffer): Promise<void> => {
+  async (chunk: Buffer | null | undefined): Promise<void> => {
+    if (isNull(chunk) || isUndefined(chunk)) {
+      await writer.close()
+      return
+    }
     const uint8Array = new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength)
     await writer.write(uint8Array)
   }
