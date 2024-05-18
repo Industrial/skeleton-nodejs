@@ -11,32 +11,10 @@
   "workspaces": [
     "applications/*",
     "packages/*"
-    // "packages/array"
-    // "packages/async",
-    // "packages/child_process",
-    // "packages/component-compositor",
-    // "packages/crypto",
-    // "packages/date",
-    // "packages/either",
-    // "packages/fs",
-    // "packages/null",
-    // "packages/number",
-    // "packages/object",
-    // "packages/simulated-annealing",
-    // "packages/stream",
-    // "packages/string",
-    // "packages/timeframe",
-    // "packages/trader-backtest",
-    // "packages/trader-core",
-    // "packages/trader-indicator",
-    // "packages/undefined"
   ],
   "scripts": {
-    "build": "nx run-many -t build",
-    "lint": "nx run-many -t lint",
     "prepare": "husky",
-    "test": "nx run-many -t test",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "bun --filter '*' test --coverage",
     "test:staged": "vitest related --run",
     "test:staged:coverage": "vitest related --coverage --run",
     "update": "pnpx npm-check-updates -p pnpm -u && pnpm i"

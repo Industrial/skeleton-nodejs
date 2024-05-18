@@ -5,7 +5,7 @@
   "module": "src/index.ts",
   "main": "src/index.ts",
   "scripts": {
-    "lint": "bun tsc -p . --noEmit && bun eslint --fix .",
+    "lint": "tsc -p . --noEmit && eslint --fix .",
     "test": "vitest"
   },
   "devDependencies": {
@@ -17,6 +17,7 @@
     "vitest": "^1.4.0"
   },
   "dependencies": {
+    "@code9/stream": "workspace:*",
     "bun": "^1.1.7"
   }
 }

@@ -5,7 +5,7 @@
   "module": "src/index.ts",
   "main": "src/index.ts",
   "scripts": {
-    "lint": "bun tsc -p . --noEmit && bun eslint --fix .",
+    "lint": "tsc -p . --noEmit && eslint --fix .",
     "test": "vitest"
   },
   "devDependencies": {

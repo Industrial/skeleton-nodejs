@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/index.ts",
-    "lint": "bun tsc -p . --noEmit && bun eslint --fix .",
+    "lint": "tsc -p . --noEmit && eslint --fix .",
     "test": "vitest"
   },
   "dependencies": {

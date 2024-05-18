@@ -6,7 +6,7 @@
   "scripts": {
     "build": "mkdir -p dist && bun build src/index.ts > dist/index.js",
     "start": "bun run dist/index.js",
-    "lint": "bun tsc -p . --noEmit && bun eslint --fix .",
+    "lint": "tsc -p . --noEmit && eslint --fix .",
     "test": "vitest"
   },
   "dependencies": {

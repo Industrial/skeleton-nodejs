@@ -4,7 +4,7 @@
   "scripts": {
     "build": "vinxi build",
     "dev": "vinxi dev",
-    "lint": "bun tsc -p . --noEmit && bun eslint --fix .",
+    "lint": "tsc -p . --noEmit && eslint --fix .",
     "start": "vinxi start",
     "version": "vinxi version"
   },
