@@ -6,6 +6,7 @@
     "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "skipLibCheck": true,
+    "strict": true,
     "strictNullChecks": true,
     "target": "ESNext"
   }

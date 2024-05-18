@@ -1,7 +1,7 @@
-import * as E from 'fp-ts/Either'
+import { Either, pipe } from 'effect'
 import { describe, expect, it } from 'vitest'
 
-import { allIndexesOf, atIndexes, average, firstElement } from './array.ts'
+import { allIndexesOf, atIndexes, average } from './array.ts'
 
 describe('array', () => {
   describe('allIndexesOf', () => {
@@ -51,65 +51,89 @@ describe('array', () => {
     it('should return an empty array for an empty index list', () => {
       const indexes: Array<number> = []
       const array = [1, 2, 3]
-      const result = atIndexes(indexes, array)
+      const result = pipe(
+        array,
+        atIndexes(indexes),
+      )
 
-      expect(result).toEqual(E.right([]))
+      expect(result).toStrictEqual(Either.right([]))
     })
 
     it('should return items at specified indexes', () => {
       const indexes = [1, 0]
       const array = [10, 20, 30]
-      const result = atIndexes(indexes, array)
+      const result = pipe(
+        array,
+        atIndexes(indexes),
+      )
 
-      expect(result).toEqual(E.right([20, 10]))
+      expect(result).toStrictEqual(Either.right([20, 10]))
     })
 
     it('should return an error for out-of-bounds indexes', () => {
       const indexes = [1, 3]
       const array = [1, 2]
-      const result = atIndexes(indexes, array)
+      const result = pipe(
+        array,
+        atIndexes(indexes),
+      )
 
-      expect(result).toEqual(E.left(new Error('Index out of bounds: 3')))
+      expect(result).toStrictEqual(Either.left('Index out of bounds'))
     })
 
     it('should handle negative indexes as out-of-bounds', () => {
       const indexes = [-1, -2]
       const array = [1, 2, 3]
-      const result = atIndexes(indexes, array)
+      const result = pipe(
+        array,
+        atIndexes(indexes),
+      )
 
-      expect(result).toEqual(E.left(new Error('Index out of bounds: -1')))
+      expect(result).toStrictEqual(Either.left('Index out of bounds'))
     })
 
     it('should return items in the original order', () => {
       const indexes = [2, 0, 1]
       const array = [10, 20, 30]
-      const result = atIndexes(indexes, array)
+      const result = pipe(
+        array,
+        atIndexes(indexes),
+      )
 
-      expect(result).toEqual(E.right([30, 10, 20]))
+      expect(result).toStrictEqual(Either.right([30, 10, 20]))
     })
 
     it('should handle duplicate indexes', () => {
       const indexes = [1, 1, 0]
       const array = [10, 20, 30]
-      const result = atIndexes(indexes, array)
+      const result = pipe(
+        array,
+        atIndexes(indexes),
+      )
 
-      expect(result).toEqual(E.right([20, 20, 10]))
+      expect(result).toStrictEqual(Either.right([20, 20, 10]))
     })
 
     it('should handle an empty array', () => {
       const indexes = [1, 2]
       const array: Array<number> = []
-      const result = atIndexes(indexes, array)
+      const result = pipe(
+        array,
+        atIndexes(indexes),
+      )
 
-      expect(result).toEqual(E.left(new Error('Index out of bounds: 1')))
+      expect(result).toStrictEqual(Either.left('Index out of bounds'))
     })
 
     it('should return an error for negative indexes', () => {
       const indexes = [-1, -2]
       const array = [1, 2, 3]
-      const result = atIndexes(indexes, array)
+      const result = pipe(
+        array,
+        atIndexes(indexes),
+      )
 
-      expect(result).toEqual(E.left(new Error('Index out of bounds: -1')))
+      expect(result).toStrictEqual(Either.left('Index out of bounds'))
     })
   })
 
@@ -124,32 +148,6 @@ describe('array', () => {
 
         // Assert
         expect(actual).toEqual(expected)
-      })
-    })
-  })
-
-  describe('firstElement', () => {
-    describe('When called with an empty array', () => {
-      it('should return undefined', () => {
-        const array: Array<string> = []
-        const result = firstElement(array)
-        expect(result).toBe(undefined)
-      })
-    })
-
-    describe('When called with an array with one element', () => {
-      it('should return the first element', () => {
-        const array = ['a']
-        const result = firstElement(array)
-        expect(result).toBe('a')
-      })
-    })
-
-    describe('When called with an array with more than one element', () => {
-      it('should return the first element', () => {
-        const array = ['a', 'b', 'c']
-        const result = firstElement(array)
-        expect(result).toBe('a')
       })
     })
   })
