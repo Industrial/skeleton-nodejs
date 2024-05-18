@@ -6,5 +6,5 @@ export const sequenceArrayWritable = <T>(as: Array<E.Either<Error, T>>): E.Eithe
     as,
     E.sequenceArray,
     E.map((a) =>
-a as Array<T>),
+      a as Array<T>),
   )

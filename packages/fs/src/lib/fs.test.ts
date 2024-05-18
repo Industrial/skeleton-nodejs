@@ -1,63 +1,141 @@
+import { describe, expect, it, spyOn } from 'bun:test'
+import { Effect } from 'effect'
 import { Stats } from 'fs'
 import fs from 'fs/promises'
-import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { directoryExists, fileExists } from './fs.ts'
+import { directoryExists, fileExists, pathExists } from './fs.ts'
 
 describe('fs', () => {
-  describe('fileExists', () => {
-    afterEach(() => {
-      vi.restoreAllMocks()
+  describe('pathExists', () => {
+    describe('When an error is thrown', () => {
+      it('should throw an error', () => {
+        const spy = spyOn(fs, 'stat').mockImplementation(async () =>
+          Promise.reject(new Error('No')))
+        const filename = 'test.txt'
+        expect(async () =>
+          Effect.runPromise(pathExists(filename)))
+          .toThrowError(new Error('No'))
+        expect(spy).toHaveBeenCalledWith(filename)
+        expect(spy).toHaveBeenCalledTimes(1)
+        spy.mockRestore()
+      })
     })
-
-    it('should return true if the file exists', async () => {
-      const filename = 'test.txt'
-      const denoStateMock = vi.spyOn(fs, 'stat').mockImplementationOnce(async () =>
-        Promise.resolve({ isFile: () => true } as Stats))
-
-      const result = await fileExists(filename)
-      expect(result).toBe(true)
-      expect(denoStateMock).toBeCalledWith(filename)
-      expect(denoStateMock).toBeCalledTimes(1)
+    describe('When the path does not exist', () => {
+      it('should return an effect with an error', async () => {
+        const spy = spyOn(fs, 'stat').mockImplementation(async () =>
+          Promise.reject(new Error('No such file or directory')))
+        const filename = 'test.txt'
+        expect(async () =>
+          Effect.runPromise(pathExists(filename)))
+          .toThrowError(new Error('No such file or directory'))
+        expect(spy).toHaveBeenCalledWith(filename)
+        expect(spy).toHaveBeenCalledTimes(1)
+        spy.mockRestore()
+      })
     })
-
-    it('should return false if the file does not exist', async () => {
-      const filename = 'test.txt'
-      const denoStateMock = vi.spyOn(fs, 'stat').mockImplementationOnce(async () =>
-        Promise.reject(new Error('File not found')))
-
-      const result = await fileExists(filename)
-      expect(result).toBe(false)
-      expect(denoStateMock).toBeCalledWith(filename)
-      expect(denoStateMock).toBeCalledTimes(1)
+    describe('When the path exists', () => {
+      it('should return true', async () => {
+        // @ts-expect-error annoying
+        const spy = spyOn(fs, 'stat').mockImplementation(async () =>
+          ({
+            isFile: () =>
+              true,
+          } as unknown as Stats))
+        const filename = 'test.txt'
+        const result = await Effect.runPromise(pathExists(filename))
+        expect(result).toBeTruthy()
+        expect(spy).toHaveBeenCalledWith(filename)
+        expect(spy).toHaveBeenCalledTimes(1)
+        spy.mockRestore()
+      })
     })
   })
-
+  describe('fileExists', () => {
+    describe('When an error is thrown', () => {
+      it('should throw an error', () => {
+        const spy = spyOn(fs, 'stat').mockImplementation(async () =>
+          Promise.reject(new Error('No')))
+        const filename = 'test.txt'
+        expect(async () =>
+          Effect.runPromise(fileExists(filename)))
+          .toThrowError(new Error('No'))
+        expect(spy).toHaveBeenCalledWith(filename)
+        expect(spy).toHaveBeenCalledTimes(1)
+        spy.mockRestore()
+      })
+    })
+    describe('When the path does not exist', () => {
+      it('should return an effect with an error', async () => {
+        const spy = spyOn(fs, 'stat').mockImplementation(async () =>
+          Promise.reject(new Error('No such file or directory')))
+        const filename = 'test.txt'
+        expect(async () =>
+          Effect.runPromise(fileExists(filename)))
+          .toThrowError(new Error('No such file or directory'))
+        expect(spy).toHaveBeenCalledWith(filename)
+        expect(spy).toHaveBeenCalledTimes(1)
+        spy.mockRestore()
+      })
+    })
+    describe('When the path exists', () => {
+      it('should return true', async () => {
+        // @ts-expect-error annoying
+        const spy = spyOn(fs, 'stat').mockImplementation(async () =>
+          ({
+            isFile: () =>
+              true,
+          } as unknown as Stats))
+        const filename = 'test.txt'
+        const result = await Effect.runPromise(fileExists(filename))
+        expect(result).toEqual(true)
+        expect(spy).toHaveBeenCalledWith(filename)
+        expect(spy).toHaveBeenCalledTimes(1)
+        spy.mockRestore()
+      })
+    })
+  })
   describe('directoryExists', () => {
-    afterEach(() => {
-      vi.restoreAllMocks()
+    describe('When an error is thrown', () => {
+      it('should throw an error', () => {
+        const spy = spyOn(fs, 'stat').mockImplementation(async () =>
+          Promise.reject(new Error('No')))
+        const filename = 'test.txt'
+        expect(async () =>
+          Effect.runPromise(directoryExists(filename)))
+          .toThrowError(new Error('No'))
+        expect(spy).toHaveBeenCalledWith(filename)
+        expect(spy).toHaveBeenCalledTimes(1)
+        spy.mockRestore()
+      })
     })
-
-    it('should return true if the file exists', async () => {
-      const filename = 'test.txt'
-      const denoStateMock = vi.spyOn(fs, 'stat').mockImplementationOnce(async () =>
-        Promise.resolve({ isDirectory: () => true } as Stats))
-
-      const result = await directoryExists(filename)
-      expect(result).toBe(true)
-      expect(denoStateMock).toBeCalledWith(filename)
-      expect(denoStateMock).toBeCalledTimes(1)
+    describe('When the path does not exist', () => {
+      it('should return an effect with an error', async () => {
+        const spy = spyOn(fs, 'stat').mockImplementation(async () =>
+          Promise.reject(new Error('No such file or directory')))
+        const filename = 'test.txt'
+        expect(async () =>
+          Effect.runPromise(directoryExists(filename)))
+          .toThrowError(new Error('No such file or directory'))
+        expect(spy).toHaveBeenCalledWith(filename)
+        expect(spy).toHaveBeenCalledTimes(1)
+        spy.mockRestore()
+      })
     })
-
-    it('should return false if the file does not exist', async () => {
-      const filename = 'test.txt'
-      const denoStateMock = vi.spyOn(fs, 'stat').mockImplementationOnce(async () =>
-        Promise.reject(new Error('File not found')))
-
-      const result = await directoryExists(filename)
-      expect(result).toBe(false)
-      expect(denoStateMock).toBeCalledWith(filename)
-      expect(denoStateMock).toBeCalledTimes(1)
+    describe('When the path exists', () => {
+      it('should return true', async () => {
+        // @ts-expect-error annoying
+        const spy = spyOn(fs, 'stat').mockImplementation(async () =>
+          ({
+            isDirectory: () =>
+              true,
+          } as unknown as Stats))
+        const filename = 'test.txt'
+        const result = await Effect.runPromise(directoryExists(filename))
+        expect(result).toEqual(true)
+        expect(spy).toHaveBeenCalledWith(filename)
+        expect(spy).toHaveBeenCalledTimes(1)
+        spy.mockRestore()
+      })
     })
   })
 })
