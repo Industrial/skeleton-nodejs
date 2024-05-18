@@ -3,7 +3,7 @@ import { type Property } from '@frp-ts/core'
 import { spawn, SpawnOptionsWithoutStdio } from 'child_process'
 import { either as E } from 'fp-ts'
 
-export const createChildProcess = <T>(command: string, args?: Array<string>, options?: SpawnOptionsWithoutStdio): {
+export const createChildProcess = (command: string, args?: Array<string>, options?: SpawnOptionsWithoutStdio): {
   stdout: Property<E.Either<Error, Uint8Array>>
   stderr: Property<E.Either<Error, Uint8Array>>
 } => {

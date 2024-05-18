@@ -1,6 +1,6 @@
 import { safeDivide } from '@code9/number'
+import { Option as O } from 'effect'
 import { pipe } from 'fp-ts/function'
-import * as O from 'fp-ts/Option'
 
 const conversions: Record<string, number> = {
   ms: 1,
@@ -14,18 +14,15 @@ export const convertTime = (
   value: number,
   sourceUnit: 'd' | 'h' | 'm' | 'ms' | 's',
   targetUnit: 'd' | 'h' | 'm' | 'ms' | 's',
-): O.Option<number> => {
-  if (sourceUnit === targetUnit) {
-    return O.some(value)
-  }
-
-  return pipe(
-    O.fromNullable(conversions[sourceUnit]),
-    O.chain((source) =>
-      pipe(
-        O.fromNullable(conversions[targetUnit]),
-        O.chain((target) =>
-          safeDivide(value * source, target)),
-      )),
-  )
-}
+): O.Option<number> =>
+  sourceUnit === targetUnit
+    ? O.some(value)
+    : pipe(
+      O.fromNullable(conversions[sourceUnit]),
+      O.flatMap((source) =>
+        pipe(
+          O.fromNullable(conversions[targetUnit]),
+          O.flatMap((target) =>
+            safeDivide(value * source, target)),
+        )),
+    )

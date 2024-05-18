@@ -1,8 +1,7 @@
-import * as E from 'fp-ts/Either'
-import * as O from 'fp-ts/Option'
+import { Either, Option } from 'effect'
 import { describe, expect, it, test } from 'vitest'
 
-import { factorial, factorialByIteration, getPrecision, getRandomNumber, safeDivide } from './number.ts'
+import { decimalPlaces, factorial, factorialByIteration, getPrecision, getRandomNumber, isInteger, isScientificNotation, safeDivide, scientificDecimalPlaces } from './number.ts'
 
 describe('number', () => {
   describe('factorial', () => {
@@ -97,108 +96,162 @@ describe('number', () => {
   describe('safeDivide', () => {
     test('should divide two numbers when the denominator is not zero', () => {
       const result = safeDivide(6, 2)
-      expect(O.isSome(result)).toBe(true)
-      expect(O.getOrElse(() =>
+      expect(Option.isSome(result)).toBe(true)
+      expect(Option.getOrElse(() =>
         0)(result)).toBe(3)
     })
 
     test('should return none when the denominator is zero', () => {
       const result = safeDivide(6, 0)
-      expect(O.isNone(result)).toBe(true)
+      expect(Option.isNone(result)).toBe(true)
     })
 
     test('should return none when both numbers are zero', () => {
       const result = safeDivide(0, 0)
-      expect(O.isNone(result)).toBe(true)
+      expect(Option.isNone(result)).toBe(true)
     })
 
     test('should handle negative numbers properly', () => {
       const result = safeDivide(-6, 2)
-      expect(O.isSome(result)).toBe(true)
-      expect(O.getOrElse(() =>
+      expect(Option.isSome(result)).toBe(true)
+      expect(Option.getOrElse(() =>
         0)(result)).toBe(-3)
     })
   })
 
-  describe('getNumberPrecision', () => {
-    test('Integer', () => {
-    // Arrange
-
-      // Act
-      const actual = getPrecision(1)
-
-      // Assert
-      expect(E.isLeft(actual)).toEqual(true)
-    })
-
-    test('Decimal Notation', () => {
-    // Arrange
-      const expected = 2
-
-      // Act
-      const actual = getPrecision(0.01)
-
-      // Assert
-      expect(actual).toEqual(E.right(expected))
-    })
-
-    describe('Scientific Notation', () => {
-      test('Positive', () => {
-      // Arrange
-
-        // Act
-        const actual = getPrecision(1e2)
-
-        // Assert
-        expect(E.isLeft(actual)).toEqual(true)
-      })
-
-      describe('When above 6', () => {
-        test('Should return the exponent', () => {
-        // Arrange
-          const expected = 7
-
-          // Act
-          const actual = getPrecision(1e-7)
-
-          // Assert
-          expect(actual).toEqual(E.right(expected))
+  describe('getRandomNumber', () => {
+    describe('When the minimum number is below 0', () => {
+      describe('When the maximum number is below 0', () => {
+        it('should return the correct result', () => {
+          const minimum = -10
+          const maximum = -1
+          const actual = getRandomNumber(minimum, maximum)
+          expect(actual).toBeGreaterThanOrEqual(minimum)
+          expect(actual).toBeLessThanOrEqual(maximum)
         })
       })
-
-      describe('When above below 7 (it is converted to Decimal notation)', () => {
-        test('Should return the exponent', () => {
-        // Arrange
-          const expected = 6
-
-          // Act
-          const actual = getPrecision(1e-6)
-
-          // Assert
-          expect(actual).toEqual(E.right(expected))
+      describe('When the maximum number is above 0', () => {
+        it('should return the correct result', () => {
+          const minimum = -10
+          const maximum = 10
+          const actual = getRandomNumber(minimum, maximum)
+          expect(actual).toBeGreaterThanOrEqual(minimum)
+          expect(actual).toBeLessThanOrEqual(maximum)
+        })
+      })
+    })
+    describe('When the minimum number is above 0', () => {
+      describe('When the maximum number is below 0', () => {
+        it('should still work, regardless of which is higher', () => {
+          const minimum = 1
+          const maximum = -10
+          const actual = getRandomNumber(minimum, maximum)
+          expect(actual).toBeGreaterThanOrEqual(maximum)
+          expect(actual).toBeLessThanOrEqual(minimum)
+        })
+      })
+      describe('When the maximum number is above 0', () => {
+        it('should return the correct result', () => {
+          const minimum = 1
+          const maximum = 10
+          const actual = getRandomNumber(minimum, maximum)
+          expect(actual).toBeGreaterThanOrEqual(minimum)
+          expect(actual).toBeLessThanOrEqual(maximum)
         })
       })
     })
   })
 
-  describe('getRandomNumber function', () => {
-    test('should return a number within the specified range', () => {
-      const result = getRandomNumber(5, 10)
-      expect(result).to.be.a('number')
-      expect(result).to.be.at.least(5)
-      expect(result).to.be.at.most(10)
+  describe('decimalPlaces', () => {
+    describe('When the number has no decimal places', () => {
+      it('should return 0', () => {
+        const actual = decimalPlaces(123)
+        expect(actual).toEqual(0)
+      })
     })
-
-    test('should return the minimum value if minimum and maximum are the same', () => {
-      const result = getRandomNumber(5, 5)
-      expect(result).to.equal(5)
+    describe('When the number has decimal places', () => {
+      it('should return the amount of decimal places', () => {
+        const actual = decimalPlaces(1.23)
+        expect(actual).toEqual(2)
+      })
     })
+  })
 
-    test('should handle negative range correctly', () => {
-      const result = getRandomNumber(-10, -5)
-      expect(result).to.be.a('number')
-      expect(result).to.be.at.least(-10)
-      expect(result).to.be.at.most(-5)
+  describe('scientificDecimalPlaces', () => {
+    describe('When called with a scientific notation formatted number', () => {
+      describe('When the number is negative', () => {
+        it('should return the amount of decimal places', () => {
+          const actual = scientificDecimalPlaces(-1e100)
+          expect(actual).toEqual(100)
+        })
+      })
+      describe('When the number is positive', () => {
+        it('should return the amount of decimal places', () => {
+          const actual = scientificDecimalPlaces(1e100)
+          expect(actual).toEqual(100)
+        })
+      })
+    })
+  })
+
+  describe('isScientificNotation', () => {
+    describe('When called with a number', () => {
+      it('should return false', () => {
+        const actual = isScientificNotation(123)
+        expect(actual).toEqual(false)
+      })
+    })
+    describe('When called with a scientific notation formatter number', () => {
+      it('should return true', () => {
+        const actual = isScientificNotation(1e123)
+        expect(actual).toEqual(true)
+      })
+    })
+  })
+
+  describe('isInteger', () => {
+    describe('When called with a number that is not an integer', () => {
+      it('should return false', () => {
+        const actual = isInteger(1.23)
+        expect(actual).toEqual(false)
+      })
+    })
+    describe('When called with a number that is an integer', () => {
+      it('should return true', () => {
+        const actual = isInteger(123)
+        expect(actual).toEqual(true)
+      })
+    })
+  })
+
+  describe('getPrecision', () => {
+    describe('When called with a number that is an integer', () => {
+      it('should return an Either.Left', () => {
+        const actual = getPrecision(1)
+        expect(actual).toEqual(Either.left('Not an integer'))
+      })
+    })
+    describe('When called with a number that is not an integer', () => {
+      describe('When the number is in decimal notation', () => {
+        it('should return an Either.right with the correct value', () => {
+          const actual = getPrecision(1.23)
+          expect(actual).toEqual(Either.right(2))
+        })
+      })
+      describe('When the number is in scientific notation', () => {
+        describe('When the amount is above 6', () => {
+          it('should return an Either.right with the correct value', () => {
+            const actual = getPrecision(1e-7)
+            expect(actual).toEqual(Either.right(7))
+          })
+        })
+        describe('When the amount is below 7 (it is converted to decimal notation)', () => {
+          it('should return an Either.right with the correct value', () => {
+            const actual = getPrecision(1e-6)
+            expect(actual).toEqual(Either.right(6))
+          })
+        })
+      })
     })
   })
 })
