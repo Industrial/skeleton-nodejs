@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
+import { createChildProcess } from '@code9/child_process'
 import * as A from 'fp-ts/Array'
 import * as E from 'fp-ts/Either'
 import * as FN from 'fp-ts/function'
 import * as S from 'fp-ts/string'
 import * as TE from 'fp-ts/TaskEither'
 import { readdir, stat } from 'fs/promises'
-import { spawnChildProcessStream } from 'packages/child_process/src/index.ts'
 
 const packageJSON = await import('../package.json')
 // @ts-expect-error workspaces is optional
@@ -60,24 +60,38 @@ const cmd = process.argv.slice(2).join(' ')
 // const result = await getWorkspaces(packageJSONWorkspaces)()
 // console.log('result', result)
 
-const main = async () =>
-  FN.pipe(
-    packageJSONWorkspaces,
-    getWorkspaces,
-    TE.chain(A.traverse(TE.ApplicativePar)((entry) =>
-      spawnChildProcessStream(cmd, [entry], {
-        cwd: entry,
-        shell: true,
-      }))),
-  )()
+// const main = async () =>
+//   FN.pipe(
+//     packageJSONWorkspaces,
+//     getWorkspaces,
+//     TE.chain(A.traverse(TE.ApplicativePar)((entry) =>
+//       createChildProcess(cmd, [entry], {
+//         cwd: entry,
+//         shell: true,
+//       }))),
+//   )()
 
-const x = await spawnChildProcessStream('bun', ['run', 'test'], {
+const x = createChildProcess('bun', ['run', 'lint'], {
   cwd: 'applications/solid-app',
   shell: true,
-})()
+})
 
-try {
-  await main()
-} catch (error: unknown) {
-  console.error(error)
-}
+const decoder = new TextDecoder()
+
+x.stderr.subscribe({
+  next: (value: ) => {
+    console.log('stderr', value)
+  },
+})
+
+x.stdout.subscribe({
+  next: (value) => {
+    console.log('stdout', value)
+  },
+})
+
+// try {
+//   await main()
+// } catch (error: unknown) {
+//   console.error(error)
+// }

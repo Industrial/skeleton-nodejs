@@ -50,7 +50,7 @@ export const streamToString = (stream: Readable): TE.TaskEither<Error, string> =
     E.toError,
   )
 
-export const createReadableStreamProperty = (stream: ReadableStream): Property<E.Either<Error, Uint8Array>> => {
+export const createReadableStreamProperty = <T>(stream: ReadableStream): Property<E.Either<Error, Uint8Array>> => {
   const reader = stream.getReader()
   let currentValue: E.Either<Error, Uint8Array> = E.right(new Uint8Array())
   let subscribed = false
