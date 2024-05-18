@@ -1,5 +1,5 @@
+import { describe, expect, test } from 'bun:test'
 import { Option } from 'effect'
-import { describe, expect, test } from 'vitest'
 
 import { convertTime } from './date.ts'
 

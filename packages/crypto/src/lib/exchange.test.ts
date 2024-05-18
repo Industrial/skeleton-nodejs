@@ -1,8 +1,8 @@
 import { afterEach } from 'node:test'
 
+import { describe, expect, it, vi } from 'bun:test'
 import { Exchange } from 'ccxt'
 import * as E from 'fp-ts/Either'
-import { describe, expect, it, vi } from 'vitest'
 
 import { loadMarketsE } from '../lib/exchange.ts'
 import { createMarket } from './test/market.ts'
@@ -18,7 +18,8 @@ describe('Exchange', () => {
     describe('When called with an exchange and it produces an error', () => {
       it('should return the error', async () => {
         const mockError = new Error('Failed to load markets')
-        const mockLoadMarkets = vi.spyOn(exchange, 'loadMarkets').mockImplementationOnce(async () => Promise.reject(mockError))
+        const mockLoadMarkets = vi.spyOn(exchange, 'loadMarkets').mockImplementationOnce(async () =>
+          Promise.reject(mockError))
         const actual = await loadMarketsE(exchange)()
         if (E.isRight(actual)) {
           throw new Error('Expected a failure, but got a success')
@@ -35,7 +36,8 @@ describe('Exchange', () => {
           BTC: createMarket('BTC', 'USDT', true, 'spot'),
           ETH: createMarket('ETH', 'USDT', true, 'spot'),
         }
-        const mockLoadMarkets = vi.spyOn(exchange, 'loadMarkets').mockImplementationOnce(async () => Promise.resolve(expectedMarkets))
+        const mockLoadMarkets = vi.spyOn(exchange, 'loadMarkets').mockImplementationOnce(async () =>
+          Promise.resolve(expectedMarkets))
         const actual = await loadMarketsE(exchange)()
         if (E.isLeft(actual)) {
           throw actual.left

@@ -1,5 +1,5 @@
+import { describe, expect, it } from 'bun:test'
 import { isLeft, isRight } from 'fp-ts/Either'
-import { describe, expect, it } from 'vitest'
 
 import { createPair, getBase, getQuote, isCorrectBaseE, isCorrectPairFormatE, isCorrectQuoteE } from '../lib/pair.ts'
 

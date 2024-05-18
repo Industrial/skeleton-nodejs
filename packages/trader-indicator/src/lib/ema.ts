@@ -1,3 +1,5 @@
+import { isUndefined } from '@code9/undefined'
+
 export type Alpha = (length: number) => number
 
 export const emaAlpha = (length: number): number =>
@@ -11,7 +13,7 @@ export const ema = (length: number, values: Array<number>, alpha: Alpha = emaAlp
 
   const [firstValue] = values
 
-  if (firstValue === undefined) {
+  if (isUndefined(firstValue)) {
     return []
   }
 
@@ -23,7 +25,7 @@ export const ema = (length: number, values: Array<number>, alpha: Alpha = emaAlp
 
       const lastPreviousValue = previousValue[previousValue.length - 1]
 
-      if (lastPreviousValue === undefined) {
+      if (isUndefined(lastPreviousValue)) {
         return previousValue
       }
 

@@ -1,5 +1,5 @@
+import { describe, expect, it } from 'bun:test'
 import { Either, pipe } from 'effect'
-import { describe, expect, it } from 'vitest'
 
 import { allIndexesOf, atIndexes, average } from './array.ts'
 

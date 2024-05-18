@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'bun:test'
 
 import { Pair } from '../lib/pair.ts'
 import { sortedPairs, Volume } from '../lib/pairList.ts'

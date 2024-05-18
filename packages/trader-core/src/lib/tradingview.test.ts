@@ -1,6 +1,6 @@
+import { describe, expect, it } from 'bun:test'
 import * as E from 'fp-ts/Either'
 import * as FN from 'fp-ts/function'
-import { describe, expect, it } from 'vitest'
 
 import { createGetBatchBarsTE, fetchBarsInBatches, getSymbolInfo, getTradingView, TV, TVSymbolInfo } from './tradingview.ts'
 

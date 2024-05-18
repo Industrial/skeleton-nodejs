@@ -1,5 +1,5 @@
+import { describe, expect, it, test } from 'bun:test'
 import { Either, Option } from 'effect'
-import { describe, expect, it, test } from 'vitest'
 
 import { decimalPlaces, factorial, factorialByIteration, getPrecision, getRandomNumber, isInteger, isScientificNotation, safeDivide, scientificDecimalPlaces } from './number.ts'
 

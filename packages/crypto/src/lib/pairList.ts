@@ -1,5 +1,5 @@
-import { sequenceArrayWritable } from '@code9/either'
 import { Exchange } from 'ccxt'
+import { Either } from 'effect'
 import * as A from 'fp-ts/Array'
 import * as E from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
@@ -62,7 +62,7 @@ export const getPairs = (exchange: Exchange): TE.TaskEither<Error, Array<Pair>> 
         filterActiveMarkets,
         filterSpotMarkets,
         mapToPairs,
-        sequenceArrayWritable,
+        Either.all,
         E.map(filterBase(filterByUnwantedBase)),
         TE.fromEither,
       )),

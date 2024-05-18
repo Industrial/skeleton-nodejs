@@ -1,5 +1,5 @@
-import * as O from 'fp-ts/Option'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'bun:test'
+import { Option } from 'effect'
 
 import {
   add,
@@ -16,7 +16,7 @@ describe('timeframe', () => {
   describe('toMs', () => {
     describe('When the number is a negative number', () => {
       it('should return a negative number', () => {
-        const expected = O.some(-1000)
+        const expected = Option.some(-1000)
         const result = toMs('-1s')
         expect(result).toStrictEqual(expected)
       })
@@ -24,7 +24,7 @@ describe('timeframe', () => {
 
     describe('When the timeframe is valid', () => {
       it('should return the correct value', () => {
-        const expected = O.some(1000)
+        const expected = Option.some(1000)
         const result = toMs('1s')
         expect(result).toStrictEqual(expected)
       })
@@ -34,7 +34,7 @@ describe('timeframe', () => {
   describe('fromMs', () => {
     describe('When the number is negative', () => {
       it('should return a negative timeframe', () => {
-        const expected = O.some('-1s')
+        const expected = Option.some('-1s')
         const result = fromMs(-1000, 's')
         expect(result).toStrictEqual(expected)
       })
@@ -42,7 +42,7 @@ describe('timeframe', () => {
 
     describe('When the timeframe is valid', () => {
       it('should return the correct value', () => {
-        const expected = O.some('1s')
+        const expected = Option.some('1s')
         const result = fromMs(1000, 's')
         expect(result).toStrictEqual(expected)
       })
@@ -54,7 +54,7 @@ describe('timeframe', () => {
       const date = new Date()
       const expected = new Date(date.valueOf() + 1000)
       const result = add('1s', date)
-      expect(result).toStrictEqual(O.some(expected))
+      expect(result).toStrictEqual(Option.some(expected))
     })
   })
 
@@ -63,7 +63,7 @@ describe('timeframe', () => {
       const date = new Date()
       const expected = new Date(date.valueOf() - 1000)
       const result = subtract('1s', date)
-      expect(result).toStrictEqual(O.some(expected))
+      expect(result).toStrictEqual(Option.some(expected))
     })
   })
 
@@ -73,7 +73,7 @@ describe('timeframe', () => {
         const date = new Date()
         const expected = new Date(date.valueOf() - 1000)
         const result = subtractSeconds(date)
-        expect(result).toStrictEqual(O.some(expected))
+        expect(result).toStrictEqual(Option.some(expected))
       })
     })
     describe('When passed an amount', () => {
@@ -81,7 +81,7 @@ describe('timeframe', () => {
         const date = new Date()
         const expected = new Date(date.valueOf() - 5000)
         const result = subtractSeconds(date, 5)
-        expect(result).toStrictEqual(O.some(expected))
+        expect(result).toStrictEqual(Option.some(expected))
       })
     })
   })
@@ -95,7 +95,7 @@ describe('timeframe', () => {
           const date = new Date('2000-01-01T00:00:01.000Z')
           const expected = new Date('2000-01-01T00:00:00.000Z')
           const result = start(timeframe, date)
-          expect(result).toStrictEqual(O.some(expected))
+          expect(result).toStrictEqual(Option.some(expected))
         })
       })
 
@@ -104,7 +104,7 @@ describe('timeframe', () => {
           const date = new Date('2000-01-01T00:59:59.000Z')
           const expected = new Date('2000-01-01T00:00:00.000Z')
           const result = start(timeframe, date)
-          expect(result).toStrictEqual(O.some(expected))
+          expect(result).toStrictEqual(Option.some(expected))
         })
       })
     })
@@ -117,7 +117,7 @@ describe('timeframe', () => {
       describe('When the date is 1 second after the start of the timeframe', () => {
         it('should return the milliseconds until the next timeframe', () => {
           const date = new Date('2000-01-01T00:00:01.000Z')
-          const expected = O.some(3599000)
+          const expected = Option.some(3599000)
           const result = millisecondsUntilNextTimeframe(timeframe, date)
           expect(result).toStrictEqual(expected)
         })
@@ -126,7 +126,7 @@ describe('timeframe', () => {
       describe('When the date is 1 second before the start of the next timeframe', () => {
         it('should return the milliseconds until the next timeframe', () => {
           const date = new Date('2000-01-01T00:59:59.000Z')
-          const expected = O.some(1000)
+          const expected = Option.some(1000)
           const result = millisecondsUntilNextTimeframe(timeframe, date)
           expect(result).toStrictEqual(expected)
         })
@@ -146,7 +146,7 @@ describe('timeframe', () => {
             new Date('2000-01-01T00:00:00.000Z'),
           ]
           const result = between(timeframe, startDate, endDate)
-          expect(result).toStrictEqual(O.some(expected))
+          expect(result).toStrictEqual(Option.some(expected))
         })
       })
 
@@ -158,7 +158,7 @@ describe('timeframe', () => {
             new Date('2000-01-01T00:00:00.000Z'),
           ]
           const result = between(timeframe, startDate, endDate)
-          expect(result).toStrictEqual(O.some(expected))
+          expect(result).toStrictEqual(Option.some(expected))
         })
       })
 
@@ -171,7 +171,7 @@ describe('timeframe', () => {
             new Date('2000-01-01T01:00:00.000Z'),
           ]
           const result = between(timeframe, startDate, endDate)
-          expect(result).toStrictEqual(O.some(expected))
+          expect(result).toStrictEqual(Option.some(expected))
         })
       })
     })

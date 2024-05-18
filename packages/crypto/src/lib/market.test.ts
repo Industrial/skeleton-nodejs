@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'bun:test'
 
 import { filterActiveMarkets, filterSpotMarkets, mapToPairs } from '../lib/market.ts'
 import { createPair, Pair } from '../lib/pair.ts'

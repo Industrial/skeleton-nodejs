@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from 'bun:test'
 
 import { simulatedAnnealing } from './simulated-annealing.ts'
 
@@ -8,9 +8,12 @@ describe('Simulated Annealing', () => {
       initialState: Math.random() * 16,
       minimumTemperature: 0.001,
       maximumTemperature: 15,
-      state: (previousState) => previousState + (Math.random() - 0.5),
-      energy: (state) => Math.abs(state * state - 16),
-      temperature: (previousTemperature) => previousTemperature - 0.001,
+      state: (previousState) =>
+        previousState + (Math.random() - 0.5),
+      energy: (state) =>
+        Math.abs(state * state - 16),
+      temperature: (previousTemperature) =>
+        previousTemperature - 0.001,
     })
 
     // Result is -4 or 4 so abs it.
@@ -28,8 +31,10 @@ describe('Simulated Annealing', () => {
         iterations += 1
         return previousState + (Math.random() - 0.5)
       },
-      energy: (state) => Math.abs(state * state - 16),
-      temperature: (previousTemperature) => previousTemperature - 0.001,
+      energy: (state) =>
+        Math.abs(state * state - 16),
+      temperature: (previousTemperature) =>
+        previousTemperature - 0.001,
       maximumIterations: 10,
     })
 
