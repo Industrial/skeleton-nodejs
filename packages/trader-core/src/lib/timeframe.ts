@@ -139,22 +139,18 @@ export const between = <A extends Date, E, R>(timeframe: Timeframe) =>
             E.succeed(startDate),
             start(timeframe),
             E.map((startDateTimeframeStart) =>
-              startDate.valueOf() === startDateTimeframeStart.valueOf()
-                ? pipe(
-                  E.succeed(startDate),
-                  pipe(
-                    E.succeed(endDate),
-                    generateDates(timeframe),
+              pipe(
+                startDate.valueOf() === startDateTimeframeStart.valueOf()
+                  ? E.succeed(startDate)
+                  : pipe(
+                    E.succeed(startDate),
+                    start(timeframe),
+                    add(timeframe),
                   ),
-                )
-                : pipe(
-                  E.succeed(startDate),
-                  start(timeframe),
-                  add(timeframe),
-                  pipe(
-                    E.succeed(endDate),
-                    generateDates<A, Cause.NoSuchElementException | E, R>(timeframe),
-                  ),
-                )),
+                pipe(
+                  E.succeed(endDate),
+                  generateDates<A, Cause.NoSuchElementException | E, R>(timeframe),
+                ),
+              )),
           )),
       )
