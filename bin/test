@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-bun --filter '*' test
+bun test --coverage 2>&1 | tee test.log

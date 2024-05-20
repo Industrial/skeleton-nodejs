@@ -5,6 +5,8 @@ export const TIMEFRAME = '1m'
 
 export type Timeframe = '1d' | '1h' | '1m' | '2h' | '3m' | '4h' | '5m' | '6h' | '8h' | '12h' | '15m' | '30m'
 
+export const timeframes: Array<Timeframe> = ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d']
+
 export const toMs = (timeframe: Timeframe): number => {
   switch (timeframe) {
   case '1m':
@@ -101,11 +103,23 @@ export const millisecondsUntilNextTimeframe = (timeframe: Timeframe, date: Date)
 
 export const between = (timeframe: Timeframe, startDate: Date, endDate: Date): Array<Date> => {
   const timeframeInMilliseconds = toMs(timeframe)
-  if (endDate.valueOf() - startDate.valueOf() < timeframeInMilliseconds) {
+  if (
+    endDate.valueOf() < startDate.valueOf() ||
+    endDate.valueOf() === startDate.valueOf() ||
+    endDate.valueOf() - startDate.valueOf() < timeframeInMilliseconds
+  ) {
     return []
   }
   const dates: Array<Date> = []
-  let currentDate = start(timeframe, startDate)
+
+  let currentDate: Date
+  if (startDate.valueOf() === start(timeframe, startDate).valueOf()) {
+    console.log(0)
+    currentDate = startDate
+  } else {
+    console.log(1)
+    currentDate = add(timeframe, start(timeframe, startDate), 1)
+  }
   while (currentDate < endDate) {
     dates.push(currentDate)
     currentDate = add(timeframe, currentDate)

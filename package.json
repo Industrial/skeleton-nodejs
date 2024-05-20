@@ -14,6 +14,7 @@
   ],
   "scripts": {
     "prepare": "husky",
+    "test": "bun test --coverage > test.log",
     "test:coverage": "bun --filter '*' test --coverage",
     "test:staged": "vitest related --run",
     "test:staged:coverage": "vitest related --coverage --run",

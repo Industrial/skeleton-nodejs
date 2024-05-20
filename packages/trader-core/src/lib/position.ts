@@ -1,4 +1,4 @@
-import { Maybe } from './maybe.ts'
+import { Maybe } from '@code9/undefined'
 
 export enum Position {
   Buy = 'Buy',
