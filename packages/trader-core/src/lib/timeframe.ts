@@ -119,6 +119,24 @@ const generateDates = <A extends Date, E, R>(timeframe: Timeframe, dates: Array<
 
 export class DateRangeError extends Data.Error<{ message: string }> {}
 
+const normalizeStartDate = <A extends Date, E, R>(timeframe: Timeframe) =>
+  (startDateE: E.Effect<A, E, R>): E.Effect<A, Cause.NoSuchElementException | E, R> =>
+    pipe(
+      E.Do,
+      E.bind('startDate', () =>
+        startDateE),
+      E.bind('startDateTimeframeStart', () =>
+        start(timeframe)(startDateE)),
+      E.flatMap(({ startDate, startDateTimeframeStart }) =>
+        pipe(startDate.valueOf() === startDateTimeframeStart.valueOf()
+          ? E.succeed(startDate)
+          : pipe(
+            E.succeed(startDate),
+            start(timeframe),
+            add(timeframe),
+          )) as E.Effect<A, Cause.NoSuchElementException | E, R>),
+    ) as E.Effect<A, Cause.NoSuchElementException | E, R>
+
 export const between = <A extends Date, E, R>(timeframe: Timeframe) =>
   (startDateE: E.Effect<A, E, R>) =>
     (endDateE: E.Effect<A, E, R>) =>
@@ -128,29 +146,25 @@ export const between = <A extends Date, E, R>(timeframe: Timeframe) =>
           startDateE),
         E.bind('endDate', () =>
           endDateE),
-        E.flatMap(({ startDate, endDate }) =>
-          endDate.valueOf() < startDate.valueOf()
-            ? E.fail(new DateRangeError({ message: 'End date is before start date' }))
-            : endDate.valueOf() === startDate.valueOf()
-              ? E.fail(new DateRangeError({ message: 'End date is the same as start date' }))
-              : E.succeed({ startDate, endDate })),
-        E.flatMap(({ startDate, endDate }) =>
+        E.filterOrFail(
+          ({ startDate, endDate }) =>
+            endDate.valueOf() < startDate.valueOf(),
+          () =>
+            new DateRangeError({ message: 'End date is before start date.' }),
+        ),
+        E.filterOrFail(
+          ({ startDate, endDate }) =>
+            endDate.valueOf() === startDate.valueOf(),
+          () =>
+            new DateRangeError({ message: 'End date is equal to start date.' }),
+        ),
+        E.flatMap(({ endDate }) =>
           pipe(
-            E.succeed(startDate),
-            start(timeframe),
-            E.map((startDateTimeframeStart) =>
-              pipe(
-                startDate.valueOf() === startDateTimeframeStart.valueOf()
-                  ? E.succeed(startDate)
-                  : pipe(
-                    E.succeed(startDate),
-                    start(timeframe),
-                    add(timeframe),
-                  ),
-                pipe(
-                  E.succeed(endDate),
-                  generateDates<A, Cause.NoSuchElementException | E, R>(timeframe),
-                ),
-              )),
+            startDateE,
+            normalizeStartDate(timeframe),
+            pipe(
+              E.succeed(endDate),
+              generateDates<A, Cause.NoSuchElementException | E, R>(timeframe),
+            ),
           )),
       )
