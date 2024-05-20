@@ -46,43 +46,43 @@ export const fromMs = (milliseconds: number) =>
   E.fromNullable(msToTimeframeMap[milliseconds])
 
 export const add = <A extends Date, E, R>(timeframe: Timeframe, amount = 1) =>
-  (dateE: E.Effect<A, E, R>) =>
+  (dateE: E.Effect<A, E, R>): E.Effect<A, Cause.NoSuchElementException | E, R> =>
     pipe(
       toMs(timeframe),
       E.flatMap((ms) =>
         pipe(
           dateE,
           E.map((date) =>
-            new Date(date.valueOf() + ms * amount)),
+            new Date(date.valueOf() + ms * amount) as A),
         )),
     )
 
 export const subtract = <A extends Date, E, R>(timeframe: Timeframe, amount = 1) =>
-  (dateE: E.Effect<A, E, R>) =>
+  (dateE: E.Effect<A, E, R>): E.Effect<A, Cause.NoSuchElementException | E, R> =>
     pipe(
       toMs(timeframe),
       E.flatMap((ms) =>
         pipe(
           dateE,
           E.map((date) =>
-            new Date(date.valueOf() - ms * amount)),
+            new Date(date.valueOf() - ms * amount) as A),
         )),
     )
 
 export const start = <A extends Date, E, R>(timeframe: Timeframe) =>
-  (dateE: E.Effect<A, E, R>) =>
+  (dateE: E.Effect<A, E, R>): E.Effect<A, Cause.NoSuchElementException | E, R> =>
     pipe(
       toMs(timeframe),
       E.flatMap((ms) =>
         pipe(
           dateE,
           E.map((date) =>
-            new Date(date.valueOf() - (date.valueOf() % ms))),
+            new Date(date.valueOf() - (date.valueOf() % ms)) as A),
         )),
     )
 
 export const millisecondsUntilNextTimeframe = <A extends Date, E, R>(timeframe: Timeframe) =>
-  (dateE: E.Effect<A, E, R>) =>
+  (dateE: E.Effect<A, E, R>): E.Effect<number, Cause.NoSuchElementException | E, R> =>
     pipe(
       toMs(timeframe),
       E.flatMap((ms) =>
@@ -101,41 +101,47 @@ const fromPredicateE = <A>(f: () => boolean): E.Effect<undefined, PredicateFaile
       ? E.succeed(undefined)
       : E.fail(new PredicateFailedError({ message: 'Predicate failed' })))
 
-const generateDates = (timeframe: Timeframe, dates: Array<Date> = []) =>
-  (endDate: Date) =>
-    (startDate: Date): E.Effect<Array<Date>, Cause.NoSuchElementException | PredicateFailedError, unknown> =>
+const generateDates = <A extends Date, E, R>(timeframe: Timeframe, dates: Array<A> = []) =>
+  (endDate: A) =>
+    (startDateE: E.Effect<A, E, R>): E.Effect<Array<A>, Cause.NoSuchElementException | E, R> =>
       pipe(
-        fromPredicateE(() =>
-          startDate.valueOf() < endDate.valueOf()),
-        E.flatMap(() =>
-          E.succeed(dates)),
-        E.catchAll(() =>
-          pipe(
-            E.succeed(startDate),
-            add(timeframe),
-            E.flatMap(generateDates(timeframe, [...dates, startDate])(endDate)),
-          )),
+        startDateE,
+        E.flatMap((date) =>
+          date.valueOf() < endDate.valueOf()
+            ? E.succeed(dates)
+            : pipe(
+              startDateE,
+              add(timeframe),
+              generateDates<A, Cause.NoSuchElementException | E, R>(timeframe, [...dates, date])(endDate),
+            )),
       )
 
 export class DateRangeError extends Data.Error<{ message: string }> {}
 
 export const between = (timeframe: Timeframe, startDate: Date, endDate: Date) =>
-  E.gen(function *betweenGenerator() {
-    return endDate.valueOf() < startDate.valueOf()
-      ? yield* new DateRangeError({ message: 'End date is before start date' })
-      : endDate.valueOf() === startDate.valueOf()
-        ? yield* new DateRangeError({ message: 'End date is the same as start date' })
-        : pipe(
-          E.succeed(startDate),
-          start(timeframe),
-          E.map((startDateTimeframeStart) =>
-            startDate.valueOf() === startDateTimeframeStart.valueOf()
-              ? generateDates(timeframe)(endDate)(startDate)
-              : pipe(
-                E.succeed(startDate),
-                start(timeframe),
-                add(timeframe),
-                E.map(generateDates(timeframe)(endDate)),
-              )),
-        )
-  })
+  pipe(
+    E.succeed(startDate),
+    E.flatMap((sD) =>
+      endDate.valueOf() < sD.valueOf()
+        ? E.fail(new DateRangeError({ message: 'End date is before start date' }))
+        : endDate.valueOf() === sD.valueOf()
+          ? E.fail(new DateRangeError({ message: 'End date is the same as start date' }))
+          : E.succeed(sD)),
+    E.flatMap((sD) =>
+      pipe(
+        E.succeed(sD),
+        start(timeframe),
+        E.map((startDateTimeframeStart) =>
+          sD.valueOf() === startDateTimeframeStart.valueOf()
+            ? pipe(
+              E.succeed(sD),
+              generateDates(timeframe)(endDate),
+            )
+            : pipe(
+              E.succeed(sD),
+              start(timeframe),
+              add(timeframe),
+              generateDates(timeframe)(endDate),
+            )),
+      )),
+  )
