@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test'
+import { Effect } from 'effect'
 
-import { add, between, fromMs, millisecondsUntilNextTimeframe, start, subtract, subtractSeconds, Timeframe, timeframes, toMs } from './timeframe.ts'
+import { add, between, DateRangeError, fromMs, millisecondsUntilNextTimeframe, start, subtract, subtractSeconds, Timeframe, timeframes, toMs } from './timeframe.ts'
 
 describe('timeframe', () => {
   describe('toMs', () => {
@@ -676,32 +677,29 @@ describe('timeframe', () => {
         const startDate = new Date('2000-01-01 00:00:00')
         describe('When the end date is before the beginning of the timeframe', () => {
           const endDate = new Date(startDate.valueOf() - 1)
-          it('should return an empty array', () => {
-            const actual = between(timeframe, startDate, endDate)
-            const expected: Array<Date> = []
-            expect(actual).toEqual(expected)
+          it('should throw an error', () => {
+            expect(() =>
+              Effect.runSync(between(timeframe, startDate, endDate))).toThrowError(new DateRangeError({ message: 'End date is before start date' }))
           })
         })
         describe('When the end date is at the beginning of the timeframe', () => {
           const endDate = startDate
-          it('should return an empty array', () => {
-            const actual = between(timeframe, startDate, endDate)
-            const expected: Array<Date> = []
-            expect(actual).toEqual(expected)
+          it('should throw an error', () => {
+            expect(() =>
+              Effect.runSync(between(timeframe, startDate, endDate))).toThrowError(new DateRangeError({ message: 'End date is the same as start date' }))
           })
         })
         describe('When the end date is within the timeframe', () => {
           const endDate = new Date(add(timeframe, startDate, 1).valueOf() - 1)
-          it('should return an empty array', () => {
-            const actual = between(timeframe, startDate, endDate)
-            const expected: Array<Date> = []
-            expect(actual).toEqual(expected)
+          it('should throw an error', () => {
+            expect(() =>
+              Effect.runSync(between(timeframe, startDate, endDate))).toThrowError(new DateRangeError({ message: 'End date is less than one timeframe after start date' }))
           })
         })
         describe('When the end date is later then the timeframe', () => {
           const endDate = new Date(add(timeframe, startDate, 2).valueOf() - 1)
           it('should return an array with dates', () => {
-            const actual = between(timeframe, startDate, endDate)
+            const actual = Effect.runSync(between(timeframe, startDate, endDate))
             const expected: Array<Date> = [
               startDate,
               add(timeframe, startDate, 1),
@@ -714,24 +712,22 @@ describe('timeframe', () => {
         const startDate = new Date('2000-01-01 00:00:59')
         describe('When the end date is before the beginning of the timeframe', () => {
           const endDate = new Date(start(timeframe, startDate).valueOf() - 1)
-          it('should return an empty array', () => {
-            const actual = between(timeframe, startDate, endDate)
-            const expected: Array<Date> = []
-            expect(actual).toEqual(expected)
+          it('should throw an error', () => {
+            expect(() =>
+              Effect.runSync(between(timeframe, startDate, endDate))).toThrowError(new DateRangeError({ message: 'End date is before start date' }))
           })
         })
         describe('When the end date is before the start date', () => {
           const endDate = new Date(startDate.valueOf() - 1)
-          it('should return an empty array', () => {
-            const actual = between(timeframe, startDate, endDate)
-            const expected: Array<Date> = []
-            expect(actual).toEqual(expected)
+          it('should throw an error', () => {
+            expect(() =>
+              Effect.runSync(between(timeframe, startDate, endDate))).toThrowError(new DateRangeError({ message: 'End date is before start date' }))
           })
         })
         describe('When the end date is later then the timeframe', () => {
           const endDate = new Date(add(timeframe, startDate, 2).valueOf() - 1)
           it('should return an array with dates', () => {
-            const actual = between(timeframe, startDate, endDate)
+            const actual = Effect.runSync(between(timeframe, startDate, endDate))
             const expected: Array<Date> = [
               new Date(add(timeframe, start(timeframe, startDate), 1)),
               new Date(add(timeframe, start(timeframe, startDate), 2)),

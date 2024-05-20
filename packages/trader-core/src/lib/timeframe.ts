@@ -1,3 +1,5 @@
+import { Data, Effect } from 'effect'
+
 // For now, assume that the timeframe is always 1m, since we cannot pass this
 
 // Through the Tradingview Alert.
@@ -101,28 +103,22 @@ export const millisecondsUntilNextTimeframe = (timeframe: Timeframe, date: Date)
   return timeframeMilliseconds - (date.valueOf() % timeframeMilliseconds)
 }
 
-export const between = (timeframe: Timeframe, startDate: Date, endDate: Date): Array<Date> => {
-  const timeframeInMilliseconds = toMs(timeframe)
-  if (
-    endDate.valueOf() < startDate.valueOf() ||
-    endDate.valueOf() === startDate.valueOf() ||
-    endDate.valueOf() - startDate.valueOf() < timeframeInMilliseconds
-  ) {
-    return []
-  }
-  const dates: Array<Date> = []
+const generateDates = (timeframe: Timeframe, startDate: Date, endDate: Date, dates: Array<Date> = []): Array<Date> =>
+  startDate.valueOf() < endDate.valueOf()
+    ? generateDates(timeframe, add(timeframe, startDate), endDate, [...dates, startDate])
+    : dates
 
-  let currentDate: Date
-  if (startDate.valueOf() === start(timeframe, startDate).valueOf()) {
-    console.log(0)
-    currentDate = startDate
-  } else {
-    console.log(1)
-    currentDate = add(timeframe, start(timeframe, startDate), 1)
-  }
-  while (currentDate < endDate) {
-    dates.push(currentDate)
-    currentDate = add(timeframe, currentDate)
-  }
-  return dates
-}
+export class DateRangeError extends Data.Error<{ message: string }> {}
+
+export const between = (timeframe: Timeframe, startDate: Date, endDate: Date): Effect.Effect<Array<Date>, DateRangeError> =>
+  Effect.gen(function *betweenGenerator() {
+    return endDate.valueOf() < startDate.valueOf()
+      ? yield* new DateRangeError({ message: 'End date is before start date' })
+      : endDate.valueOf() === startDate.valueOf()
+        ? yield* new DateRangeError({ message: 'End date is the same as start date' })
+        : endDate.valueOf() - startDate.valueOf() < toMs(timeframe)
+          ? yield* new DateRangeError({ message: 'End date is less than one timeframe after start date' })
+          : startDate.valueOf() === start(timeframe, startDate).valueOf()
+            ? generateDates(timeframe, startDate, endDate)
+            : generateDates(timeframe, add(timeframe, start(timeframe, startDate)), endDate)
+  })
