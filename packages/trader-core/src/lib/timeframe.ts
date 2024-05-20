@@ -1,4 +1,4 @@
-import { Data, Effect } from 'effect'
+import { Cause, Data, Effect as E, pipe } from 'effect'
 
 // For now, assume that the timeframe is always 1m, since we cannot pass this
 
@@ -9,116 +9,133 @@ export type Timeframe = '1d' | '1h' | '1m' | '2h' | '3m' | '4h' | '5m' | '6h' | 
 
 export const timeframes: Array<Timeframe> = ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d']
 
-export const toMs = (timeframe: Timeframe): number => {
-  switch (timeframe) {
-  case '1m':
-    return 60 * 1000
-  case '3m':
-    return 3 * toMs('1m')
-  case '5m':
-    return 5 * toMs('1m')
-  case '15m':
-    return 15 * toMs('1m')
-  case '30m':
-    return 30 * toMs('1m')
-  case '1h':
-    return 60 * toMs('1m')
-  case '2h':
-    return 2 * toMs('1h')
-  case '4h':
-    return 4 * toMs('1h')
-  case '6h':
-    return 6 * toMs('1h')
-  case '8h':
-    return 8 * toMs('1h')
-  case '12h':
-    return 12 * toMs('1h')
-  case '1d':
-    return 24 * toMs('1h')
-  default:
-    throw new Error(`Invalid Timeframe: ${String(timeframe)}`)
-  }
+const timeframeToMsMap: Record<Timeframe, number> = {
+  '1m': 60 * 1000,
+  '3m': 3 * 60 * 1000,
+  '5m': 5 * 60 * 1000,
+  '15m': 15 * 60 * 1000,
+  '30m': 30 * 60 * 1000,
+  '1h': 60 * 60 * 1000,
+  '2h': 2 * 60 * 60 * 1000,
+  '4h': 4 * 60 * 60 * 1000,
+  '6h': 6 * 60 * 60 * 1000,
+  '8h': 8 * 60 * 60 * 1000,
+  '12h': 12 * 60 * 60 * 1000,
+  '1d': 24 * 60 * 60 * 1000,
 }
 
-export const fromMs = (milliseconds: number): Timeframe => {
-  switch (milliseconds) {
-  case 60 * 1000:
-    return '1m'
-  case 3 * toMs('1m'):
-    return '3m'
-  case 5 * toMs('1m'):
-    return '5m'
-  case 15 * toMs('1m'):
-    return '15m'
-  case 30 * toMs('1m'):
-    return '30m'
-  case 60 * toMs('1m'):
-    return '1h'
-  case 2 * toMs('1h'):
-    return '2h'
-  case 4 * toMs('1h'):
-    return '4h'
-  case 6 * toMs('1h'):
-    return '6h'
-  case 8 * toMs('1h'):
-    return '8h'
-  case 12 * toMs('1h'):
-    return '12h'
-  case 24 * toMs('1h'):
-    return '1d'
-  default:
-    throw new Error(`Invalid Timeframe: ${milliseconds}`)
-  }
+export const toMs = (timeframe: Timeframe) =>
+  E.fromNullable(timeframeToMsMap[timeframe])
+
+const msToTimeframeMap: Record<number, Timeframe> = {
+  [60 * 1000]: '1m',
+  [3 * 60 * 1000]: '3m',
+  [5 * 60 * 1000]: '5m',
+  [15 * 60 * 1000]: '15m',
+  [30 * 60 * 1000]: '30m',
+  [60 * 60 * 1000]: '1h',
+  [2 * 60 * 60 * 1000]: '2h',
+  [4 * 60 * 60 * 1000]: '4h',
+  [6 * 60 * 60 * 1000]: '6h',
+  [8 * 60 * 60 * 1000]: '8h',
+  [12 * 60 * 60 * 1000]: '12h',
+  [24 * 60 * 60 * 1000]: '1d',
 }
 
-export const add = (timeframe: Timeframe, date: Date, amount = 1): Date => {
-  const timeframeInMilliseconds = toMs(timeframe)
-  const dateTimestamp = date.valueOf()
-  const newDate = new Date(dateTimestamp + timeframeInMilliseconds * amount)
-  return newDate
-}
+export const fromMs = (milliseconds: number) =>
+  E.fromNullable(msToTimeframeMap[milliseconds])
 
-export const subtract = (timeframe: Timeframe, date: Date, amount = 1): Date => {
-  const timeframeInMilliseconds = toMs(timeframe)
-  const dateTimestamp = date.valueOf()
-  const newDate = new Date(dateTimestamp - timeframeInMilliseconds * amount)
-  return newDate
-}
+export const add = <A extends Date, E, R>(timeframe: Timeframe, amount = 1) =>
+  (dateE: E.Effect<A, E, R>) =>
+    pipe(
+      toMs(timeframe),
+      E.flatMap((ms) =>
+        pipe(
+          dateE,
+          E.map((date) =>
+            new Date(date.valueOf() + ms * amount)),
+        )),
+    )
 
-export const subtractSeconds = (date: Date, amount = 1): Date => {
-  const dateTimestamp = date.valueOf()
-  const newDate = new Date(dateTimestamp - 1000 * amount)
-  return newDate
-}
+export const subtract = <A extends Date, E, R>(timeframe: Timeframe, amount = 1) =>
+  (dateE: E.Effect<A, E, R>) =>
+    pipe(
+      toMs(timeframe),
+      E.flatMap((ms) =>
+        pipe(
+          dateE,
+          E.map((date) =>
+            new Date(date.valueOf() - ms * amount)),
+        )),
+    )
 
-export const start = (timeframe: Timeframe, date: Date): Date => {
-  const timeframeInMilliseconds = toMs(timeframe)
-  const dateTimestamp = date.valueOf()
-  const newDate = new Date(dateTimestamp - (dateTimestamp % timeframeInMilliseconds))
-  return newDate
-}
+export const start = <A extends Date, E, R>(timeframe: Timeframe) =>
+  (dateE: E.Effect<A, E, R>) =>
+    pipe(
+      toMs(timeframe),
+      E.flatMap((ms) =>
+        pipe(
+          dateE,
+          E.map((date) =>
+            new Date(date.valueOf() - (date.valueOf() % ms))),
+        )),
+    )
 
-export const millisecondsUntilNextTimeframe = (timeframe: Timeframe, date: Date): number => {
-  const timeframeMilliseconds = toMs(timeframe)
-  return timeframeMilliseconds - (date.valueOf() % timeframeMilliseconds)
-}
+export const millisecondsUntilNextTimeframe = <A extends Date, E, R>(timeframe: Timeframe) =>
+  (dateE: E.Effect<A, E, R>) =>
+    pipe(
+      toMs(timeframe),
+      E.flatMap((ms) =>
+        pipe(
+          dateE,
+          E.map((date) =>
+            ms - (date.valueOf() % ms)),
+        )),
+    )
 
-const generateDates = (timeframe: Timeframe, startDate: Date, endDate: Date, dates: Array<Date> = []): Array<Date> =>
-  startDate.valueOf() < endDate.valueOf()
-    ? generateDates(timeframe, add(timeframe, startDate), endDate, [...dates, startDate])
-    : dates
+export class PredicateFailedError extends Data.Error<{ message: string }> {}
+
+const fromPredicateE = <A>(f: () => boolean): E.Effect<undefined, PredicateFailedError, A> =>
+  E.suspend(() =>
+    f()
+      ? E.succeed(undefined)
+      : E.fail(new PredicateFailedError({ message: 'Predicate failed' })))
+
+const generateDates = (timeframe: Timeframe, dates: Array<Date> = []) =>
+  (endDate: Date) =>
+    (startDate: Date): E.Effect<Array<Date>, Cause.NoSuchElementException | PredicateFailedError, unknown> =>
+      pipe(
+        fromPredicateE(() =>
+          startDate.valueOf() < endDate.valueOf()),
+        E.flatMap(() =>
+          E.succeed(dates)),
+        E.catchAll(() =>
+          pipe(
+            E.succeed(startDate),
+            add(timeframe),
+            E.flatMap(generateDates(timeframe, [...dates, startDate])(endDate)),
+          )),
+      )
 
 export class DateRangeError extends Data.Error<{ message: string }> {}
 
-export const between = (timeframe: Timeframe, startDate: Date, endDate: Date): Effect.Effect<Array<Date>, DateRangeError> =>
-  Effect.gen(function *betweenGenerator() {
+export const between = (timeframe: Timeframe, startDate: Date, endDate: Date) =>
+  E.gen(function *betweenGenerator() {
     return endDate.valueOf() < startDate.valueOf()
       ? yield* new DateRangeError({ message: 'End date is before start date' })
       : endDate.valueOf() === startDate.valueOf()
         ? yield* new DateRangeError({ message: 'End date is the same as start date' })
-        : endDate.valueOf() - startDate.valueOf() < toMs(timeframe)
-          ? yield* new DateRangeError({ message: 'End date is less than one timeframe after start date' })
-          : startDate.valueOf() === start(timeframe, startDate).valueOf()
-            ? generateDates(timeframe, startDate, endDate)
-            : generateDates(timeframe, add(timeframe, start(timeframe, startDate)), endDate)
+        : pipe(
+          E.succeed(startDate),
+          start(timeframe),
+          E.map((startDateTimeframeStart) =>
+            startDate.valueOf() === startDateTimeframeStart.valueOf()
+              ? generateDates(timeframe)(endDate)(startDate)
+              : pipe(
+                E.succeed(startDate),
+                start(timeframe),
+                add(timeframe),
+                E.map(generateDates(timeframe)(endDate)),
+              )),
+        )
   })

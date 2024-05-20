@@ -4,6 +4,7 @@
     "baseUrl": "./",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,

@@ -443,7 +443,7 @@ const typescriptConfiguration = {
         accessibility: 'explicit',
       },
     ],
-    '@typescript-eslint/explicit-module-boundary-types': ['error'],
+    '@typescript-eslint/explicit-module-boundary-types': ['off'],
     '@typescript-eslint/member-ordering': ['error'],
     '@typescript-eslint/method-signature-style': ['error'],
     '@typescript-eslint/naming-convention': ['off'],
