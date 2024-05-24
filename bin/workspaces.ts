@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-import { createChildProcess } from '@code9/child_process'
 import * as A from 'fp-ts/Array'
 import * as E from 'fp-ts/Either'
 import * as FN from 'fp-ts/function'
@@ -71,24 +70,24 @@ const cmd = process.argv.slice(2).join(' ')
 //       }))),
 //   )()
 
-const x = createChildProcess('bun', ['run', 'lint'], {
-  cwd: 'applications/solid-app',
-  shell: true,
-})
-
-const decoder = new TextDecoder()
-
-x.stderr.subscribe({
-  next: (value: ) => {
-    console.log('stderr', value)
-  },
-})
-
-x.stdout.subscribe({
-  next: (value) => {
-    console.log('stdout', value)
-  },
-})
+// const x = createChildProcess('bun', ['run', 'lint'], {
+//   cwd: 'applications/solid-app',
+//   shell: true,
+// })
+//
+// const decoder = new TextDecoder()
+//
+// x.stderr.subscribe({
+//   next: (value: ) => {
+//     console.log('stderr', value)
+//   },
+// })
+//
+// x.stdout.subscribe({
+//   next: (value) => {
+//     console.log('stdout', value)
+//   },
+// })
 
 // try {
 //   await main()

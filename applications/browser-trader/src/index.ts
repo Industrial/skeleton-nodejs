@@ -3,11 +3,13 @@ import { getRandomNumber } from '@code9/number'
 import { strategySimulatedAnnealing } from '@code9/simulated-annealing'
 import { backtest, logProfitPercentages, logTrades } from '@code9/trader-backtest'
 import * as localstorage from '@code9/trader-core'
-import { fetchBarsInBatches, getSymbol, getSymbolInfo, getTradingView, log, Maybe, millisecondsUntilNextTimeframe, normalizePositions, start, StrategyOptionsBounds, Timeframe, toMs, Trade } from '@code9/trader-core'
+import { fetchBarsInBatches, getSymbol, getSymbolInfo, getTradingView, millisecondsUntilNextTimeframe, normalizePositions, start, StrategyOptionsBounds, Timeframe, toMs, Trade } from '@code9/trader-core'
+import { Maybe } from '@code9/undefined'
 import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import * as RNEA from 'fp-ts/ReadonlyNonEmptyArray'
 
+import { log } from './log.ts'
 import { rsiSmaStrategy } from './rsiStrategy.ts'
 
 export type RSISMAAnnealingState = {
@@ -327,4 +329,3 @@ const main = async (): Promise<void> => {
 main().catch((error) => {
   log.error(error)
 })
-
