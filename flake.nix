@@ -23,19 +23,21 @@
       perSystem = {
         system,
         pkgs,
-        lib,
         config,
         ...
       }: {
         mission-control.scripts = {
-          hello = {
-            description = "Say Hello";
-            exec = "echo Hello";
+          test = {
+            description = "Run unit tests with coverage.";
+            exec = "bun test --coverage 2>&1 | tee logs/test.log";
           };
-          fmt = {
-            description = "Format the top-level Nix files";
-            exec = "${lib.getExe pkgs.nixpkgs-fmt} ./*.nix";
-            category = "Tools";
+          update = {
+            description = "Update package versions";
+            exec = "bunx npm-check-updates -p pnpm -u 2>&1 | tee logs/update.log && pnpm i 2>&1 | tee logs/install.log";
+          };
+          lint = {
+            description = "Run eslint and fix issues.";
+            exec = "bunx tsc -p . --noEmit 2>&1 | tee logs/tsc.log && bunx eslint --fix --cache . 2>&1 | tee logs/eslint.log";
           };
         };
         checks = {
@@ -74,6 +76,10 @@
           buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
           inputsFrom = [
             config.mission-control.devShell
+          ];
+          packages = with pkgs; [
+            alejandra
+            bun
           ];
         };
       };

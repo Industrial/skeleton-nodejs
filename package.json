@@ -1,5 +1,5 @@
 {
-  "name": "autofreq",
+  "name": "skeleton-nodejs",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,14 +12,6 @@
     "applications/*",
     "packages/*"
   ],
-  "scripts": {
-    "prepare": "husky",
-    "test": "bun test --coverage > test.log",
-    "test:coverage": "bun --filter '*' test --coverage",
-    "test:staged": "vitest related --run",
-    "test:staged:coverage": "vitest related --coverage --run",
-    "update": "pnpx npm-check-updates -p pnpm -u && pnpm i"
-  },
   "dependencies": {
     "@frp-ts/core": "^1.0.0-beta.6",
     "@frp-ts/fp-ts": "^1.0.0-beta.6",
@@ -54,8 +46,6 @@
     "@types/node": "^20.11.30",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
-    "@vitest/coverage-v8": "^1.4.0",
-    "@vitest/ui": "^1.4.0",
     "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
     "eslint-config-code9": "^0.6.0",
@@ -63,13 +53,9 @@
     "eslint-plugin-jsonc": "^2.14.1",
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-simple-import-sort": "^12.0.0",
-    "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
-    "nx": "18.1.3",
     "prettier": "^3.2.5",
     "swc-loader": "0.2.6",
     "ts-node": "10.9.2",
-    "vite": "~5.2.6",
-    "vitest": "^1.4.0"
+    "typescript": "^5.4.5"
   }
 }

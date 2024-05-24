@@ -48,6 +48,7 @@ Thumbs.db
 .pytest_cache/
 .tsbuildinfo
 .venv/
+/logs/
 __pycache__/
 coverage/
 node_modules/
