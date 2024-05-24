@@ -93,8 +93,6 @@ export const millisecondsUntilNextTimeframe = <A extends Date, E, R>(timeframe: 
         )),
     )
 
-export class PredicateFailedError extends Data.Error<{ message: string }> {}
-
 const generateDates = <A extends Date, E, R>(timeframe: Timeframe, dates: Array<A> = []) =>
   (endDateE: E.Effect<A, E, R>) =>
     (startDateE: E.Effect<A, E, R>): E.Effect<Array<A>, Cause.NoSuchElementException | E, R> =>
