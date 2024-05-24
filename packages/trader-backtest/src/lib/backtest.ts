@@ -1,4 +1,4 @@
-import { log, Maybe, OHLCV, Position, Trade } from '@code9/trader-core'
+import { OHLCV, Position, Trade } from '@code9/trader-core'
 import * as E from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
 import * as RE from 'fp-ts/ReaderEither'
@@ -244,7 +244,7 @@ export const backtest = (
 
 export const logTrades = (trades: Array<Trade>, initialAmount: number): void => {
   if (trades.length === 0) {
-    log.info(`No trades found`)
+    console.log(`No trades found`)
     return
   }
 
@@ -277,7 +277,7 @@ export const logTrades = (trades: Array<Trade>, initialAmount: number): void => 
     const { startPrice, endPrice } = trade
     const percentageDifference = (-(100 - (quote / previousQuote) * 100)).toFixed(2)
 
-    log.info(`${startDate} (${startPrice}) -> ${endDate} (${endPrice}) ${quote} (${percentageDifference}%)`)
+    console.log(`${startDate} (${startPrice}) -> ${endDate} (${endPrice}) ${quote} (${percentageDifference}%)`)
   }
 }
 
@@ -295,6 +295,6 @@ export const logProfitPercentages = (trades: Array<Trade>, initialAmount: number
     entry > 0)
   const profitabilityPercentage = (winningTrades.length / trades.length) * 100
 
-  log.info(`Profit Percentage: ${profitPercentage.toFixed(2)}%`)
-  log.info(`Profitability Percentage: ${profitabilityPercentage.toFixed(2)}%`)
+  console.log(`Profit Percentage: ${profitPercentage.toFixed(2)}%`)
+  console.log(`Profitability Percentage: ${profitabilityPercentage.toFixed(2)}%`)
 }

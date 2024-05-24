@@ -8,7 +8,6 @@ import {
   millisecondsUntilNextTimeframe,
   start,
   subtract,
-  subtractSeconds,
   toMs,
 } from './timeframe.ts'
 
@@ -64,25 +63,6 @@ describe('timeframe', () => {
       const expected = new Date(date.valueOf() - 1000)
       const result = subtract('1s', date)
       expect(result).toStrictEqual(Option.some(expected))
-    })
-  })
-
-  describe('subtractSeconds', () => {
-    describe('When passed no amount', () => {
-      it('should subtract 1 second', () => {
-        const date = new Date()
-        const expected = new Date(date.valueOf() - 1000)
-        const result = subtractSeconds(date)
-        expect(result).toStrictEqual(Option.some(expected))
-      })
-    })
-    describe('When passed an amount', () => {
-      it('should subtract seconds correctly', () => {
-        const date = new Date()
-        const expected = new Date(date.valueOf() - 5000)
-        const result = subtractSeconds(date, 5)
-        expect(result).toStrictEqual(Option.some(expected))
-      })
     })
   })
 
@@ -177,4 +157,3 @@ describe('timeframe', () => {
     })
   })
 })
-

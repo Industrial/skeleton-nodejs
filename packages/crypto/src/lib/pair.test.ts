@@ -8,28 +8,28 @@ describe('Pair module', () => {
     describe('When base is an empty string', () => {
       it('should return an error', () => {
         const actual = isCorrectBaseE('')
-        expect(isLeft(actual)).to.be.equal(true)
+        expect(isLeft(actual)).toStrictEqual(true)
       })
     })
 
     describe('When base contains lower case characters', () => {
       it('should return an error', () => {
         const actual = isCorrectBaseE('abc')
-        expect(isLeft(actual)).to.be.equal(true)
+        expect(isLeft(actual)).toStrictEqual(true)
       })
     })
 
     describe('When base contains characters other then upper case characters', () => {
       it('should return an error', () => {
         const actual = isCorrectBaseE('ABC@!#$')
-        expect(isLeft(actual)).to.be.equal(true)
+        expect(isLeft(actual)).toStrictEqual(true)
       })
     })
 
     describe('When base contains upper case characters', () => {
       it('should return an error', () => {
         const actual = isCorrectBaseE('ABC')
-        expect(isRight(actual)).to.be.equal(true)
+        expect(isRight(actual)).toStrictEqual(true)
       })
     })
   })
@@ -38,28 +38,28 @@ describe('Pair module', () => {
     describe('When base is an empty string', () => {
       it('should return an error', () => {
         const actual = isCorrectQuoteE('')
-        expect(isLeft(actual)).to.be.equal(true)
+        expect(isLeft(actual)).toStrictEqual(true)
       })
     })
 
     describe('When base contains lower case characters', () => {
       it('should return an error', () => {
         const actual = isCorrectQuoteE('abc')
-        expect(isLeft(actual)).to.be.equal(true)
+        expect(isLeft(actual)).toStrictEqual(true)
       })
     })
 
     describe('When base contains characters other then upper case characters', () => {
       it('should return an error', () => {
         const actual = isCorrectQuoteE('ABC@!#$')
-        expect(isLeft(actual)).to.be.equal(true)
+        expect(isLeft(actual)).toStrictEqual(true)
       })
     })
 
     describe('When base contains upper case characters', () => {
       it('should return an error', () => {
         const actual = isCorrectQuoteE('ABC')
-        expect(isRight(actual)).to.be.equal(true)
+        expect(isRight(actual)).toStrictEqual(true)
       })
     })
   })
@@ -68,7 +68,7 @@ describe('Pair module', () => {
     describe('When format has a length lower then 2', () => {
       it('should return an error', () => {
         const actual = isCorrectPairFormatE(['BASE'])
-        expect(isLeft(actual)).to.be.equal(true)
+        expect(isLeft(actual)).toStrictEqual(true)
       })
     })
 
@@ -79,7 +79,7 @@ describe('Pair module', () => {
           throw actual.left
         }
         expect(isRight(actual)).toBe(true)
-        expect(actual.right).to.be.deep.equal(['BASE', 'QUOTE'])
+        expect(actual.right).toStrictEqual(['BASE', 'QUOTE'])
       })
     })
   })
@@ -88,28 +88,28 @@ describe('Pair module', () => {
     describe('When base is empty', () => {
       it('should return an error', () => {
         const actual = createPair('', 'QUOTE')
-        expect(isLeft(actual)).to.be.equal(true)
+        expect(isLeft(actual)).toStrictEqual(true)
       })
     })
 
     describe('When quote is empty', () => {
       it('should return an error', () => {
         const actual = createPair('BASE', '')
-        expect(isLeft(actual)).to.be.equal(true)
+        expect(isLeft(actual)).toStrictEqual(true)
       })
     })
 
     describe('When base is not uppercase', () => {
       it('should return an error', () => {
         const actual = createPair('base', 'QUOTE')
-        expect(isLeft(actual)).to.be.equal(true)
+        expect(isLeft(actual)).toStrictEqual(true)
       })
     })
 
     describe('When quote is not uppercase', () => {
       it('should return an error', () => {
         const actual = createPair('BASE', 'quote')
-        expect(isLeft(actual)).to.be.equal(true)
+        expect(isLeft(actual)).toStrictEqual(true)
       })
     })
 
@@ -119,7 +119,7 @@ describe('Pair module', () => {
         if (isLeft(actual)) {
           throw actual.left
         }
-        expect(actual.right).to.be.equal(`BASE/QUOTE`)
+        expect(actual.right).toStrictEqual(`BASE/QUOTE`)
       })
     })
   })
@@ -134,7 +134,7 @@ describe('Pair module', () => {
       if (isLeft(base)) {
         throw base.left
       }
-      expect(base.right).to.be.equal('BASE')
+      expect(base.right).toStrictEqual('BASE')
     })
   })
 
@@ -148,7 +148,7 @@ describe('Pair module', () => {
       if (isLeft(quote)) {
         throw quote.left
       }
-      expect(quote.right).to.be.equal('QUOTE')
+      expect(quote.right).toStrictEqual('QUOTE')
     })
   })
 })

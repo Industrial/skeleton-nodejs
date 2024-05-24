@@ -9,7 +9,7 @@ describe('Market', () => {
     describe('When called with an empty array', () => {
       it('should return an empty array', async () => {
         const actual = filterActiveMarkets([])
-        expect(actual).to.be.deep.equal([])
+        expect(actual).toStrictEqual([])
       })
     })
 
@@ -19,7 +19,7 @@ describe('Market', () => {
           ['BTC/USDT' as Pair, createMarket('BTC', 'USDT', true, 'spot')],
           ['ETH/USDT' as Pair, createMarket('ETH', 'USDT', false, 'spot')],
         ])
-        expect(actual).to.be.deep.equal([
+        expect(actual).toStrictEqual([
           ['BTC/USDT' as Pair, createMarket('BTC', 'USDT', true, 'spot')],
         ])
       })
@@ -30,7 +30,7 @@ describe('Market', () => {
     describe('When called with an empty array', () => {
       it('should return an empty array', async () => {
         const actual = filterSpotMarkets([])
-        expect(actual).to.be.deep.equal([])
+        expect(actual).toStrictEqual([])
       })
     })
 
@@ -40,7 +40,7 @@ describe('Market', () => {
           ['BTC/USDT' as Pair, createMarket('BTC', 'USDT', true, 'spot')],
           ['ETH/USDT' as Pair, createMarket('ETH', 'USDT', false, 'margin')],
         ])
-        expect(actual).to.be.deep.equal([
+        expect(actual).toStrictEqual([
           ['BTC/USDT' as Pair, createMarket('BTC', 'USDT', true, 'spot')],
         ])
       })
@@ -51,7 +51,7 @@ describe('Market', () => {
     describe('When called with an empty array', () => {
       it('should return an empty array', async () => {
         const actual = mapToPairs([])
-        expect(actual).to.be.deep.equal([])
+        expect(actual).toStrictEqual([])
       })
     })
 
@@ -61,7 +61,7 @@ describe('Market', () => {
           ['BTC/USDT' as Pair, createMarket('BTC', 'USDT', true, 'spot')],
           ['ETH/USDT' as Pair, createMarket('ETH', 'USDT', true, 'spot')],
         ])
-        expect(actual).to.be.deep.equal([
+        expect(actual).toStrictEqual([
           createPair('BTC', 'USDT'),
           createPair('ETH', 'USDT'),
         ])

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { Effect } from 'effect'
 
-import { add, between, DateRangeError, fromMs, millisecondsUntilNextTimeframe, start, subtract, subtractSeconds, Timeframe, timeframes, toMs } from './timeframe.ts'
+import { add, between, DateRangeError, fromMs, millisecondsUntilNextTimeframe, start, subtract, Timeframe, timeframes, toMs } from './timeframe.ts'
 
 describe('timeframe', () => {
   describe('toMs', () => {
@@ -226,29 +226,6 @@ describe('timeframe', () => {
     it('should subtract 1 day to the start of a timeframe', () => {
       const subtractedTimeframe = subtract('1d', new Date('2000-01-02 00:00:00'), 1)
       expect(subtractedTimeframe).toEqual(new Date('2000-01-01 00:00:00'))
-    })
-  })
-  describe('subtractSeconds', () => {
-    describe('Given a valid date', () => {
-      it('should return the correct date when subtracting 1 second', () => {
-        const subtractedTimeframe = subtractSeconds(new Date('2000-01-01 00:00:01'), 1)
-        expect(subtractedTimeframe).toEqual(new Date('2000-01-01 00:00:00'))
-      })
-      it('should return the correct date when subtracting 2 seconds', () => {
-        const subtractedTimeframe = subtractSeconds(new Date('2000-01-01 00:00:02'), 2)
-        expect(subtractedTimeframe).toEqual(new Date('2000-01-01 00:00:00'))
-      })
-      it('should return the correct date when subtracting 5 seconds', () => {
-        const subtractedTimeframe = subtractSeconds(new Date('2000-01-01 00:00:05'), 5)
-        expect(subtractedTimeframe).toEqual(new Date('2000-01-01 00:00:00'))
-      })
-    })
-    describe('Given an invalid date (e.g. null or undefined)', () => {
-      it('should throw an error when trying to subtract seconds from a null/undefined date', () => {
-        expect(() => {
-          subtractSeconds(null as unknown as Date, 5)
-        }).toThrowError()
-      })
     })
   })
   describe('start', () => {
@@ -739,4 +716,3 @@ describe('timeframe', () => {
     }
   })
 })
-
