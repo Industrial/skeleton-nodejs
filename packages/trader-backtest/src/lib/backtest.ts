@@ -1,8 +1,6 @@
+import { effectFromPredicate, PredicateError } from '@code9/effect'
 import { OHLCV, Position, Trade } from '@code9/trader-core'
-import * as E from 'fp-ts/Either'
-import { pipe } from 'fp-ts/function'
-import * as RE from 'fp-ts/ReaderEither'
-import * as RNEA from 'fp-ts/ReadonlyNonEmptyArray'
+import { pipe } from 'effect'
 
 export type CalculatePricesProps = {
   base: number
@@ -16,32 +14,32 @@ export type CalculatePricesResult = {
   quote: number
 }
 
-export const isntBaseZeroE = E.fromPredicate<CalculatePricesProps, Error>(
-  (b) =>
-    !(b.base === 0),
+export const isntBaseZeroE = effectFromPredicate(
+  (a: CalculatePricesProps) =>
+    a.base !== 0,
   () =>
-    new Error('Base is zero'),
+    new PredicateError({ message: 'Base is zero' }),
 )
 
-export const isntQuoteZeroE = E.fromPredicate<CalculatePricesProps, Error>(
-  (b) =>
-    !(b.quote === 0),
+export const isntQuoteZeroE = effectFromPredicate(
+  (a: CalculatePricesProps) =>
+    a.quote !== 0,
   () =>
-    new Error('Quote is zero'),
+    new PredicateError({ message: 'Quote is zero' }),
 )
 
-export const isntPriceZeroE = E.fromPredicate<CalculatePricesProps, Error>(
-  (b) =>
-    !(b.price === 0),
+export const isntPriceZeroE = effectFromPredicate(
+  (a: CalculatePricesProps) =>
+    a.price !== 0,
   () =>
-    new Error('Price is zero'),
+    new PredicateError({ message: 'Price is zero' }),
 )
 
-export const isntTransactionCostPercentageNegativeE = E.fromPredicate<CalculatePricesProps, Error>(
-  (b) =>
-    !(b.transactionCostPercentage < 0),
+export const isntTransactionCostPercentageNegativeE = effectFromPredicate(
+  (a: CalculatePricesProps) =>
+    a.transactionCostPercentage >= 0,
   () =>
-    new Error('transactionCostPercentage is negative'),
+    new PredicateError({ message: 'transactionCostPercentage is negative' }),
 )
 
 export const calculateBuyPrices: RE.ReaderEither<CalculatePricesProps, Error, CalculatePricesResult> = (a) =>
@@ -139,12 +137,6 @@ export const buy: BacktestOperation = ({ state, bar, transactionCostPercentage }
       )),
   )
 
-// const positionHasTradeE = E.fromPredicate<BacktestState, Error>(
-//   (state) =>
-//     state.currentTrade !== undefined,
-//   () =>
-//     new Error(`Cannot sell when currentTrade is not defined`),
-// )
 const positionHasTradeE = E.fromPredicate<BacktestState, BacktestState & { currentTrade: Trade }, Error>(
   (state): state is BacktestState & { currentTrade: Trade } =>
     state.currentTrade !== undefined,

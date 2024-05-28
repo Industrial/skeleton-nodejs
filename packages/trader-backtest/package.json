@@ -9,8 +9,8 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@code9/trader-core": "workspace:*",
-    "fp-ts": "^2.16.5"
+    "@code9/effect": "workspace:*",
+    "@code9/trader-core": "workspace:*"
   },
   "devDependencies": {
     "@effect/language-service": "^0.1.0",

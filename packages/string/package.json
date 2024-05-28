@@ -8,9 +8,7 @@
     "lint": "tsc -p . --noEmit && eslint --fix .",
     "test": "vitest"
   },
-  "dependencies": {
-    "fp-ts": "^2.16.5"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@effect/language-service": "^0.1.0",
     "@types/node": "^20.11.30",

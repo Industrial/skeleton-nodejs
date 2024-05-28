@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "discord.js": "^14.14.1",
-    "fp-ts": "^2.16.5",
     "tslog": "^4.9.2"
   },
   "devDependencies": {

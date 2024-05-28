@@ -10,8 +10,7 @@
   },
   "dependencies": {
     "@code9/trader-backtest": "workspace:*",
-    "@code9/trader-core": "workspace:*",
-    "fp-ts": "^2.16.5"
+    "@code9/trader-core": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",

@@ -9,8 +9,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@code9/number": "workspace:*",
-    "fp-ts": "^2.16.5"
+    "@code9/number": "workspace:*"
   },
   "devDependencies": {
     "@effect/language-service": "^0.1.0",
