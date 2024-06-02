@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Option } from 'effect'
+import { Effect as Fx } from 'effect'
 
 import {
   add,
@@ -15,17 +15,15 @@ describe('timeframe', () => {
   describe('toMs', () => {
     describe('When the number is a negative number', () => {
       it('should return a negative number', () => {
-        const expected = Option.some(-1000)
-        const result = toMs('-1s')
-        expect(result).toStrictEqual(expected)
+        const result = Fx.runSync(toMs('-1s'))
+        expect(result).toStrictEqual(-1000)
       })
     })
 
     describe('When the timeframe is valid', () => {
       it('should return the correct value', () => {
-        const expected = Option.some(1000)
-        const result = toMs('1s')
-        expect(result).toStrictEqual(expected)
+        const result = Fx.runSync(toMs('1s'))
+        expect(result).toStrictEqual(1000)
       })
     })
   })
@@ -33,17 +31,15 @@ describe('timeframe', () => {
   describe('fromMs', () => {
     describe('When the number is negative', () => {
       it('should return a negative timeframe', () => {
-        const expected = Option.some('-1s')
-        const result = fromMs(-1000, 's')
-        expect(result).toStrictEqual(expected)
+        const result = Fx.runSync(fromMs(-1000, 's'))
+        expect(result).toStrictEqual('-1s')
       })
     })
 
     describe('When the timeframe is valid', () => {
       it('should return the correct value', () => {
-        const expected = Option.some('1s')
-        const result = fromMs(1000, 's')
-        expect(result).toStrictEqual(expected)
+        const result = Fx.runSync(fromMs(1000, 's'))
+        expect(result).toStrictEqual('1s')
       })
     })
   })
@@ -51,18 +47,18 @@ describe('timeframe', () => {
   describe('add', () => {
     it('should add timeframes to dates correctly', () => {
       const date = new Date()
+      const result = Fx.runSync(add('1s', date))
       const expected = new Date(date.valueOf() + 1000)
-      const result = add('1s', date)
-      expect(result).toStrictEqual(Option.some(expected))
+      expect(result).toStrictEqual(expected)
     })
   })
 
   describe('subtract', () => {
-    it('should add timeframes to dates correctly', () => {
+    it('should subtract timeframes from dates correctly', () => {
       const date = new Date()
+      const result = Fx.runSync(subtract('1s', date))
       const expected = new Date(date.valueOf() - 1000)
-      const result = subtract('1s', date)
-      expect(result).toStrictEqual(Option.some(expected))
+      expect(result).toStrictEqual(expected)
     })
   })
 
@@ -73,18 +69,18 @@ describe('timeframe', () => {
       describe('When the date is 1 second after the start of the timeframe', () => {
         it('should return the start of the timeframe', () => {
           const date = new Date('2000-01-01T00:00:01.000Z')
+          const result = Fx.runSync(start(timeframe, date))
           const expected = new Date('2000-01-01T00:00:00.000Z')
-          const result = start(timeframe, date)
-          expect(result).toStrictEqual(Option.some(expected))
+          expect(result).toStrictEqual(expected)
         })
       })
 
       describe('When the date is 1 second before the start of the next timeframe', () => {
         it('should return the start of the timeframe', () => {
           const date = new Date('2000-01-01T00:59:59.000Z')
+          const result = Fx.runSync(start(timeframe, date))
           const expected = new Date('2000-01-01T00:00:00.000Z')
-          const result = start(timeframe, date)
-          expect(result).toStrictEqual(Option.some(expected))
+          expect(result).toStrictEqual(expected)
         })
       })
     })
@@ -97,8 +93,8 @@ describe('timeframe', () => {
       describe('When the date is 1 second after the start of the timeframe', () => {
         it('should return the milliseconds until the next timeframe', () => {
           const date = new Date('2000-01-01T00:00:01.000Z')
-          const expected = Option.some(3599000)
-          const result = millisecondsUntilNextTimeframe(timeframe, date)
+          const result = Fx.runSync(millisecondsUntilNextTimeframe(timeframe, date))
+          const expected = 3599000
           expect(result).toStrictEqual(expected)
         })
       })
@@ -106,8 +102,8 @@ describe('timeframe', () => {
       describe('When the date is 1 second before the start of the next timeframe', () => {
         it('should return the milliseconds until the next timeframe', () => {
           const date = new Date('2000-01-01T00:59:59.000Z')
-          const expected = Option.some(1000)
-          const result = millisecondsUntilNextTimeframe(timeframe, date)
+          const result = Fx.runSync(millisecondsUntilNextTimeframe(timeframe, date))
+          const expected = 1000
           expect(result).toStrictEqual(expected)
         })
       })
@@ -122,11 +118,11 @@ describe('timeframe', () => {
         it('should generate a range of dates correctly', () => {
           const startDate = new Date('2000-01-01T00:00:00.000Z')
           const endDate = new Date('2000-01-01T00:30:00.000Z')
+          const result = Fx.runSync(between(timeframe, startDate, endDate))
           const expected = [
             new Date('2000-01-01T00:00:00.000Z'),
           ]
-          const result = between(timeframe, startDate, endDate)
-          expect(result).toStrictEqual(Option.some(expected))
+          expect(result).toStrictEqual(expected)
         })
       })
 
@@ -134,11 +130,11 @@ describe('timeframe', () => {
         it('should generate a range of dates correctly', () => {
           const startDate = new Date('2000-01-01T00:00:00.000Z')
           const endDate = new Date('2000-01-01T01:00:00.000Z')
+          const result = Fx.runSync(between(timeframe, startDate, endDate))
           const expected = [
             new Date('2000-01-01T00:00:00.000Z'),
           ]
-          const result = between(timeframe, startDate, endDate)
-          expect(result).toStrictEqual(Option.some(expected))
+          expect(result).toStrictEqual(expected)
         })
       })
 
@@ -146,12 +142,12 @@ describe('timeframe', () => {
         it('should generate a range of dates correctly', () => {
           const startDate = new Date('2000-01-01T00:00:00.000Z')
           const endDate = new Date('2000-01-01T02:00:00.000Z')
+          const result = Fx.runSync(between(timeframe, startDate, endDate))
           const expected = [
             new Date('2000-01-01T00:00:00.000Z'),
             new Date('2000-01-01T01:00:00.000Z'),
           ]
-          const result = between(timeframe, startDate, endDate)
-          expect(result).toStrictEqual(Option.some(expected))
+          expect(result).toStrictEqual(expected)
         })
       })
     })

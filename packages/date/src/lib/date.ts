@@ -1,8 +1,12 @@
 import { safeDivide } from '@code9/number'
-import { Option } from 'effect'
-import { pipe } from 'fp-ts/function'
+import { Option as O, pipe } from 'effect'
 
-const conversions: Record<string, number> = {
+export type TimeUnit = 'd' | 'h' | 'm' | 'ms' | 's'
+
+/**
+ * A mapping of time units to their equivalent value in milliseconds.
+ */
+const conversions: Record<TimeUnit, number> = {
   ms: 1,
   s: 1000,
   m: 60000,
@@ -10,19 +14,38 @@ const conversions: Record<string, number> = {
   d: 86400000,
 }
 
-export const convertTime = (
-  value: number,
-  sourceUnit: 'd' | 'h' | 'm' | 'ms' | 's',
-  targetUnit: 'd' | 'h' | 'm' | 'ms' | 's',
-): Option.Option<number> =>
-  sourceUnit === targetUnit
-    ? Option.some(value)
-    : pipe(
-      Option.fromNullable(conversions[sourceUnit]),
-      Option.flatMap((source) =>
-        pipe(
-          Option.fromNullable(conversions[targetUnit]),
-          Option.flatMap((target) =>
-            safeDivide(value * source, target)),
-        )),
-    )
+/**
+ * Converts a time value from one unit to another.
+ *
+ * @param value - The numeric value of the time to convert.
+ * @param sourceUnit - The unit of the input time value ('d' for days, 'h' for
+ *                     hours, 'm' for minutes, 'ms' for milliseconds, 's' for seconds).
+ * @param targetUnit - The unit to convert the time value to ('d' for days, 'h'
+ *                     for hours, 'm' for minutes, 'ms' for milliseconds, 's' for seconds).
+ * @returns An Option containing the converted time value, or None if the conversion is not possible.
+ *
+ * @example
+ * ```typescript
+ * import { convertTime } from './date'
+ * import { unsafeUnwrap } from 'effect'
+ *
+ * const result = convertTime(2, 'h', 'm')
+ * console.log(unsafeUnwrap(result)) // 120
+ * ```
+ */
+export const convertTime = <A extends number>(
+  sourceUnit: TimeUnit,
+  targetUnit: TimeUnit,
+) =>
+    (a: A): O.Option<A> =>
+      sourceUnit === targetUnit
+        ? O.some(a)
+        : pipe(
+          O.fromNullable(conversions[sourceUnit]),
+          O.flatMap((source) =>
+            pipe(
+              O.fromNullable(conversions[targetUnit]),
+              O.flatMap((target) =>
+                safeDivide(a * source, target)),
+            )),
+        ) as O.Option<A>
