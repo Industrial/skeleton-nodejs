@@ -18,8 +18,8 @@ export class PredicateError extends Data.TaggedError('PredicateError')<{
  * @param {function(): E} onFalse - A function that returns an error when the predicate returns false.
  * @returns {function(A): Fx.Effect<A, E, R>} A function that takes an input and returns an effect.
  */
-export const effectFromPredicate = <A, E extends PredicateError, R>(predicate: (a: A) => boolean, onFalse: () => E) =>
-  (a: A): Fx.Effect<A, E, R> =>
+export const fromPredicate = <A, B extends A, E extends PredicateError, R>(predicate: (a: A) => a is B, onFalse: () => E) =>
+  (a: A): Fx.Effect<B, E, R> =>
     predicate(a)
       ? Fx.succeed(a)
       : Fx.fail(onFalse())
