@@ -1,6 +1,6 @@
 import { effectFromPredicate, PredicateError } from '@code9/effect'
 import { OHLCV, Position, Trade } from '@code9/trader-core'
-import { pipe } from 'effect'
+import { Effect as E, pipe } from 'effect'
 
 export type CalculatePricesProps = {
   base: number
@@ -78,25 +78,25 @@ export const calculateSellPrices: RE.ReaderEither<CalculatePricesProps, Error, C
 
 export type BacktestState = {
   currentPosition: Position
-  currentTrade: Maybe<Trade>
+  currentTrade: Trade | undefined
   currentAmountBase: number
   currentAmountQuote: number
   trades: Array<Trade>
 }
 
 export type BacktestOperationProps = {
-  state: E.Either<Error, BacktestState>
+  state: E.Effect<BacktestState>
   bar: OHLCV
   transactionCostPercentage: number
 }
 
-export type BacktestOperation = (props: BacktestOperationProps) => E.Either<Error, BacktestState>
+export type BacktestOperation = (props: BacktestOperationProps) => E.Effect<BacktestState>
 
-const positionIsntBuyE = E.fromPredicate<BacktestState, Error>(
-  (state) =>
+const positionIsntBuyE = effectFromPredicate(
+  (state: BacktestState) =>
     state.currentPosition !== Position.Buy,
   () =>
-    new Error('Cannot buy when currentPosition is Buy.'),
+    new PredicateError({ message: 'Cannot buy when currentPosition is Buy.' }),
 )
 
 /**
@@ -108,8 +108,8 @@ const positionIsntBuyE = E.fromPredicate<BacktestState, Error>(
 export const buy: BacktestOperation = ({ state, bar, transactionCostPercentage }) =>
   pipe(
     state,
-    E.chain(positionIsntBuyE),
-    E.chain((currentState) =>
+    E.flatMap(positionIsntBuyE),
+    E.flatMap((currentState) =>
       pipe(
         calculateBuyPrices({
           base: currentState.currentAmountBase,
@@ -137,11 +137,11 @@ export const buy: BacktestOperation = ({ state, bar, transactionCostPercentage }
       )),
   )
 
-const positionHasTradeE = E.fromPredicate<BacktestState, BacktestState & { currentTrade: Trade }, Error>(
-  (state): state is BacktestState & { currentTrade: Trade } =>
+const positionHasTradeE = effectFromPredicate(
+  (state: BacktestState): state is BacktestState & { currentTrade: Trade } =>
     state.currentTrade !== undefined,
   () =>
-    new Error(`Cannot sell when currentTrade is not defined`),
+    new PredicateError({ message: `Cannot sell when currentTrade is not defined` }),
 )
 
 /**
@@ -153,8 +153,8 @@ const positionHasTradeE = E.fromPredicate<BacktestState, BacktestState & { curre
 export const sell: BacktestOperation = ({ state, bar, transactionCostPercentage }) =>
   pipe(
     state,
-    E.chain(positionHasTradeE),
-    E.chain((currentState) =>
+    E.flatMap(positionHasTradeE),
+    E.flatMap((currentState) =>
       pipe(
         calculateSellPrices({
           base: currentState.currentAmountBase,

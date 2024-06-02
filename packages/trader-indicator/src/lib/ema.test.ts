@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'bun:test'
+import { Effect as E } from 'effect'
 
 import { ema } from './ema.ts'
 
 describe('ema', () => {
   describe('When no values are provided', () => {
     it('should return an empty array', () => {
-      const actual = ema(5, [])
+      const actual = E.runSync(ema(5)(E.succeed([])))
       const expected: Array<number> = []
       expect(actual).toStrictEqual(expected)
     })
@@ -15,7 +16,7 @@ describe('ema', () => {
     describe('When the first value is defined', () => {
       describe('When the length is zero', () => {
         it('should return an array with the first value', () => {
-          const actual = ema(0, [1])
+          const actual = E.runSync(ema(0)(E.succeed([1])))
           const expected: Array<number> = [1]
           expect(actual).toStrictEqual(expected)
         })
@@ -24,7 +25,7 @@ describe('ema', () => {
       describe('When the length is greater than zero', () => {
         describe('When the first argument is undefined', () => {
           it('should return an empty array', () => {
-            const actual = ema(5, [undefined as unknown as number, 1, 2, 3])
+            const actual = E.runSync(ema(5)(E.succeed([undefined as unknown as number, 1, 2, 3])))
             const expected: Array<number> = []
             expect(actual).toStrictEqual(expected)
           })
@@ -32,7 +33,7 @@ describe('ema', () => {
 
         describe('When the alpha function is not provided', () => {
           it('should return an array with the exponential moving average', () => {
-            const actual = ema(5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+            const actual = E.runSync(ema(5)(E.succeed([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])))
             const expected: Array<number> = [
               1, 1.3333333333333335, 1.888888888888889, 2.5925925925925926, 3.3950617283950617, 4.263374485596708,
               5.175582990397805, 6.117055326931871, 7.078036884621247, 8.052024589747498,
@@ -45,7 +46,7 @@ describe('ema', () => {
           it('should return an array with the exponential moving average using the provided alpha function', () => {
             const alpha = (length: number): number =>
               1 / length
-            const actual = ema(5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], alpha)
+            const actual = E.runSync(ema(5, alpha)(E.succeed([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])))
             const expected: Array<number> = [
               1,
               1.2000000000000002,

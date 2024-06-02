@@ -1,15 +1,59 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, it } from 'bun:test'
+import { Effect as E } from 'effect'
 
 import { sma } from './sma.ts'
 
 describe('sma', () => {
-  describe('When passed a length of 2 and an Array with the numbers 1 to 10', () => {
-    test('Should return the correct sequence', () => {
-      const input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-      const length = 2
-      const expected = [1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5]
-      const actual = sma(length, input)
-      expect(actual).toEqual(expected)
+  describe('when calculating the Simple Moving Average', () => {
+    describe('When the array is empty', () => {
+      it('should throw an error', () => {
+        expect(() => {
+          E.runSync(sma(3)(E.succeed([])))
+        }).toThrowError(new Error('Calculation failed'))
+      })
+    })
+
+    describe('when having a non-empty array of numbers', () => {
+      describe('when calculating the SMA for length 1', () => {
+        it('should throw an error', () => {
+          const values = E.succeed([1, 2, 3, 4, 5])
+          expect(() => {
+            E.runSync(sma(1)(values))
+          }).toThrowError(new Error('Calculation failed'))
+        })
+      })
+
+      describe('when calculating the SMA for length 2', () => {
+        it('should calculate the SMA correctly', () => {
+          const values = E.succeed([1, 2, 3, 4, 5])
+          const result = E.runSync(sma(2)(values))
+          expect(result).toEqual([1.5, 2.5, 3.5, 4.5, 5])
+        })
+      })
+
+      describe('when calculating the SMA for length 3', () => {
+        it('should calculate the SMA correctly', () => {
+          const values = E.succeed([1, 2, 3, 4, 5])
+          const result = E.runSync(sma(3)(values))
+          expect(result).toEqual([2, 3, 4, 4.5])
+        })
+      })
+
+      describe('when calculating the SMA for length 4', () => {
+        it('should calculate the SMA correctly', () => {
+          const values = E.succeed([1, 2, 3, 4, 5])
+          const result = E.runSync(sma(4)(values))
+          expect(result).toEqual([2.5, 3.5, 4])
+        })
+      })
+
+      describe('when calculating the SMA for length 5', () => {
+        it('should calculate the SMA correctly', () => {
+          const values = E.succeed([1, 2, 3, 4, 5])
+          const result = E.runSync(sma(5)(values))
+          expect(result).toEqual([3, 3.5])
+        })
+      })
     })
   })
 })

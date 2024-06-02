@@ -1,4 +1,11 @@
-import { Array, Either, Equal, Number, Option, pipe } from 'effect'
+import { Array as A, Effect as E, Either, Equal, Number as N, Option, pipe } from 'effect'
+
+export const sliceE = (start?: number | undefined, end?: number | undefined) =>
+  (as: Array<number>) =>
+    pipe(
+      as.slice(start, end),
+      E.fromNullable,
+    )
 
 /**
  * Find all indexes of a specified item in an array.
@@ -6,7 +13,7 @@ import { Array, Either, Equal, Number, Option, pipe } from 'effect'
 export const allIndexesOf = <T>(item: T, array: Array<T>): Array<number> =>
   pipe(
     array,
-    Array.filterMap((value, index) =>
+    A.filterMap((value, index) =>
       Equal.equals(value, item) ? Option.some(index) : Option.none()),
   )
 
@@ -17,7 +24,7 @@ export const atIndexes = <A>(indexes: Array<number>) =>
   (array: Array<A>): Either.Either<Array<A>, string> => {
     const someOutOfBounds = pipe(
       indexes,
-      Array.findFirst((index) =>
+      A.findFirst((index) =>
         index < 0 || index > array.length - 1
           ? Option.some('Index out of bounds')
           : Option.none()),
@@ -27,7 +34,7 @@ export const atIndexes = <A>(indexes: Array<number>) =>
     }
     return Either.right(pipe(
       indexes,
-      Array.map((index) =>
+      A.map((index) =>
         array[index]),
     ))
   }
@@ -35,5 +42,8 @@ export const atIndexes = <A>(indexes: Array<number>) =>
 /**
  * Calculate the average of an array of numbers.
  */
-export const average = (values: Array<number>): number =>
-  Number.sumAll(values) / values.length
+export const average = (values: Array<number>) =>
+  pipe(
+    N.sumAll(values),
+    N.divide(values.length),
+  )

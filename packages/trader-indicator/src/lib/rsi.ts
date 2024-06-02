@@ -1,33 +1,35 @@
+import { Effect as E, pipe } from 'effect'
+
 import { rma } from './rma.ts'
 
-export const returns = (values: Array<number>): Array<number> =>
-  values
-    .map((value, index) => {
-      const lastValue = values[index - 1] ?? 0
-      return index === 0 ? 0 : value - lastValue
-    })
-    .slice(1)
+// Helper function to calculate returns.
+const returns = (values: Array<number>): Array<number> =>
+  values.map((value, index) => {
+    const lastValue = values[index - 1] ?? 0
+    return index === 0 ? 0 : value - lastValue
+  }).slice(1)
 
-// Function that returns the RSI.
-export const rsi = (length: number, values: Array<number>): Array<number> => {
-  const changes = returns(values)
+// Reimplemented RSI function using Effect.
+export const rsi = (length: number) =>
+  (values: E.Effect<Array<number>>): E.Effect<Array<number>> =>
+    pipe(
+      values,
+      E.flatMap((as) => {
+        if (as.length === 0) {
+          return E.succeed([])
+        }
 
-  const ups = rma(
-    length,
-    changes.map((value) =>
-      Math.max(value, 0)),
-  )
+        const changes = returns(as)
 
-  const downs = rma(
-    length,
-    changes.map((value) =>
-      -Math.min(value, 0)),
-  )
+        const ups = rma(length)(E.succeed(changes.map((c) =>
+          Math.max(c, 0))))
+        const downs = rma(length)(E.succeed(changes.map((c) =>
+          -Math.min(c, 0))))
 
-  const rsis = downs.map((value, index) => {
-    const upValue = ups[index] ?? 0
-    return value === 0 ? 100 : upValue === 0 ? 0 : 100 - 100 / (1 + upValue / value)
-  })
-
-  return rsis
-}
+        return pipe(E.zipWith(ups, downs, (upArray, downArray) =>
+          downArray.map((down, index) => {
+            const up = upArray[index] ?? 0
+            return down === 0 ? 100 : up === 0 ? 0 : 100 - 100 / (1 + up / down)
+          })))
+      }),
+    )
