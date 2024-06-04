@@ -1,6 +1,4 @@
-import * as E from 'fp-ts/Either'
-import * as FN from 'fp-ts/function'
-import * as TE from 'fp-ts/TaskEither'
+import { Cause as C, Effect as Fx, pipe } from 'effect'
 
 import { OHLCV } from './ohlcv.ts'
 import { start, subtract, Timeframe, toMs } from './timeframe.ts'
@@ -42,20 +40,55 @@ export type TVSymbolInfo = {
   visible_plots_set: string
 }
 
-export const getTradingView = (): TV => {
-  const [tvKey] = Object.keys(globalThis).filter((x) =>
-    x.startsWith('tradingview_'))
-  const tv = globalThis[tvKey]
-  if (!tv) {
-    throw new Error('TradingView Not Found')
-  }
-  return tv
-}
+/**
+ * Retrieves the TradingView object from the global environment.
+ *
+ * This function searches for a global object whose key starts with 'tradingview_'
+ * and returns it. If no such object is found, an error is raised.
+ *
+ * @returns {Fx.Effect<TV, C.NoSuchElementException | E, R>} Effect that
+ * describes the process of fetching the TradingView object, which might result
+ * in a TV object or an Error.
+ */
+export const getTradingView = <E, R>(): Fx.Effect<TV, C.NoSuchElementException | E, R> =>
+  pipe(
+    Fx.fromNullable(Object.keys(globalThis).filter((x) =>
+      x.startsWith('tradingview_'))[0]),
+    Fx.flatMap((tvKey) =>
+      pipe(Fx.fromNullable(globalThis[tvKey as keyof typeof globalThis]))),
+  )
 
-export const getSymbolInfo = async (tv: TV, symbolName: string): Promise<TVSymbolInfo> =>
-  await new Promise((resolve, reject) => {
-    tv.datafeed.resolveSymbol(symbolName, resolve, reject)
-  })
+/**
+ * Retrieves symbol information for the given symbol name.
+ *
+ * @typeParam T - The type of the information object being returned.
+ * @param symbolName - The name of the symbol to retrieve information for.
+ * @returns An object of type `T` containing information about the symbol, or `null` if the symbol is not found.
+ *
+ * @example
+ * ```typescript
+ * interface StockInfo {
+ *   price: number;
+ * }
+ *
+ * const info = getSymbolInfo<StockInfo>('AAPL');
+ * if (info) {
+ *   console.log(info.price);
+ * }
+ * ```
+ */
+export const getSymbolInfo = <E extends Error, R>(tv: TV, symbolName: string): Fx.Effect<TVSymbolInfo, E | Error, R> =>
+  pipe(Fx.async<TVSymbolInfo, E | Error, R>((cb) => {
+    tv.datafeed.resolveSymbol(
+      symbolName,
+      (value) => {
+        cb(Fx.succeed(value as TVSymbolInfo))
+      },
+      (reason) => {
+        cb(Fx.fail(new Error(reason as string)))
+      },
+    )
+  }))
 
 export const createGetBatchBarsTE = (
   tv: TV,
