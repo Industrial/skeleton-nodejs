@@ -7,8 +7,8 @@ task.
 ## Rules (Generated code must adhere to these rules)
 
 * Only use the Effect library, not `fp-ts`.
-* Use [Effect](https://github.com/Effect-TS/effect/tree/main/packages/effect/src)
-  to learn about the possibilities of the library. Read the code.
+* Use [Effect](https://effect-ts.github.io/effect/docs/effect) to learn about
+  the possibilities of the library. Read the code.
 * It is implemented with a pipe() and is a composition of effects.
 * No if/else/ternary/object or other language constructs are used. Only effects.
 
