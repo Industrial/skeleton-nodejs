@@ -314,7 +314,7 @@ const backtestOperations = {
  * for backtesting.
  * @param {number} [transactionCostPercentage=0] - Transaction cost as a
  * percentage of each trade.
- * @returns {Fx.Effect<E.Either<Error, Array<Trade>>>} Effect containing either
+ * @returns {Fx.Effect<Array<Trade>, E | PredicateError, R>} Effect containing either
  * an error or the array of executed trades.
  *
  * @example
