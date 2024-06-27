@@ -6,7 +6,8 @@
     "dev": "vinxi dev",
     "lint": "tsc -p . --noEmit && eslint --fix .",
     "start": "vinxi start",
-    "version": "vinxi version"
+    "version": "vinxi version",
+    "db:watch": "cd src/lib/db && edgedb watch"
   },
   "dependencies": {
     "@edgedb/generate": "^0.5.3",
