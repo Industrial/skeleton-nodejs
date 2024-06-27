@@ -7,7 +7,9 @@
     "lint": "tsc -p . --noEmit && eslint --fix .",
     "start": "vinxi start",
     "version": "vinxi version",
-    "db:watch": "cd src/lib/db && edgedb watch"
+    "db:ui": "edgedb ui",
+    "db:watch": "edgedb watch",
+    "db:generate:queries": "bunx @edgedb/generate queries"
   },
   "dependencies": {
     "@edgedb/generate": "^0.5.3",
