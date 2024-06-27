@@ -27,6 +27,10 @@
         ...
       }: {
         mission-control.scripts = {
+          flake-update = {
+            description = "Update flake inputs";
+            exec = "nix flake update --recreate-lock-file 2>&1 | tee logs/flake-update.log";
+          };
           test = {
             description = "Run unit tests with coverage.";
             exec = "bun test --coverage 2>&1 | tee logs/test.log";
