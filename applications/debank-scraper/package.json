@@ -9,6 +9,7 @@
     "version": "vinxi version"
   },
   "dependencies": {
+    "@edgedb/generate": "^0.5.3",
     "@solidjs/meta": "^0.29.3",
     "@solidjs/router": "^0.13.3",
     "@solidjs/start": "^1.0.0-rc.0",
