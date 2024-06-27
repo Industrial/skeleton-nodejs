@@ -5,9 +5,22 @@ import { Cause, Data, Effect as E, pipe } from 'effect'
 // Through the Tradingview Alert.
 export const TIMEFRAME = '1m'
 
-export type Timeframe = '1d' | '1h' | '1m' | '2h' | '3m' | '4h' | '5m' | '6h' | '8h' | '12h' | '15m' | '30m'
+export type Timeframe =
+  '1d' | '1h' | '1m' | '2h' | '3m' | '4h' | '5m' | '8h' | '12h' | '15m' | '30m'
 
-export const timeframes: Array<Timeframe> = ['1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '6h', '8h', '12h', '1d']
+export const timeframes: Array<Timeframe> = [
+  '1m',
+  '3m',
+  '5m',
+  '15m',
+  '30m',
+  '1h',
+  '2h',
+  '4h',
+  '8h',
+  '12h',
+  '1d',
+]
 
 const timeframeToMsMap: Record<Timeframe, number> = {
   '1m': 60 * 1000,
@@ -18,7 +31,6 @@ const timeframeToMsMap: Record<Timeframe, number> = {
   '1h': 60 * 60 * 1000,
   '2h': 2 * 60 * 60 * 1000,
   '4h': 4 * 60 * 60 * 1000,
-  '6h': 6 * 60 * 60 * 1000,
   '8h': 8 * 60 * 60 * 1000,
   '12h': 12 * 60 * 60 * 1000,
   '1d': 24 * 60 * 60 * 1000,
@@ -36,7 +48,6 @@ const msToTimeframeMap: Record<number, Timeframe> = {
   [60 * 60 * 1000]: '1h',
   [2 * 60 * 60 * 1000]: '2h',
   [4 * 60 * 60 * 1000]: '4h',
-  [6 * 60 * 60 * 1000]: '6h',
   [8 * 60 * 60 * 1000]: '8h',
   [12 * 60 * 60 * 1000]: '12h',
   [24 * 60 * 60 * 1000]: '1d',

@@ -1,7 +1,7 @@
 import { Cause as C, Effect as Fx, pipe } from 'effect'
 
 import { OHLCV } from './ohlcv.ts'
-import { start, subtract, Timeframe, toMs } from './timeframe.ts'
+import { start, subtract, Timeframe } from './timeframe.ts'
 
 // TODO: Type
 export type PromiseResolveFunction<T = unknown> = (value?: T) => void
@@ -23,7 +23,10 @@ export type TV = {
     ) => void
   }
 }
-export type TVResolution = '1' | '1D' | '1M' | '1S' | '1W' | '3' | '3D' | '5' | '15' | '15S' | '30' | '30S' | '60' | '120' | '240' | '480' | '720'
+
+export type TVResolution =
+  '1' | '1D' | '3' | '5' | '15' | '30' | '60' | '120' | '240' | '480' | '720'
+
 export type TVSymbolInfo = {
   description: string
   exchange: string
@@ -39,6 +42,93 @@ export type TVSymbolInfo = {
   timezone: string
   visible_plots_set: string
 }
+
+export const timeframeToTVResolutionMap: {
+  [K in Timeframe]: TVResolution
+} = {
+  '1m': '1',
+  '3m': '3',
+  '5m': '5',
+  '15m': '15',
+  '30m': '30',
+  '1h': '60',
+  '2h': '120',
+  '4h': '240',
+  '8h': '480',
+  '12h': '720',
+  '1d': '1D',
+}
+
+/**
+ * Converts a Timeframe to a TVResolution type.
+ *
+ * This function attempts to map a given `timeframe` of type `Timeframe` to its
+ * corresponding `TVResolution` type.
+ * If the `timeframe` is not found in the `timeframeToTVResolutionMap`, it
+ * returns an error of type `C.NoSuchElementException`.
+ *
+ * @typeParam E - Type of error that might occur during the computation.
+ * @typeParam R - Type of the return value from the Effect.
+ * @param timeframe - The `Timeframe` to be converted.
+ * @returns An `Fx.Effect` that represents the potential success
+ * (`TVResolution`) or failure (`C.NoSuchElementException | E`) of the
+ * conversion.
+ *
+ * @example
+ * ```typescript
+ * import { timeframeToTVResolutionE } from './tradingview';
+ * import { runEffect } from 'effect';
+ *
+ * const effect = timeframeToTVResolutionE('1h');
+ *
+ * runEffect(effect).then(console.log).catch(console.error); // Logs '60'
+ * ```
+ */
+export const timeframeToTVResolution = <E, R>(timeframe: Timeframe): Fx.Effect<TVResolution, C.NoSuchElementException | E, R> =>
+  pipe(Fx.fromNullable(timeframeToTVResolutionMap[timeframe]))
+
+export const tvResolutionToTimeframeMap: {
+  [K in TVResolution]: Timeframe
+} = {
+  1: '1m',
+  3: '3m',
+  5: '5m',
+  15: '15m',
+  30: '30m',
+  60: '1h',
+  120: '2h',
+  240: '4h',
+  480: '8h',
+  720: '12h',
+  '1D': '1d',
+}
+
+/**
+ * Converts a TVResolution to a Timeframe type.
+ *
+ * This function attempts to map a given `resolution` of type `TVResolution` to
+ * its corresponding `Timeframe` type.
+ * If the `resolution` is not found in the `tvResolutionToTimeframeMap`, it
+ * returns an error of type `C.NoSuchElementException`.
+ *
+ * @typeParam E - Type of error that might occur during the computation.
+ * @typeParam R - Type of the return value from the Effect.
+ * @param resolution - The `TVResolution` to be converted.
+ * @returns An `Fx.Effect` that represents the potential success (`Timeframe`)
+ * or failure (`C.NoSuchElementException | E`) of the conversion.
+ *
+ * @example
+ * ```typescript
+ * import { tvResolutionToTimeframeE } from './tradingview';
+ * import { runEffect } from 'effect';
+ *
+ * const effect = tvResolutionToTimeframeE('60');
+ *
+ * runEffect(effect).then(console.log).catch(console.error); // Logs '1h'
+ * ```
+ */
+export const tvResolutionToTimeframe = <E, R>(resolution: TVResolution): Fx.Effect<Timeframe, C.NoSuchElementException | E, R> =>
+  pipe(Fx.fromNullable(tvResolutionToTimeframeMap[resolution]))
 
 /**
  * Retrieves the TradingView object from the global environment.
@@ -63,7 +153,8 @@ export const getTradingView = <E, R>(): Fx.Effect<TV, C.NoSuchElementException |
  *
  * @typeParam T - The type of the information object being returned.
  * @param symbolName - The name of the symbol to retrieve information for.
- * @returns An object of type `T` containing information about the symbol, or `null` if the symbol is not found.
+ * @returns An object of type `T` containing information about the symbol, or
+ * `null` if the symbol is not found.
  *
  * @example
  * ```typescript
@@ -90,30 +181,60 @@ export const getSymbolInfo = <E extends Error, R>(tv: TV, symbolName: string): F
     )
   }))
 
-export const createGetBatchBarsTE = (
+export const createGetBatchBarsTE = <E, R>(
   tv: TV,
   symbolInfo: TVSymbolInfo,
   timeframe: Timeframe,
   limit: number,
-): ((batchFrom: Date, batchTo: Date) => TE.TaskEither<Error, Array<OHLCV>>) =>
-  (batchFrom: Date, batchTo: Date) =>
-    TE.tryCatch(
-      async () =>
-        new Promise<Array<OHLCV>>((resolve, reject) => {
-          tv.datafeed.getBars(
-            symbolInfo,
-            String(toMs(timeframe) / 1000 / 60),
-            {
-              from: batchFrom.valueOf() / 1000,
-              to: batchTo.valueOf() / 1000,
-              countBack: limit,
-            },
-            resolve,
-            reject,
-          )
+): ((batchFrom: Date, batchTo: Date) => Fx.Effect<Array<OHLCV>, E, R>) =>
+    (batchFrom: Date, batchTo: Date) =>
+      pipe(
+        timeframeToTVResolution(timeframe),
+        Fx.flatMap((resolution) => {
+          const a = Fx.async<Array<OHLCV>, E, R>((cb) => {
+            tv.datafeed.getBars(
+              symbolInfo,
+              resolution,
+              {
+                from: batchFrom.valueOf() / 1000,
+                to: batchTo.valueOf() / 1000,
+                countBack: limit,
+              },
+              (value) => {
+                cb(Fx.succeed(value as Array<OHLCV>) as Fx.Effect<Array<OHLCV>, E, R>)
+              },
+              (reason) => {
+                cb(Fx.fail(new Error(reason as string)) as Fx.Effect<Array<OHLCV>, E, R>)
+              },
+            )
+          })
         }),
-      E.toError,
-    )
+      )
+
+// export const createGetBatchBarsTE = (
+//   tv: TV,
+//   symbolInfo: TVSymbolInfo,
+//   timeframe: Timeframe,
+//   limit: number,
+// ): ((batchFrom: Date, batchTo: Date) => TE.TaskEither<Error, Array<OHLCV>>) =>
+//   (batchFrom: Date, batchTo: Date) =>
+//     TE.tryCatch(
+//       async () =>
+//         new Promise<Array<OHLCV>>((resolve, reject) => {
+//           tv.datafeed.getBars(
+//             symbolInfo,
+//             String(toMs(timeframe) / 1000 / 60),
+//             {
+//               from: batchFrom.valueOf() / 1000,
+//               to: batchTo.valueOf() / 1000,
+//               countBack: limit,
+//             },
+//             resolve,
+//             reject,
+//           )
+//         }),
+//       E.toError,
+//     )
 
 export const processBatchBars = (
   timeframe: Timeframe,
