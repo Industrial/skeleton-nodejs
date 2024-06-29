@@ -14,12 +14,13 @@
     "db:watch": "edgedb watch",
     "dev": "vinxi dev",
     "lint": "tsc -p . --noEmit && eslint --fix .",
-    "start:importer": "bash -c 'bun run src/lib/importer.ts'",
+    "start:importer": "bash -c 'bun run --watch src/lib/importer.ts'",
     "start": "vinxi start",
     "version": "vinxi version"
   },
   "dependencies": {
     "@code9/undefined": "workspace:*",
+    "@code9/log": "workspace:*",
     "@edgedb/generate": "^0.5.3",
     "@solidjs/meta": "^0.29.3",
     "@solidjs/router": "^0.13.3",

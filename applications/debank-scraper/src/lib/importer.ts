@@ -1,27 +1,20 @@
+// @refresh reload
+import { log } from '@code9/log'
+import { assertIsNotUndefined } from '@code9/undefined'
 import nodeSchedule from 'node-schedule'
 
-const spec: nodeSchedule.Spec = {
-  // hour: 0,
-  // minute: 0,
-  second: 0,
-}
+import { db } from './db'
+import { findWalletByAddress } from './db/generated/queries'
 
-// const spec: nodeSchedule.Spec = '* * * * * *'
+const { WALLET_ADDRESS } = process.env
+assertIsNotUndefined(WALLET_ADDRESS)
 
-const work: nodeSchedule.JobCallback = () => {
-  console.log(new Date(), 'This job runs every minute!')
-}
+nodeSchedule.scheduleJob({ second: 0 }, async () => {
+  log.info('Running importer...')
 
-let job: nodeSchedule.Job
-export const schedule = () => {
-  if (job) {
-    return
-  }
+  const wallet = await findWalletByAddress(db, {
+    address: WALLET_ADDRESS,
+  })
 
-  console.log('Cron spec:', spec)
-  console.log('Scheduling job...')
-
-  job = nodeSchedule.scheduleJob(spec, work)
-}
-
-schedule()
+  console.log('wallet123', wallet)
+})
