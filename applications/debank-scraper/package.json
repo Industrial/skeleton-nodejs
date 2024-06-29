@@ -3,13 +3,18 @@
   "type": "module",
   "scripts": {
     "build": "vinxi build",
+    "db:generate": "bash -c 'bunx npm-run-all db:generate:*'",
+    "db:generate:queries": "bash -c 'bunx @edgedb/generate queries --file src/lib/db/generated/queries --force-overwrite'",
+    "db:generate:client": "bash -c 'bunx @edgedb/generate edgeql-js --out src/lib/db/generated/client --force-overwrite'",
+    "db:generate:interfaces": "bash -c 'bunx @edgedb/generate interfaces --file src/lib/db/generated/interfaces.ts --force-overwrite'",
+    "db:migrate": "edgedb migrate",
+    "db:migration:create": "edgedb migration create",
+    "db:ui": "edgedb ui",
+    "db:watch": "edgedb watch",
     "dev": "vinxi dev",
     "lint": "tsc -p . --noEmit && eslint --fix .",
     "start": "vinxi start",
-    "version": "vinxi version",
-    "db:ui": "edgedb ui",
-    "db:watch": "edgedb watch",
-    "db:generate:queries": "bunx @edgedb/generate queries"
+    "version": "vinxi version"
   },
   "dependencies": {
     "@edgedb/generate": "^0.5.3",

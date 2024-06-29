@@ -48,6 +48,7 @@ Thumbs.db
 .pytest_cache/
 .tsbuildinfo
 .venv/
+/applications/debank-scraper/src/lib/db/generated/
 /logs/
 __pycache__/
 coverage/

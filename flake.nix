@@ -84,7 +84,6 @@
           packages = with pkgs; [
             alejandra
             bun
-            edgedb
           ];
         };
       };

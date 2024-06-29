@@ -1,15 +1,13 @@
+using extension ai;
+
 module default {
-  type User {
-    required name: str;
+  type Wallet {
+    required address: str;
   }
 
-  type Post {
-    required title: str;
-    required body: str;
-    required author: User;
-  }
-
-  type Comment {
-    required content: str;
+  type NetWorth {
+    required wallet: Wallet;
+    required date: datetime;
+    required value: float64;
   }
 }

@@ -4,4 +4,5 @@
 /.nx/cache/
 /.venv/
 /.vscode/
+/applications/debank-scraper/src/lib/db/generated/**/*
 /node_modules/
