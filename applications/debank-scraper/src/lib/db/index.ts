@@ -1,3 +1,3 @@
-import * as edgedb from 'edgedb'
+import { createClient } from './generated/client'
 
-export const db = edgedb.createClient()
+export const db = createClient()
