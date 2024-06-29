@@ -3,6 +3,7 @@
   "type": "module",
   "scripts": {
     "build": "vinxi build",
+    "db:seed": "bash -c 'bun run src/lib/db/seed.ts'",
     "db:generate": "bash -c 'bunx npm-run-all db:generate:*'",
     "db:generate:queries": "bash -c 'bunx @edgedb/generate queries --file src/lib/db/generated/queries --force-overwrite'",
     "db:generate:client": "bash -c 'bunx @edgedb/generate edgeql-js --out src/lib/db/generated/client --force-overwrite'",
