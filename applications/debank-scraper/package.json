@@ -14,15 +14,19 @@
     "db:watch": "edgedb watch",
     "dev": "vinxi dev",
     "lint": "tsc -p . --noEmit && eslint --fix .",
+    "start:importer": "bash -c 'bun run src/lib/importer.ts'",
     "start": "vinxi start",
     "version": "vinxi version"
   },
   "dependencies": {
+    "@code9/undefined": "workspace:*",
     "@edgedb/generate": "^0.5.3",
     "@solidjs/meta": "^0.29.3",
     "@solidjs/router": "^0.13.3",
     "@solidjs/start": "^1.0.0-rc.0",
+    "@types/node-schedule": "^2.1.7",
     "edgedb": "^1.5.7",
+    "node-schedule": "^2.1.1",
     "solid-js": "^1.8.17",
     "vinxi": "^0.3.11"
   },
