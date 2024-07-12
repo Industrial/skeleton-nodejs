@@ -83,7 +83,7 @@ const javascriptConfiguration = {
     'accessor-pairs': ['error'],
     'arrow-body-style': ['error', 'as-needed', { requireReturnForObjectLiteral: true }],
     'block-scoped-var': ['error'],
-    camelcase: ['error'],
+    camelcase: ['warn'],
     'capitalized-comments': ['off'],
     'class-methods-use-this': ['off'],
     complexity: ['off'],

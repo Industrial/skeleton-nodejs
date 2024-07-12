@@ -1,8 +1,13 @@
+import { log } from '@code9/log'
 import { Title } from '@solidjs/meta'
 import { HttpStatusCode } from '@solidjs/start'
 import { type JSX } from 'solid-js'
 
 export default function NotFound(): JSX.Element {
+  log.debug({
+    method: 'NotFound',
+  })
+
   return (
     <main>
       <Title>Not Found</Title>
