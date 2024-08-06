@@ -8,7 +8,7 @@ Generate a Tree of test cases for the implementation using principles of Behavio
 * Each `it` description starts with the word "should" and contains an assumption.
 * Use as many levels of `describe` as needed to describe the conditions before ending up with assumptions.
 * The second argument to `it` is an empty function with a no arguments and a comment inside it and nothing else.
-* Do not generate any test code. No assertions.
+* Every test case should be implemented with the exact code `expect(1).toBe(2)` so that it fails by default.
 * All possible conditions and assumptions are listed. None are skipped.
 
 ## Output
