@@ -28,12 +28,12 @@
         inherit inputs system;
         run-unit-tests = false;
         custom-hooks = {
-          pre-push = {
+          pre-commit = {
             enable = true;
             name = "Pre Push";
             entry = "bun test && bun build";
             pass_filenames = false;
-            stages = ["pre-push"];
+            stages = ["pre-commit"];
           };
         };
       });
