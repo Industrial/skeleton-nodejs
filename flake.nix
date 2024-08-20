@@ -1,91 +1,54 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-root.url = "github:srid/flake-root";
-    mission-control.url = "github:Platonic-Systems/mission-control";
-    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    for-all-systems.url = "github:Industrial/for-all-systems";
+    for-all-systems.inputs.nixpkgs.follows = "nixpkgs";
+    flake-checks.url = "github:Industrial/flake-checks/v1.1.0";
+    flake-checks.inputs.nixpkgs.follows = "nixpkgs";
+    flake-devshells.url = "github:Industrial/flake-devshells";
+    flake-devshells.inputs.nixpkgs.follows = "nixpkgs";
+    flake-github-actions.url = "github:Industrial/flake-github-actions";
+    flake-github-actions.inputs.nixpkgs.follows = "nixpkgs";
+    git-hooks.url = "github:cachix/git-hooks.nix";
+    git-hooks.inputs.nixpkgs.follows = "nixpkgs";
+    nix-github-actions.url = "github:nix-community/nix-github-actions";
+    nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = inputs @ {
-    self,
-    flake-parts,
-    nixpkgs,
-    ...
-  }:
-    flake-parts.lib.mkFlake {inherit inputs;} {
-      systems = nixpkgs.lib.systems.flakeExposed;
-      imports = with inputs; [
-        flake-root.flakeModule
-        mission-control.flakeModule
-        pre-commit-hooks.flakeModule
-      ];
-      flake = {};
-      perSystem = {
-        system,
-        pkgs,
-        config,
-        ...
-      }: {
-        mission-control.scripts = {
-          flake-update = {
-            description = "Update flake inputs";
-            exec = "nix flake update --recreate-lock-file 2>&1 | tee logs/flake-update.log";
-          };
-          test = {
-            description = "Run unit tests with coverage.";
-            exec = "bun test --coverage 2>&1 | tee logs/test.log";
-          };
-          update = {
-            description = "Update package versions";
-            exec = "bunx npm-check-updates -p pnpm -u 2>&1 | tee logs/update.log && pnpm i 2>&1 | tee logs/install.log";
-          };
-          lint = {
-            description = "Run eslint and fix issues.";
-            exec = "bunx tsc -p . --noEmit 2>&1 | tee logs/tsc.log && bunx eslint --fix --cache . 2>&1 | tee logs/eslint.log";
+
+  outputs = inputs @ {self, ...}: let
+    forAllSystems = inputs.for-all-systems.forAllSystems {nixpkgs = inputs.nixpkgs;};
+  in {
+    githubActions = inputs.flake-github-actions.github-actions {
+      systems = ["x86_64-linux" "aarch64-darwin"];
+      checks = inputs.flake-checks.checks;
+    } {inherit inputs;};
+
+    checks = forAllSystems ({system, ...}:
+      inputs.flake-checks.checks {
+        inherit inputs system;
+        run-unit-tests = false;
+        custom-hooks = {
+          pre-push = {
+            enable = true;
+            name = "Pre Push";
+            entry = "bun test && bun build";
+            pass_filenames = false;
+            stages = ["pre-push"];
           };
         };
-        checks = {
-          pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
-            src = ./.;
-            hooks = {
-              alejandra.enable = true;
-              check-added-large-files.enable = true;
-              check-case-conflicts.enable = true;
-              check-executables-have-shebangs.enable = true;
-              check-json.enable = true;
-              check-merge-conflicts.enable = true;
-              check-shebang-scripts-are-executable.enable = true;
-              check-symlinks.enable = true;
-              check-toml.enable = true;
-              check-yaml.enable = true;
-              commitizen = {
-                enable = true;
-                stages = ["commit-msg"];
-              };
-              detect-aws-credentials.enable = true;
-              detect-private-keys.enable = true;
-              end-of-file-fixer.enable = true;
-              eslint.enable = true;
-              fix-byte-order-marker.enable = true;
-              flake-checker.enable = true;
-              forbid-new-submodules.enable = true;
-              markdownlint.enable = true;
-              shellcheck.enable = true;
-              trim-trailing-whitespace.enable = true;
-            };
-          };
-        };
-        devShells.default = pkgs.mkShell {
-          inherit (self.checks.${system}.pre-commit-check) shellHook;
-          buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
-          inputsFrom = [
-            config.mission-control.devShell
-          ];
-          packages = with pkgs; [
-            alejandra
-            bun
-          ];
-        };
-      };
-    };
+      });
+
+    devShells = forAllSystems ({
+      system,
+      pkgs,
+    }:
+      inputs.flake-devshells.devshells {
+        packages = with pkgs; [
+          bun
+          direnv
+          jq
+          pre-commit
+        ];
+      } {inherit self system pkgs;});
+  };
 }
