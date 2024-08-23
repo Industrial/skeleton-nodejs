@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "start": "tsx src/index.ts",
+    "update-packages": "bun npm-check-updates -u",
     "lint": "tsc -p . --noEmit && eslint --fix .",
+    "start": "tsx src/index.ts",
     "test": "vitest"
   },
   "dependencies": {
@@ -16,6 +17,7 @@
     "@vitest/coverage-v8": "^1.2.2",
     "@vitest/spy": "^1.2.2",
     "@vitest/ui": "^1.0.4",
+    "npm-check-updates": "^17.1.0",
     "tsx": "^4.7.1",
     "vitest": "^1.2.2"
   }

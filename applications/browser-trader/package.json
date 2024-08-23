@@ -5,8 +5,9 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "mkdir -p dist && bun build src/index.ts > dist/index.js",
-    "start": "bun run dist/index.js",
+    "update-packages": "bun npm-check-updates -u",
     "lint": "tsc -p . --noEmit && eslint --fix .",
+    "start": "bun run dist/index.js",
     "test": "vitest"
   },
   "dependencies": {
@@ -34,6 +35,7 @@
     "eslint-config-code9": "^0.3.0",
     "eslint-plugin-prettier": "5.0.0",
     "jsdom": "^22.1.0",
+    "npm-check-updates": "^17.1.0",
     "typescript": "^5.1.6",
     "vitest": "^1.2.2"
   }

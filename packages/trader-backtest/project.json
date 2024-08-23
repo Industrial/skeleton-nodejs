@@ -4,36 +4,10 @@
   "sourceRoot": "packages/trader-backtest/src",
   "projectType": "library",
   "targets": {
-    "lint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "pnpm lint"
-        ],
-        "cwd": "packages/trader-backtest"
-      }
-    },
-    "build": {
-      "executor": "@nx/js:swc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
-      "options": {
-        "outputPath": "dist/packages/trader-backtest",
-        "main": "packages/trader-backtest/src/index.ts",
-        "tsConfig": "packages/trader-backtest/tsconfig.json",
-        "assets": []
-      }
-    },
-    "test": {
-      "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
-      "options": {
-        "reportsDirectory": "../../coverage/packages/trader-backtest"
-      }
-    }
+    "lint": {},
+    "test": {},
+    "build": {},
+    "update-packages": {}
   },
   "tags": []
 }

@@ -3,6 +3,7 @@
   "type": "module",
   "scripts": {
     "build": "vinxi build",
+    "update-packages": "bun npm-check-updates -u",
     "db:generate:client": "bash -c 'bunx npm-run-all db:generate:client:*'",
     "db:generate:client:client": "bash -c 'bunx @edgedb/generate edgeql-js --out src/lib/db/generated/client --force-overwrite'",
     "db:generate:client:interfaces": "bash -c 'bunx @edgedb/generate interfaces --file src/lib/db/generated/interfaces.ts --force-overwrite'",
@@ -44,5 +45,8 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "npm-check-updates": "^17.1.0"
   }
 }

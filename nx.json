@@ -1,30 +1,81 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nx-bun/task-worker-runner",
+      "options": {
+        "cacheableOperations": [
+          "lint",
+          "test",
+          "build"
+        ]
+      }
+    }
+  },
   "targetDefaults": {
     "lint": {
-      "cache": true
+      "cache": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "bun run lint"
+        ],
+        "cwd": "{projectRoot}"
+      },
+      "dependsOn": [],
+      "inputs": [
+        "{projectRoot}/src"
+      ],
+      "outputs": []
     },
     "test": {
       "cache": true,
+      "executor": "@nx-bun/nx:test",
+      "options": {
+        "commands": [
+          "bun run test"
+        ],
+        "cwd": "{projectRoot}"
+      },
       "dependsOn": [
         "^lint"
-      ]
+      ],
+      "inputs": [
+        "{projectRoot}/src"
+      ],
+      "outputs": []
     },
     "build": {
-      "cache": true
-      // "dependsOn": ["^test"]
-    }
-  },
-  "plugins": [
-    {
-      "plugin": "@nx/eslint/plugin",
+      "cache": true,
+      "executor": "@nx-bun/nx:build",
       "options": {
-        "targetName": "lint"
-      }
+        "commands": [
+          "bun run build"
+        ],
+        "cwd": "{projectRoot}"
+      },
+      "inputs": [
+        "{projectRoot}/src"
+      ],
+      "outputs": [
+        "{projectRoot}/dist"
+      ]
     },
-    {
-      "plugin": "@nxlv/python"
+    "update-packages": {
+      "cache": false,
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "bun run update-packages"
+        ],
+        "cwd": "{projectRoot}"
+      },
+      "inputs": [
+        "{projectRoot}/package.json"
+      ],
+      "outputs": [
+        "{projectRoot}/package.json"
+      ]
     }
-  ],
-  "generators": {}
+  }
 }

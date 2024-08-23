@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "update-packages": "bun npm-check-updates -u",
     "lint": "tsc -p . --noEmit && eslint --fix .",
     "test": "vitest"
   },
@@ -11,6 +12,7 @@
     "@vitest/coverage-v8": "^1.2.2",
     "@vitest/spy": "^1.2.2",
     "@vitest/ui": "^1.0.4",
+    "npm-check-updates": "^17.1.0",
     "vitest": "^1.2.2"
   }
 }

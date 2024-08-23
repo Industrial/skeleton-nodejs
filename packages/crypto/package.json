@@ -5,6 +5,7 @@
   "module": "src/index.ts",
   "main": "src/index.ts",
   "scripts": {
+    "update-packages": "bun npm-check-updates -u",
     "lint": "tsc -p . --noEmit && eslint --fix .",
     "test": "vitest"
   },
@@ -16,6 +17,7 @@
     "@vitest/coverage-v8": "^1.4.0",
     "@vitest/spy": "^1.4.0",
     "@vitest/ui": "^1.4.0",
+    "npm-check-updates": "^17.1.0",
     "typescript": "^5.4.3",
     "vitest": "^1.4.0"
   }

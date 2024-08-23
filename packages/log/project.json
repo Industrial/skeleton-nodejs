@@ -4,36 +4,10 @@
   "sourceRoot": "packages/log/src",
   "projectType": "library",
   "targets": {
-    "lint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "pnpm lint"
-        ],
-        "cwd": "packages/log"
-      }
-    },
-    "build": {
-      "executor": "@nx/js:swc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
-      "options": {
-        "outputPath": "dist/packages/log",
-        "main": "packages/log/src/index.ts",
-        "tsConfig": "packages/log/tsconfig.json",
-        "assets": []
-      }
-    },
-    "test": {
-      "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
-      "options": {
-        "reportsDirectory": "../../coverage/packages/log"
-      }
-    }
+    "lint": {},
+    "test": {},
+    "build": {},
+    "update-packages": {}
   },
   "tags": []
 }

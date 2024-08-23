@@ -4,37 +4,10 @@
   "sourceRoot": "applications/browser-trader/src",
   "projectType": "application",
   "targets": {
-    "lint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "pnpm lint"
-        ],
-        "cwd": "applications/browser-trader"
-      }
-    },
-    "build": {
-      "executor": "@nx/rspack:rspack",
-      "outputs": [
-        "{options.outputPath}"
-      ],
-      "options": {
-        "outputPath": "dist/applications/browser-trader",
-        "main": "applications/browser-trader/src/index.ts",
-        "tsConfig": "applications/browser-trader/tsconfig.build.json",
-        "rspackConfig": "applications/browser-trader/rspack.config.cjs",
-        "target": "web"
-      }
-    },
-    "test": {
-      "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
-      "options": {
-        "reportsDirectory": "../../coverage/applications/browser-trader"
-      }
-    }
+    "lint": {},
+    "test": {},
+    "build": {},
+    "update-packages": {}
   },
   "tags": []
 }

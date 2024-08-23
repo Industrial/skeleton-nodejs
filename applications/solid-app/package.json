@@ -3,6 +3,7 @@
   "type": "module",
   "scripts": {
     "build": "vinxi build",
+    "update-packages": "bun npm-check-updates -u",
     "dev": "vinxi dev",
     "lint": "tsc -p . --noEmit && eslint --fix .",
     "start": "vinxi start",
@@ -17,5 +18,8 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "npm-check-updates": "^17.1.0"
   }
 }

@@ -1,8 +1,8 @@
 {
-  "name": "@code9/trader-indicator",
+  "name": "@code9/debank-scraper",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/trader-indicator/src",
-  "projectType": "library",
+  "sourceRoot": "applications/debank-scraper/src",
+  "projectType": "application",
   "targets": {
     "lint": {},
     "test": {},

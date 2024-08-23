@@ -4,36 +4,10 @@
   "sourceRoot": "applications/testwasmedge/src",
   "projectType": "application",
   "targets": {
-    "lint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "pnpm lint"
-        ],
-        "cwd": "applications/testwasmedge"
-      }
-    },
-    "build": {
-      "executor": "@nx/js:swc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
-      "options": {
-        "outputPath": "dist/applications/testwasmedge",
-        "main": "applications/testwasmedge/src/index.ts",
-        "tsConfig": "applications/testwasmedge/tsconfig.json",
-        "assets": []
-      }
-    },
-    "test": {
-      "executor": "@nx/vite:test",
-      "outputs": [
-        "{options.reportsDirectory}"
-      ],
-      "options": {
-        "reportsDirectory": "../../coverage/applications/testwasmedge"
-      }
-    }
+    "lint": {},
+    "test": {},
+    "build": {},
+    "update-packages": {}
   },
   "tags": []
 }
