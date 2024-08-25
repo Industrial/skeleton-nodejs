@@ -15,7 +15,9 @@
   },
   "name": "example-basic",
   "scripts": {
-    "build": "vinxi build",
+    "build": "bun run build:haskell && bun run build:vinxi",
+    "build:haskell": "cd src/haskell && wasm32-wasi-ghc lib/MyLib.hs -o dist/MyLib.wasm -no-hs-main -optl-mexec-model=reactor -optl-Wl,--export=hs_init,--export=fib",
+    "build:vinxi": "vinxi build",
     "dev": "vinxi dev",
     "lint": "tsc -p . --noEmit && eslint --fix .",
     "start": "vinxi start",
