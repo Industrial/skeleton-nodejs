@@ -23,9 +23,11 @@ wasi.start(instance)
 const exports = instance.exports as {
   hs_init: (argc: number, argv: number) => void
   fib: (n: number) => number
+  // fac: (n: number) => number
 }
 
 // This function is a part of GHC's RTS API. It must be called before any other exported Haskell functions are called.
 exports.hs_init(0, 0)
 
 console.log(exports.fib(12))
+// console.log(exports.fac(12))
