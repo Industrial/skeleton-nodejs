@@ -1,29 +1,12 @@
 {
-  "name": "skeleton-nodejs",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "type": "module",
-  "keywords": [],
   "author": "",
-  "license": "ISC",
-  "private": true,
-  "workspaces": [
-    "applications/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "lint": "bun nx run-many -t lint",
-    "test": "bun nx run-many -t test",
-    "build": "bun nx run-many -t build",
-    "update-packages": "bun nx run-many -t update-packages"
-  },
   "dependencies": {
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
     "tslib": "^2.6.2",
     "type-fest": "^4.14.0"
   },
+  "description": "",
   "devDependencies": {
     "@nx-bun/nx": "^1.2.0",
     "@nx-bun/task-worker-runner": "^0.0.4",
@@ -61,5 +44,22 @@
     "swc-loader": "0.2.6",
     "ts-node": "10.9.2",
     "typescript": "^5.4.5"
-  }
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "skeleton-nodejs",
+  "private": true,
+  "scripts": {
+    "build": "bun nx run-many -t build",
+    "lint": "bun nx run-many -t lint",
+    "test": "bun nx run-many -t test",
+    "update-packages": "bun nx run-many -t update-packages"
+  },
+  "type": "module",
+  "version": "1.0.0",
+  "workspaces": [
+    "applications/*",
+    "packages/*"
+  ]
 }

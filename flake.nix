@@ -13,6 +13,8 @@
     git-hooks.inputs.nixpkgs.follows = "nixpkgs";
     nix-github-actions.url = "github:nix-community/nix-github-actions";
     nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
+    # ghc-wasm-meta.url = "gitlab:ghc/ghc-wasm-meta?host=gitlab.haskell.org";
+    ghc-wasm-meta.url = "https://gitlab.haskell.org/ghc/ghc-wasm-meta/-/archive/master/ghc-wasm-meta-master.tar.gz";
   };
 
   outputs = inputs @ {self, ...}: let
@@ -45,13 +47,21 @@
     }:
       inputs.flake-devshells.devshells {
         packages = with pkgs; [
-          bun
-          direnv
-          jq
+          # Repository
           pre-commit
-          ghc
-          haskell.compiler.ghcjs
+          direnv
+
+          # TypeScript
+          bun
+          jq
+
+          # Haskell
+          inputs.ghc-wasm-meta.packages.${system}.all_9_10
           cabal-install
+          # ghc
+          haskell-language-server
+          haskell.compiler.ghcjs
+          haskellPackages.hlint
         ];
       } {inherit self system pkgs;});
   };

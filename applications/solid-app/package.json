@@ -1,14 +1,4 @@
 {
-  "name": "example-basic",
-  "type": "module",
-  "scripts": {
-    "build": "vinxi build",
-    "update-packages": "bun npm-check-updates -u",
-    "dev": "vinxi dev",
-    "lint": "tsc -p . --noEmit && eslint --fix .",
-    "start": "vinxi start",
-    "version": "vinxi version"
-  },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.14.3",
@@ -16,10 +6,21 @@
     "solid-js": "^1.8.21",
     "vinxi": "^0.4.1"
   },
+  "devDependencies": {
+    "@rollup/rollup-linux-x64-musl": "^4.21.0",
+    "npm-check-updates": "^17.1.0"
+  },
   "engines": {
     "node": ">=18"
   },
-  "devDependencies": {
-    "npm-check-updates": "^17.1.0"
-  }
+  "name": "example-basic",
+  "scripts": {
+    "build": "vinxi build",
+    "dev": "vinxi dev",
+    "lint": "tsc -p . --noEmit && eslint --fix .",
+    "start": "vinxi start",
+    "update-packages": "bun npm-check-updates -u",
+    "version": "vinxi version"
+  },
+  "type": "module"
 }
