@@ -1,3 +1,4 @@
+import { APIEvent } from '@solidjs/start/server'
 import { readFile } from 'fs/promises'
 import { WASI } from 'wasi'
 
@@ -5,7 +6,7 @@ const wasi = new WASI({
   args: [],
   env: {},
   preopens: {
-    "/sandbox": "./"
+    // "/sandbox": "./"
   },
   version: "preview1"
 })
@@ -34,8 +35,8 @@ export type Exports = {
 }
 
 const loadCompiled = async <T>(): Promise<T> => {
-  const wasmUrl = `${import.meta.dirname}/haskell/dist/MyLib.wasm`
-  const jsUrl = `${import.meta.dirname}/haskell/dist/MyLib.js`
+  const wasmUrl = `${import.meta.dirname}/../../haskell/dist/MyLib.wasm`
+  const jsUrl = `${import.meta.dirname}/../../haskell/dist/MyLib.js`
   const wasmBinary = await readFile(wasmUrl)
   const wasmModule = await WebAssembly.compile(wasmBinary)
   const __exports = {}
@@ -47,8 +48,15 @@ const loadCompiled = async <T>(): Promise<T> => {
   return instance.exports as T
 }
 
-const exports = await loadCompiled<Exports>()
+export const GET = async ({ params }: APIEvent) => {
+  console.log('/api/test', params)
 
-exports.hs_init(0, 0)
-console.log(exports.fib(12))
-console.log(exports.fac(1))
+  const exports = await loadCompiled<Exports>()
+
+  console.log('/api/test exports', exports)
+
+  exports.hs_init(0, 0)
+
+  console.log(exports.fib(12))
+  console.log(exports.fac(1))
+}

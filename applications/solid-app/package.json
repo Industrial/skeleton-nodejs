@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@rollup/wasm-node": "^4.21.1",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.14.3",
     "@solidjs/start": "^1.0.6",
@@ -7,7 +8,7 @@
     "vinxi": "^0.4.1"
   },
   "devDependencies": {
-    "@rollup/rollup-linux-x64-musl": "^4.21.0",
+    "@rollup/rollup-linux-x64-musl": "^4.21.1",
     "npm-check-updates": "^17.1.0"
   },
   "engines": {
@@ -16,7 +17,8 @@
   "name": "example-basic",
   "scripts": {
     "build": "bun run build:haskell && bun run build:vinxi",
-    "build:haskell": "cd src/haskell && wasm32-wasi-ghc lib/MyLib.hs -o dist/MyLib.wasm -no-hs-main -optl-mexec-model=reactor -optl-Wl,--export=hs_init,--export=fib",
+    "build:haskell": "cd src/haskell && wasm32-wasi-ghc lib/MyLib.hs -o dist/MyLib.wasm -no-hs-main -optl-mexec-model=reactor -optl-Wl,--export=hs_init,--export=fib,--export=fac",
+    "build:haskell:post-link": "cd src/haskell && bash -c \"$(wasm32-wasi-ghc --print-libdir)/post-link.mjs -i dist/MyLib.wasm -o dist/MyLib.js\"",
     "build:vinxi": "vinxi build",
     "dev": "vinxi dev",
     "lint": "tsc -p . --noEmit && eslint --fix .",

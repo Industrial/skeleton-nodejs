@@ -53,6 +53,7 @@
 
           # TypeScript
           bun
+          nodePackages.rollup
           jq
 
           # Haskell
