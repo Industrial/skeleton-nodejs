@@ -15,6 +15,11 @@
     "noPropertyAccessFromIndexSignature": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "paths": {
+      "~/*": [
+        "./src/*"
+      ]
+    },
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",

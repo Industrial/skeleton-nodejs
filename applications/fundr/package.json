@@ -5,7 +5,10 @@
   "module": "src/index.ts",
   "name": "fundr",
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.5.4"
+  },
+  "scripts": {
+    "lint": "tsc -p . --noEmit && eslint --fix ."
   },
   "type": "module"
 }
