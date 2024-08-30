@@ -1,9 +1,7 @@
-import { Maybe } from '@code9/undefined'
-
 export const createKey = (key: string): string =>
   `browser_trader_${key}`
 
-export const get = (key: string): Maybe<string> => {
+export const get = (key: string): string | undefined => {
   const result = window.localStorage.getItem(createKey(key))
   if (result === null) {
     return undefined

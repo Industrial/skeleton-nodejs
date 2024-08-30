@@ -3,8 +3,7 @@ import { getRandomNumber } from '@code9/number'
 import { strategySimulatedAnnealing } from '@code9/simulated-annealing'
 import { backtest, logProfitPercentages, logTrades } from '@code9/trader-backtest'
 import * as localstorage from '@code9/trader-core'
-import { fetchBarsInBatches, getSymbol, getSymbolInfo, getTradingView, millisecondsUntilNextTimeframe, normalizePositions, start, StrategyOptionsBounds, Timeframe, toMs, Trade } from '@code9/trader-core'
-import { Maybe } from '@code9/undefined'
+import { StrategyOptionsBounds, Timeframe, Trade, fetchBarsInBatches, getSymbol, getSymbolInfo, getTradingView, millisecondsUntilNextTimeframe, normalizePositions, start, toMs } from '@code9/trader-core'
 import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import * as RNEA from 'fp-ts/ReadonlyNonEmptyArray'
@@ -46,8 +45,8 @@ const tradesKey = `${symbol}_${BT_TIMEFRAME}_trades`
 
 const tv = getTradingView()
 
-const loadOptions = (): Maybe<RSISMAAnnealingState> => {
-  let options: Maybe<RSISMAAnnealingState>
+const loadOptions = (): RSISMAAnnealingState | undefined => {
+  let options: RSISMAAnnealingState | undefined
   const storedOptions = localstorage.get(optionsKey)
   if (storedOptions) {
     options = JSON.parse(String(storedOptions)) as RSISMAAnnealingState
@@ -234,7 +233,7 @@ const main = async (): Promise<void> => {
       } else {
         log.info(`Updaning annealing...`)
 
-        const lastTrade: Maybe<Trade> = trades[trades.length - 1]
+        const lastTrade: Trade | undefined = trades[trades.length - 1]
         log.debug('lastTrade', lastTrade)
         if (typeof lastTrade === 'undefined') {
           throw new Error(`No last trade`)
@@ -262,7 +261,7 @@ const main = async (): Promise<void> => {
         if (E.isLeft(newTrades)) {
           throw newTrades.left
         }
-        const newLastTrade: Maybe<Trade> = newTrades.right[newTrades.right.length - 1]
+        const newLastTrade: Trade | undefined = newTrades.right[newTrades.right.length - 1]
 
         if (typeof newLastTrade !== 'undefined') {
           if (newLastTrade.quote > lastTrade.quote) {

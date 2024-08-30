@@ -1,7 +1,5 @@
 import assert from 'assert'
 
-export type Maybe<A> = A | undefined
-
 export const isUndefined = <T>(value: T | undefined): value is undefined =>
   typeof value === 'undefined'
 
