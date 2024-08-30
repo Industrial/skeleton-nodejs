@@ -1,5 +1,5 @@
 import { describe, expect, it, spyOn } from 'bun:test'
-import { Effect } from 'effect'
+import { Effect as Fx } from 'effect'
 import { Stats } from 'fs'
 import fs from 'fs/promises'
 
@@ -13,7 +13,7 @@ describe('fs', () => {
           Promise.reject(new Error('No')))
         const filename = 'test.txt'
         expect(async () =>
-          Effect.runPromise(pathExists(filename)))
+          Fx.runPromise(pathExists(filename)))
           .toThrowError(new Error('No'))
         expect(spy).toHaveBeenCalledWith(filename)
         expect(spy).toHaveBeenCalledTimes(1)
@@ -26,7 +26,7 @@ describe('fs', () => {
           Promise.reject(new Error('No such file or directory')))
         const filename = 'test.txt'
         expect(async () =>
-          Effect.runPromise(pathExists(filename)))
+          Fx.runPromise(pathExists(filename)))
           .toThrowError(new Error('No such file or directory'))
         expect(spy).toHaveBeenCalledWith(filename)
         expect(spy).toHaveBeenCalledTimes(1)
@@ -42,7 +42,7 @@ describe('fs', () => {
               true,
           } as unknown as Stats))
         const filename = 'test.txt'
-        const result = await Effect.runPromise(pathExists(filename))
+        const result = await Fx.runPromise(pathExists(filename))
         expect(result).toBeTruthy()
         expect(spy).toHaveBeenCalledWith(filename)
         expect(spy).toHaveBeenCalledTimes(1)
@@ -57,7 +57,7 @@ describe('fs', () => {
           Promise.reject(new Error('No')))
         const filename = 'test.txt'
         expect(async () =>
-          Effect.runPromise(fileExists(filename)))
+          Fx.runPromise(fileExists(filename)))
           .toThrowError(new Error('No'))
         expect(spy).toHaveBeenCalledWith(filename)
         expect(spy).toHaveBeenCalledTimes(1)
@@ -70,7 +70,7 @@ describe('fs', () => {
           Promise.reject(new Error('No such file or directory')))
         const filename = 'test.txt'
         expect(async () =>
-          Effect.runPromise(fileExists(filename)))
+          Fx.runPromise(fileExists(filename)))
           .toThrowError(new Error('No such file or directory'))
         expect(spy).toHaveBeenCalledWith(filename)
         expect(spy).toHaveBeenCalledTimes(1)
@@ -86,7 +86,7 @@ describe('fs', () => {
               true,
           } as unknown as Stats))
         const filename = 'test.txt'
-        const result = await Effect.runPromise(fileExists(filename))
+        const result = await Fx.runPromise(fileExists(filename))
         expect(result).toEqual(true)
         expect(spy).toHaveBeenCalledWith(filename)
         expect(spy).toHaveBeenCalledTimes(1)
@@ -101,7 +101,7 @@ describe('fs', () => {
           Promise.reject(new Error('No')))
         const filename = 'test.txt'
         expect(async () =>
-          Effect.runPromise(directoryExists(filename)))
+          Fx.runPromise(directoryExists(filename)))
           .toThrowError(new Error('No'))
         expect(spy).toHaveBeenCalledWith(filename)
         expect(spy).toHaveBeenCalledTimes(1)
@@ -114,7 +114,7 @@ describe('fs', () => {
           Promise.reject(new Error('No such file or directory')))
         const filename = 'test.txt'
         expect(async () =>
-          Effect.runPromise(directoryExists(filename)))
+          Fx.runPromise(directoryExists(filename)))
           .toThrowError(new Error('No such file or directory'))
         expect(spy).toHaveBeenCalledWith(filename)
         expect(spy).toHaveBeenCalledTimes(1)
@@ -130,7 +130,7 @@ describe('fs', () => {
               true,
           } as unknown as Stats))
         const filename = 'test.txt'
-        const result = await Effect.runPromise(directoryExists(filename))
+        const result = await Fx.runPromise(directoryExists(filename))
         expect(result).toEqual(true)
         expect(spy).toHaveBeenCalledWith(filename)
         expect(spy).toHaveBeenCalledTimes(1)
