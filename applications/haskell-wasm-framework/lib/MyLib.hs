@@ -1,22 +1,56 @@
-module MyLib (fib, fac) where
+{-# LANGUAGE ForeignFunctionInterface #-}
 
+module MyLib where
+
+import Distribution.Compiler (CompilerFlavor (HBC))
+import Foreign.C.String (CString, newCString, peekCString)
+import Foreign.C.Types (CInt)
+import Foreign.Ptr (FunPtr, castFunPtr)
+import GHC.JS.Foreign.Callback (Callback, syncCallback1)
 import GHC.Wasm.Prim
 
-foreign import javascript unsafe "console.log($1)"
-  js_print :: JSString -> IO ()
+foreign import javascript "((f) => { f('Example!'); })"
+  callback_example :: Callback (JSVal -> IO ()) -> IO ()
 
-foreign import javascript unsafe "typeof $1 === 'object'"
-  js_is_obj :: JSVal -> Bool
+printJSValAsString :: JSVal -> IO ()
+printJSValAsString = putStrLn . fromJSString
 
-foreign import javascript unsafe "let acc = 1; for (let i = 1; i <= $1; ++i) acc *= i; return acc;"
-  js_fac :: Word -> Word
+type HTTPServer = IO ()
 
-foreign export ccall fac :: Word -> Word
+type HTTPServerPort = Int
 
-fac = js_fac
+type HTTPRequestHandler = CString -> IO CString
 
-foreign export ccall fib :: Int -> Int
+type StartHTTPServer = HTTPServerPort -> FunPtr HTTPRequestHandler -> IO ()
 
-fib 0 = 0
-fib 1 = 1
-fib n = fib (n - 1) + fib (n - 2)
+foreign import javascript "startHTTPServer($1, $2)"
+  js_startHTTPServer :: HTTPServerPort -> FunPtr HTTPRequestHandler -> IO ()
+
+foreign import javascript "((x) => test123(x))"
+  js_test123 :: Int -> IO Int
+
+handleRequest :: CString -> IO CString
+handleRequest cpath = do
+  path <- peekCString cpath
+  let response = case path of
+        "/hello" -> "there"
+        _ -> "Unknown Route"
+  newCString response
+
+foreign import ccall "wrapper"
+  mkHandler :: HTTPRequestHandler -> IO (FunPtr HTTPRequestHandler)
+
+foreign export ccall main :: IO ()
+
+main :: IO ()
+main = do
+  printJS <- syncCallback1 ThrowWouldBlock printJSValAsString
+  callback_example printJS
+  releaseCallback printJS
+
+-- result <- js_test123 123
+-- print result
+
+-- handlerFunPtr <- mkHandler handleRequest
+-- js_startHTTPServer 8080 handlerFunPtr
+-- print $ js_test123 123

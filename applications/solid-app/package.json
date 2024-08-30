@@ -1,14 +1,14 @@
 {
   "dependencies": {
-    "@rollup/wasm-node": "^4.21.1",
+    "@rollup/wasm-node": "^4.21.2",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.14.3",
     "@solidjs/start": "^1.0.6",
-    "solid-js": "^1.8.21",
-    "vinxi": "^0.4.1"
+    "solid-js": "^1.8.22",
+    "vinxi": "^0.4.2"
   },
   "devDependencies": {
-    "@rollup/rollup-linux-x64-musl": "^4.21.1",
+    "@rollup/rollup-linux-x64-musl": "^4.21.2",
     "npm-check-updates": "^17.1.0"
   },
   "engines": {
@@ -23,7 +23,7 @@
     "dev": "vinxi dev",
     "lint": "tsc -p . --noEmit && eslint --fix .",
     "start": "vinxi start",
-    "update-packages": "bun npm-check-updates -u",
+    "update-packages": "npm-check-updates -u",
     "version": "vinxi version"
   },
   "type": "module"

@@ -5,18 +5,18 @@
   "module": "src/index.ts",
   "main": "src/index.ts",
   "scripts": {
-    "update-packages": "bun npm-check-updates -u",
+    "update-packages": "npm-check-updates -u",
     "lint": "tsc -p . --noEmit && eslint --fix .",
     "test": "vitest"
   },
   "devDependencies": {
-    "@types/node": "^20.11.30",
-    "@vitest/coverage-v8": "^1.4.0",
-    "@vitest/spy": "^1.4.0",
-    "@vitest/ui": "^1.4.0",
+    "@types/node": "^22.5.1",
+    "@vitest/coverage-v8": "^2.0.5",
+    "@vitest/spy": "^2.0.5",
+    "@vitest/ui": "^2.0.5",
     "npm-check-updates": "^17.1.0",
-    "typescript": "^5.4.3",
-    "vitest": "^1.4.0"
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
   },
   "dependencies": {
     "tslog": "^4.9.3"

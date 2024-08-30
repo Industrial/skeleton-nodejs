@@ -18,10 +18,14 @@
   };
 
   outputs = inputs @ {self, ...}: let
-    forAllSystems = inputs.for-all-systems.forAllSystems {nixpkgs = inputs.nixpkgs;};
+    systems = ["x86_64-linux" "aarch64-darwin"];
+    forAllSystems = inputs.for-all-systems.forAllSystems {
+      inherit systems;
+      nixpkgs = inputs.nixpkgs;
+    };
   in {
     githubActions = inputs.flake-github-actions.github-actions {
-      systems = ["x86_64-linux" "aarch64-darwin"];
+      inherit systems;
       checks = inputs.flake-checks.checks;
     } {inherit inputs;};
 
@@ -62,6 +66,7 @@
           # ghc
           haskell-language-server
           haskell.compiler.ghcjs
+          #haskell.packages.ghcjs.ghcjs-base
           haskellPackages.hlint
         ];
       } {inherit self system pkgs;});

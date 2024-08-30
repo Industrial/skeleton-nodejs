@@ -1,17 +1,5 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@nx-bun/task-worker-runner",
-      "options": {
-        "cacheableOperations": [
-          "lint",
-          "test",
-          "build"
-        ]
-      }
-    }
-  },
   "targetDefaults": {
     "lint": {
       "cache": true,
