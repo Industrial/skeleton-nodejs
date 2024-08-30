@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-bun --filter '*' build
+bun --filter '*' update-packages
