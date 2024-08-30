@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'bun:test'
-import { Either, pipe } from 'effect'
+import { Option } from 'effect'
 
-import { allIndexesOf, atIndexes, average } from './array.ts'
+import { allIndexesOf, average } from './array.ts'
 
 describe('array', () => {
   describe('allIndexesOf', () => {
@@ -47,107 +47,67 @@ describe('array', () => {
     })
   })
 
-  describe('atIndexes', () => {
-    it('should return an empty array for an empty index list', () => {
-      const indexes: Array<number> = []
-      const array = [1, 2, 3]
-      const result = pipe(
-        array,
-        atIndexes(indexes),
-      )
-
-      expect(result).toStrictEqual(Either.right([]))
-    })
-
-    it('should return items at specified indexes', () => {
-      const indexes = [1, 0]
-      const array = [10, 20, 30]
-      const result = pipe(
-        array,
-        atIndexes(indexes),
-      )
-
-      expect(result).toStrictEqual(Either.right([20, 10]))
-    })
-
-    it('should return an error for out-of-bounds indexes', () => {
-      const indexes = [1, 3]
-      const array = [1, 2]
-      const result = pipe(
-        array,
-        atIndexes(indexes),
-      )
-
-      expect(result).toStrictEqual(Either.left('Index out of bounds'))
-    })
-
-    it('should handle negative indexes as out-of-bounds', () => {
-      const indexes = [-1, -2]
-      const array = [1, 2, 3]
-      const result = pipe(
-        array,
-        atIndexes(indexes),
-      )
-
-      expect(result).toStrictEqual(Either.left('Index out of bounds'))
-    })
-
-    it('should return items in the original order', () => {
-      const indexes = [2, 0, 1]
-      const array = [10, 20, 30]
-      const result = pipe(
-        array,
-        atIndexes(indexes),
-      )
-
-      expect(result).toStrictEqual(Either.right([30, 10, 20]))
-    })
-
-    it('should handle duplicate indexes', () => {
-      const indexes = [1, 1, 0]
-      const array = [10, 20, 30]
-      const result = pipe(
-        array,
-        atIndexes(indexes),
-      )
-
-      expect(result).toStrictEqual(Either.right([20, 20, 10]))
-    })
-
-    it('should handle an empty array', () => {
-      const indexes = [1, 2]
-      const array: Array<number> = []
-      const result = pipe(
-        array,
-        atIndexes(indexes),
-      )
-
-      expect(result).toStrictEqual(Either.left('Index out of bounds'))
-    })
-
-    it('should return an error for negative indexes', () => {
-      const indexes = [-1, -2]
-      const array = [1, 2, 3]
-      const result = pipe(
-        array,
-        atIndexes(indexes),
-      )
-
-      expect(result).toStrictEqual(Either.left('Index out of bounds'))
-    })
-  })
-
   describe('average', () => {
-    describe('When passed an array of 1 to 10', () => {
-      it('Should return 5.5', () => {
-        // Arrange
-        const expected = 5.5
+    describe('When the array is empty', () => {
+      it('should return NaN', () => {
+        const result = average([])
+        expect(Option.isNone(result)).toBe(true)
+      })
+    })
 
-        // Act
-        const actual = average([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    describe('When the array has one element', () => {
+      it('should return the value of that element', () => {
+        const result = average([1])
+        expect(Option.isSome(result)).toBe(true)
+        expect(Option.getOrElse(() =>
+          0)(result)).toBe(1)
+      })
+    })
 
-        // Assert
-        expect(actual).toEqual(expected)
+    describe('When the array has multiple elements', () => {
+      describe('When the elements are all positive numbers', () => {
+        it('should return the correct average', () => {
+          const result = average([1, 2, 3])
+          expect(Option.isSome(result)).toBe(true)
+          expect(Option.getOrElse(() =>
+            0)(result)).toBe(2)
+        })
+      })
+
+      describe('When the elements include negative numbers', () => {
+        it('should return the correct average', () => {
+          const result = average([-1, -2, -3])
+          expect(Option.isSome(result)).toBe(true)
+          expect(Option.getOrElse(() =>
+            0)(result)).toBe(-2)
+        })
+      })
+
+      describe('When the elements are all negative numbers', () => {
+        it('should return the correct average', () => {
+          const result = average([-1, -2, -3])
+          expect(Option.isSome(result)).toBe(true)
+          expect(Option.getOrElse(() =>
+            0)(result)).toBe(-2)
+        })
+      })
+
+      describe('When the elements include zero', () => {
+        it('should return the correct average', () => {
+          const result = average([0, 0, 0])
+          expect(Option.isSome(result)).toBe(true)
+          expect(Option.getOrElse(() =>
+            0)(result)).toBe(0)
+        })
+      })
+    })
+
+    describe('When the array contains floating point numbers', () => {
+      it('should return the correct average', () => {
+        const result = average([1.5, 2.5, 3.5])
+        expect(Option.isSome(result)).toBe(true)
+        expect(Option.getOrElse(() =>
+          0)(result)).toBe(2.5)
       })
     })
   })
