@@ -1,4 +1,4 @@
-import { Data, Effect as Fx, Either as E, Option as O } from 'effect'
+import { Data, Either as E, Effect as Fx, Option as O, Predicate as P } from 'effect'
 
 /**
  * Custom error class for predicate failure.
@@ -14,14 +14,31 @@ export class PredicateError extends Data.TaggedError('PredicateError')<{
  * @template A - The type of the input to the predicate function.
  * @template E - The type of the error that can be thrown.
  * @template R - The type of the result of the effect.
- * @param {function(A): boolean} predicate - The predicate function to evaluate the input.
- * @param {function(): E} onFalse - A function that returns an error when the predicate returns false.
- * @returns {function(A): Fx.Effect<A, E, R>} A function that takes an input and returns an effect.
+ * @param predicate - The predicate function to evaluate the input.
+ * @param onFalse - A function that returns an error when the predicate returns false.
+ * @returns A function that takes an input and returns an effect.
  */
-export const fromPredicate = <A, B extends A, E extends PredicateError, R>(predicate: (a: A) => a is B, onFalse: () => E) =>
-  (a: A): Fx.Effect<B, E, R> =>
+export const fromPredicate = <A, E, R>(predicate: P.Predicate<A>, onFalse: () => E) =>
+  (a: A): Fx.Effect<A, E, R> =>
     predicate(a)
       ? Fx.succeed(a)
+      : Fx.fail(onFalse())
+
+/**
+ * Creates an effect from a refinement function.
+ *
+ * @template A - The type of the input to the refinement function.
+ * @template B - The type of the narrowed output from the refinement function.
+ * @template E - The type of the error that can be thrown.
+ * @template R - The type of the result of the effect.
+ * @param refinement - The refinement function to evaluate the input.
+ * @param onFalse - A function that returns an error when the refinement returns false.
+ * @returns A function that takes an input and returns an effect.
+ */
+export const fromRefinement = <A, B extends A, E, R>(refinement: P.Refinement<A, B>, onFalse: () => E) =>
+  (a: A): Fx.Effect<B, E, R> =>
+    refinement(a)
+      ? Fx.succeed(a as B)
       : Fx.fail(onFalse())
 
 /**
@@ -30,8 +47,8 @@ export const fromPredicate = <A, B extends A, E extends PredicateError, R>(predi
  * @template A - The type of the success value in the Either type.
  * @template E - The type of the error value in the Either type.
  * @template R - The type of the result of the effect.
- * @param {E.Either<A, E>} e - The Either instance to convert.
- * @returns {Fx.Effect<A, E, R>} An effect that represents the conversion of the Either instance.
+ * @param e - The Either instance to convert.
+ * @returns An effect that represents the conversion of the Either instance.
  */
 export const fromEither = <A, E, R>(e: E.Either<A, E>): Fx.Effect<A, E, R> =>
   E.isLeft(e)

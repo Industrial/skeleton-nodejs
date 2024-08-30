@@ -4,8 +4,7 @@
   "type": "module",
   "scripts": {
     "update-packages": "npm-check-updates -u",
-    "lint": "tsc -p . --noEmit && eslint --fix .",
-    "test": "vitest"
+    "lint": "tsc -p . --noEmit && eslint --fix ."
   },
   "devDependencies": {
     "@types/node": "^22.5.1",

@@ -5,8 +5,7 @@
   "scripts": {
     "update-packages": "npm-check-updates -u",
     "lint": "tsc -p . --noEmit && eslint --fix .",
-    "start": "tsx src/index.ts",
-    "test": "vitest"
+    "start": "tsx src/index.ts"
   },
   "dependencies": {
     "typescript": "^5.5.4",

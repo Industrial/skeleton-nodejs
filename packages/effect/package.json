@@ -1,25 +1,20 @@
 {
-  "name": "@code9/effect",
-  "version": "0.1.0",
-  "type": "module",
-  "module": "src/index.ts",
-  "main": "src/index.ts",
-  "scripts": {
-    "update-packages": "npm-check-updates -u",
-    "lint": "tsc -p . --noEmit && eslint --fix .",
-    "test": "vitest"
-  },
-  "devDependencies": {
-    "@types/node": "^22.5.1",
-    "@vitest/coverage-v8": "^2.0.5",
-    "@vitest/spy": "^2.0.5",
-    "@vitest/ui": "^2.0.5",
-    "npm-check-updates": "^17.1.0",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
-  },
   "dependencies": {
     "@effect/schema": "^0.72.0",
     "effect": "^3.7.0"
-  }
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.1",
+    "npm-check-updates": "^17.1.0",
+    "typescript": "^5.5.4"
+  },
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "name": "@code9/effect",
+  "scripts": {
+    "lint": "tsc -p . --noEmit && eslint --fix .",
+    "update-packages": "npm-check-updates -u"
+  },
+  "type": "module",
+  "version": "0.1.0"
 }

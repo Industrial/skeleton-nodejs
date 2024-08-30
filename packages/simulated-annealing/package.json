@@ -6,8 +6,7 @@
   "main": "src/index.ts",
   "scripts": {
     "update-packages": "npm-check-updates -u",
-    "lint": "tsc -p . --noEmit && eslint --fix .",
-    "test": "vitest"
+    "lint": "tsc -p . --noEmit && eslint --fix ."
   },
   "dependencies": {
     "@code9/trader-backtest": "workspace:*",

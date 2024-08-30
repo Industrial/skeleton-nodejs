@@ -7,8 +7,7 @@
     "build": "mkdir -p dist && bun build src/index.ts > dist/index.js",
     "update-packages": "npm-check-updates -u",
     "lint": "tsc -p . --noEmit && eslint --fix .",
-    "start": "bun run dist/index.js",
-    "test": "vitest"
+    "start": "bun run dist/index.js"
   },
   "dependencies": {
     "@code9/async": "workspace:*",
