@@ -32,16 +32,13 @@ export const allIndexesOf = <T>(item: T, array: Array<T>): Array<number> =>
       Equal.equals(value, item) ? Option.some(index) : Option.none()),
   )
 
-const isIndexOutOfBounds = (index: number, arrayLength: number): boolean =>
-  index < 0 || index >= arrayLength
-
 /**
  * Calculate the average of an array of numbers.
  *
  * @param values - An array of numbers to calculate the average of.
  * @returns The average of the numbers in the array.
  */
-export const average = (values: Array<number>) =>
+export const average = (values: Array<number>): Option.Option<number> =>
   pipe(
     N.sumAll(values),
     N.divide(values.length),
