@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Either, Option } from 'effect'
+import { Either, Effect as Fx, Option } from 'effect'
 
 import { decimalPlaces, factorial, factorialByIteration, getPrecision, getRandomNumber, isInteger, isScientificNotation, safeDivide, scientificDecimalPlaces } from './number.ts'
 
@@ -125,7 +125,7 @@ describe('number', () => {
         it('should return the correct result', () => {
           const minimum = -10
           const maximum = -1
-          const actual = getRandomNumber(minimum, maximum)
+          const actual = Fx.runSync(getRandomNumber(minimum, maximum))
           expect(actual).toBeGreaterThanOrEqual(minimum)
           expect(actual).toBeLessThanOrEqual(maximum)
         })
@@ -134,7 +134,7 @@ describe('number', () => {
         it('should return the correct result', () => {
           const minimum = -10
           const maximum = 10
-          const actual = getRandomNumber(minimum, maximum)
+          const actual = Fx.runSync(getRandomNumber(minimum, maximum))
           expect(actual).toBeGreaterThanOrEqual(minimum)
           expect(actual).toBeLessThanOrEqual(maximum)
         })
@@ -145,7 +145,7 @@ describe('number', () => {
         it('should still work, regardless of which is higher', () => {
           const minimum = 1
           const maximum = -10
-          const actual = getRandomNumber(minimum, maximum)
+          const actual = Fx.runSync(getRandomNumber(minimum, maximum))
           expect(actual).toBeGreaterThanOrEqual(maximum)
           expect(actual).toBeLessThanOrEqual(minimum)
         })
@@ -154,7 +154,7 @@ describe('number', () => {
         it('should return the correct result', () => {
           const minimum = 1
           const maximum = 10
-          const actual = getRandomNumber(minimum, maximum)
+          const actual = Fx.runSync(getRandomNumber(minimum, maximum))
           expect(actual).toBeGreaterThanOrEqual(minimum)
           expect(actual).toBeLessThanOrEqual(maximum)
         })
