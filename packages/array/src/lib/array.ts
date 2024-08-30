@@ -1,4 +1,4 @@
-import { Array as A, Equal, Effect as Fx, Number as N, Option, pipe } from 'effect'
+import { Array as A, Effect as Fx, Equal, Number as N, Option, pipe } from 'effect'
 
 /**
  * Create a new array with a section sliced out based on the given start and end indices.
