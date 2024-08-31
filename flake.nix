@@ -60,6 +60,12 @@
           nodePackages.rollup
           jq
 
+          # EdgeDB
+          edgedb
+
+          # Ollama
+          ollama
+
           # Haskell
           inputs.ghc-wasm-meta.packages.${system}.all_9_10
           cabal-install

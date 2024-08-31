@@ -1,4 +1,7 @@
 {
+  "dependencies": {
+    "ollama": "^0.5.8"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
