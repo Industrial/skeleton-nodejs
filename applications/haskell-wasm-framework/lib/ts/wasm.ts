@@ -1,10 +1,15 @@
 import { readFile } from "fs/promises"
 import { wasi } from "./wasi"
 
-export const loadCompiled = async <T>(
+export interface InstanceWithExports<T extends Bun.WebAssembly.Exports> extends Bun.WebAssembly.Instance {
+  exports: T
+}
+
+export const loadCompiled = async <T extends Bun.WebAssembly.Exports>(
   wasmUrl: string,
   jsUrl: string,
-): Promise<T> => {
+  env: Bun.WebAssembly.ModuleImports,
+): Promise<InstanceWithExports<T>> => {
   const wasmBinary = await readFile(wasmUrl)
   const wasmModule = await WebAssembly.compile(wasmBinary)
 
@@ -12,12 +17,16 @@ export const loadCompiled = async <T>(
 
   const instance = await WebAssembly.instantiate(wasmModule, {
     ghc_wasm_jsffi: (await import(jsUrl)).default(__exports),
-    wasi_snapshot_preview1: wasi.wasiImport
+    wasi_snapshot_preview1: wasi.wasiImport,
+    env,
   })
 
   wasi.start(instance)
 
-  return instance.exports as T
+  return {
+    ...instance,
+    exports: instance.exports as T,
+  }
 }
 
 export const loadStreaming = async () => {
