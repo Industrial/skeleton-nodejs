@@ -52,6 +52,7 @@
       inputs.flake-devshells.devshells {
         packages = with pkgs; [
           # Repository
+          inotify-tools
           pre-commit
           direnv
 
@@ -66,14 +67,16 @@
           # Ollama
           ollama
 
-          # Haskell
-          inputs.ghc-wasm-meta.packages.${system}.all_9_10
+          # Haskell & WASM
+          #haskell.packages.ghcjs.ghcjs-base
+          #haskellPackages.ghc-experimental
           cabal-install
-          # ghc
           haskell-language-server
           haskell.compiler.ghcjs
-          #haskell.packages.ghcjs.ghcjs-base
           haskellPackages.hlint
+          inputs.ghc-wasm-meta.packages.${system}.all_9_10
+          wabt
+          wasmtime
         ];
       } {inherit self system pkgs;});
   };

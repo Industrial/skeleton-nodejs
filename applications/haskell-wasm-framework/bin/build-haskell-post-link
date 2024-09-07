@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#set -euo pipefail
+exec > >(tee -i "log/build-haskell-post-link.log") 2>&1
+
+echo "> bin/build-haskell-post-link"
+
+WASI_GHC_LIBDIR=$(wasm32-wasi-ghc --print-libdir)
+
+"${WASI_GHC_LIBDIR}"/post-link.mjs \
+    -i dist/Main.wasm \
+    -o dist/Main.js

@@ -1,3 +1,6 @@
-*.hi
-*.o
 *.h
+*.hi
+*.log
+*.o
+*.wasm
+*.wat

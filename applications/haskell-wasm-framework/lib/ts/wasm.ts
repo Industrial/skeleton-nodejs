@@ -23,8 +23,8 @@ export const loadCompiled = async <T>(
 export const loadStreaming = async () => {
   // TODO: WebAssembly.instantiateStreaming is not supported in BunJS
   const __exports = {}
-  const wasm_url = `${import.meta.dirname}/haskell/dist/MyLib.wasm`
-  const js_url = `${import.meta.dirname}/haskell/dist/MyLib.js`
+  const wasm_url = `${import.meta.dirname}/haskell/dist/Main.wasm`
+  const js_url = `${import.meta.dirname}/haskell/dist/Main.js`
   const { instance } = await WebAssembly.instantiateStreaming(
     fetch(wasm_url),
     {

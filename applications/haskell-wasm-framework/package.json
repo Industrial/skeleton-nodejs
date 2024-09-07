@@ -1,15 +1,4 @@
 {
-  "name": "@code9/haskell-wasm-framework",
-  "version": "0.1.0",
-  "type": "module",
-  "scripts": {
-    "build": "bun run build:haskell && bun run build:vinxi",
-    "build:haskell": "wasm32-wasi-ghc lib/MyLib.hs -o dist/MyLib.wasm -no-hs-main -optl-mexec-model=reactor -optl-Wl,--export=hs_init,--export=main",
-    "build:haskell:post-link": "bash -c \"$(wasm32-wasi-ghc --print-libdir)/post-link.mjs -i dist/MyLib.wasm -o dist/MyLib.js\"",
-    "dev": "bun run server.ts",
-    "lint": "tsc -p . --noEmit && eslint --fix .",
-    "update-packages": "npm-check-updates -u"
-  },
   "devDependencies": {
     "@types/node": "^22.5.1",
     "@vitest/coverage-v8": "^2.0.5",
@@ -17,5 +6,12 @@
     "@vitest/ui": "^2.0.5",
     "npm-check-updates": "^17.1.0",
     "vitest": "^2.0.5"
-  }
+  },
+  "name": "@code9/haskell-wasm-framework",
+  "scripts": {
+    "lint": "tsc -p . --noEmit && eslint --fix .",
+    "update-packages": "npm-check-updates -u"
+  },
+  "type": "module",
+  "version": "0.1.0"
 }
