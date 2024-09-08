@@ -15,36 +15,37 @@ const jsUrl = `${import.meta.dirname}/dist/Main.js`;
 const wasmBinary = await readFile(wasmUrl)
 const wasmModule = await WebAssembly.compile(wasmBinary)
 
-// 2. I don't know where these exports are for, but according to the generated
-//    jsffi .js file it contains:
-//    - .rts_freeStablePtr(sp)
-//    - .rts_schedulerLoop
-//    - .rts_promiseResolveInt
-//    - .rts_promiseResolveUnit
-//    - .rts_promiseReject
-//    - .memory
+const memory = new WebAssembly.Memory({
+  initial: 1
+})
+
 const __exports = {}
+const ghc_wasm_jsffi = (await import(jsUrl)).default(__exports)
 
 const instance = await WebAssembly.instantiate(wasmModule, {
-  ghc_wasm_jsffi: (await import(jsUrl)).default(__exports),
+  ghc_wasm_jsffi,
   wasi_snapshot_preview1: wasi.wasiImport,
   env: {
     // 3. This is the function that I want to expose to haskell so that I can
     //    call it inside haskell code.
-    test123: (x: number) => {
-      console.log('test123:env', x);
-      return x + 1;
+    test123: async (x: number) => {
+      console.log('test123:env', x)
+      return x + 1
     },
+    memory,
   },
 })
+Object.assign(__exports, instance.exports)
 
 export interface Exports extends WebAssembly.Exports {
-  hs_init: (argc: number, argv: number) => void;
-  main: () => Promise<void>;
+  hs_init: (argc: number, argv: number) => void
+  main: () => Promise<void>
 }
 
 const exports = instance.exports as Exports
 
+console.log('exports', exports)
+
 wasi.start(instance)
-exports.hs_init(0, 0);
-await exports.main();
+exports.hs_init(0, 0)
+await exports.main()
