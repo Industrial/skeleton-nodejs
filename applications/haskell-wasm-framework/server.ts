@@ -1,4 +1,3 @@
-// 1. My runtime is BunJS, which implements Node.js APIs and WASI.
 import { readFile } from 'node:fs/promises';
 import { WASI } from 'wasi';
 
@@ -19,19 +18,18 @@ const memory = new WebAssembly.Memory({
   initial: 1
 })
 
-const __exports = {}
+const __exports = {
+  test123: async (x: number) => {
+    console.log('test123:env', x)
+    return x + 1
+  },
+}
 const ghc_wasm_jsffi = (await import(jsUrl)).default(__exports)
 
 const instance = await WebAssembly.instantiate(wasmModule, {
   ghc_wasm_jsffi,
   wasi_snapshot_preview1: wasi.wasiImport,
   env: {
-    // 3. This is the function that I want to expose to haskell so that I can
-    //    call it inside haskell code.
-    test123: async (x: number) => {
-      console.log('test123:env', x)
-      return x + 1
-    },
     memory,
   },
 })

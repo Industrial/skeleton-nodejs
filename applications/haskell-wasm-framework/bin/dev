@@ -5,6 +5,7 @@ exec > >(tee -i "log/dev.log") 2>&1
 echo "> bin/dev"
 
 function dev_run() {
+    clear
     bin/clean
     bin/build-haskell
     bin/build-haskell-post-link
