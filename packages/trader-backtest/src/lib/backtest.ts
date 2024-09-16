@@ -1,5 +1,6 @@
 import { fromPredicate, PredicateError } from '@code9/effect'
-import { OHLCV, Position, Trade } from '@code9/trader-core'
+import type { OHLCV, Trade } from '@code9/trader-core'
+import { Position } from '@code9/trader-core'
 import { Effect as Fx, pipe } from 'effect'
 
 export type CalculatePricesProps = {
@@ -22,10 +23,8 @@ export type CalculatePricesResult = {
  * containing the validation result or a PredicateError.
  */
 export const isntBaseZeroE = fromPredicate(
-  (a: CalculatePricesProps): a is CalculatePricesProps =>
-    a.base !== 0,
-  () =>
-    new PredicateError({ message: 'Base is zero' }),
+  (a: CalculatePricesProps): a is CalculatePricesProps => a.base !== 0,
+  () => new PredicateError({ message: 'Base is zero' }),
 )
 
 /**
@@ -36,10 +35,8 @@ export const isntBaseZeroE = fromPredicate(
  * containing the validation result or a PredicateError.
  */
 export const isntQuoteZeroE = fromPredicate(
-  (a: CalculatePricesProps): a is CalculatePricesProps =>
-    a.quote !== 0,
-  () =>
-    new PredicateError({ message: 'Quote is zero' }),
+  (a: CalculatePricesProps): a is CalculatePricesProps => a.quote !== 0,
+  () => new PredicateError({ message: 'Quote is zero' }),
 )
 
 /**
@@ -50,10 +47,8 @@ export const isntQuoteZeroE = fromPredicate(
  * containing the validation result or a PredicateError.
  */
 export const isntPriceZeroE = fromPredicate(
-  (a: CalculatePricesProps): a is CalculatePricesProps =>
-    a.price !== 0,
-  () =>
-    new PredicateError({ message: 'Price is zero' }),
+  (a: CalculatePricesProps): a is CalculatePricesProps => a.price !== 0,
+  () => new PredicateError({ message: 'Price is zero' }),
 )
 
 /**
@@ -64,10 +59,8 @@ export const isntPriceZeroE = fromPredicate(
  * containing the validation result or a PredicateError.
  */
 export const isntTransactionCostPercentageNegativeE = fromPredicate(
-  (a: CalculatePricesProps): a is CalculatePricesProps =>
-    a.transactionCostPercentage >= 0,
-  () =>
-    new PredicateError({ message: 'transactionCostPercentage is negative' }),
+  (a: CalculatePricesProps): a is CalculatePricesProps => a.transactionCostPercentage >= 0,
+  () => new PredicateError({ message: 'transactionCostPercentage is negative' }),
 )
 
 /**
@@ -84,12 +77,9 @@ export const isntTransactionCostPercentageNegativeE = fromPredicate(
 export const calculateBuyPrices = <E, R>(props: CalculatePricesProps): Fx.Effect<CalculatePricesResult, E | PredicateError, R> =>
   pipe(
     Fx.Do,
-    Fx.bind('validateQuote', () =>
-      isntQuoteZeroE(props)),
-    Fx.bind('validatePrice', ({ validateQuote }) =>
-      isntPriceZeroE(validateQuote)),
-    Fx.bind('validateTransactionCostPercentage', ({ validatePrice }) =>
-      isntTransactionCostPercentageNegativeE(validatePrice)),
+    Fx.bind('validateQuote', () => isntQuoteZeroE(props)),
+    Fx.bind('validatePrice', ({ validateQuote }) => isntPriceZeroE(validateQuote)),
+    Fx.bind('validateTransactionCostPercentage', ({ validatePrice }) => isntTransactionCostPercentageNegativeE(validatePrice)),
     Fx.map(({ validateTransactionCostPercentage }) => {
       let transactionPrice = validateTransactionCostPercentage.quote / validateTransactionCostPercentage.price
       transactionPrice -= (validateTransactionCostPercentage.transactionCostPercentage / 100) * transactionPrice
@@ -115,12 +105,9 @@ export const calculateBuyPrices = <E, R>(props: CalculatePricesProps): Fx.Effect
 export const calculateSellPrices = <E, R>(props: CalculatePricesProps): Fx.Effect<CalculatePricesResult, E | PredicateError, R> =>
   pipe(
     Fx.Do,
-    Fx.bind('validateBase', () =>
-      isntBaseZeroE(props)),
-    Fx.bind('validatePrice', ({ validateBase }) =>
-      isntPriceZeroE(validateBase)),
-    Fx.bind('validateTransactionCostPercentage', ({ validatePrice }) =>
-      isntTransactionCostPercentageNegativeE(validatePrice)),
+    Fx.bind('validateBase', () => isntBaseZeroE(props)),
+    Fx.bind('validatePrice', ({ validateBase }) => isntPriceZeroE(validateBase)),
+    Fx.bind('validateTransactionCostPercentage', ({ validatePrice }) => isntTransactionCostPercentageNegativeE(validatePrice)),
     Fx.map(({ validateTransactionCostPercentage }) => {
       let transactionPrice = validateTransactionCostPercentage.base * validateTransactionCostPercentage.price
       transactionPrice -= (validateTransactionCostPercentage.transactionCostPercentage / 100) * transactionPrice
@@ -157,10 +144,8 @@ export type BacktestOperation = <A extends BacktestState, E, R>(props: BacktestO
  * Position.Buy.
  */
 const positionIsntBuyE = fromPredicate(
-  (state: BacktestState): state is BacktestState =>
-    state.currentPosition !== Position.Buy,
-  () =>
-    new PredicateError({ message: 'Cannot buy when currentPosition is Buy.' }),
+  (state: BacktestState): state is BacktestState => state.currentPosition !== Position.Buy,
+  () => new PredicateError({ message: 'Cannot buy when currentPosition is Buy.' }),
 )
 
 /**
@@ -215,14 +200,13 @@ export const buy = <E, R>({
             trades: currentState.trades,
           }
         }),
-      )),
+      ),
+    ),
   ) as Fx.Effect<BacktestState, E | PredicateError, R>
 
 const positionHasTradeE = fromPredicate(
-  (state: BacktestState): state is BacktestState & { currentTrade: Trade } =>
-    state.currentTrade !== undefined,
-  () =>
-    new PredicateError({ message: `Cannot sell when currentTrade is not defined` }),
+  (state: BacktestState): state is BacktestState & { currentTrade: Trade } => state.currentTrade !== undefined,
+  () => new PredicateError({ message: `Cannot sell when currentTrade is not defined` }),
 )
 
 /**
@@ -273,7 +257,8 @@ export const sell = <E, R>({
             ],
           }
         }),
-      )),
+      ),
+    ),
   ) as Fx.Effect<BacktestState, E | PredicateError, R>
 
 /**
@@ -290,8 +275,7 @@ export const sell = <E, R>({
  * @returns {Fx.Effect<BacktestState, E | PredicateError, R>} The unmodified
  * backtesting state.
  */
-export const hold = <E, R>({ state }: BacktestOperationProps<E, R>): Fx.Effect<BacktestState, E | PredicateError, R> =>
-  state
+export const hold = <E, R>({ state }: BacktestOperationProps<E, R>): Fx.Effect<BacktestState, E | PredicateError, R> => state
 
 const backtestOperations = {
   [Position.Buy]: buy,
@@ -327,15 +311,17 @@ export const backtest = <E, R>(
   initialAmount: number,
   transactionCostPercentage = 0,
 ): Fx.Effect<Array<Trade>, E | PredicateError, R> =>
-    pipe(
-      positions,
-      Fx.reduce({
+  pipe(
+    positions,
+    Fx.reduce(
+      {
         currentPosition: Position.Hold,
         currentTrade: undefined,
         currentAmountBase: 0,
         currentAmountQuote: initialAmount,
         trades: [],
-      } as BacktestState, (state, position, index) =>
+      } as BacktestState,
+      (state, position, index) =>
         pipe(
           Fx.fromNullable(bars[index]),
           Fx.flatMap((bar) =>
@@ -348,11 +334,12 @@ export const backtest = <E, R>(
               Fx.map((newState) => {
                 return { ...newState, currentPosition: position }
               }),
-            )),
-        ) as Fx.Effect<BacktestState, E | PredicateError, R>),
-      Fx.map((resultState) =>
-        resultState.trades),
-    )
+            ),
+          ),
+        ) as Fx.Effect<BacktestState, E | PredicateError, R>,
+    ),
+    Fx.map((resultState) => resultState.trades),
+  )
 
 /**
  * Logs the details of each trade, including start and end dates, prices,
@@ -373,8 +360,7 @@ export const logTrades = (trades: Array<Trade>, initialAmount: number): void => 
     return
   }
 
-  const quotes = [initialAmount].concat(trades.map((trade) =>
-    trade.quote))
+  const quotes = [initialAmount].concat(trades.map((trade) => trade.quote))
 
   for (let index = 1; index < quotes.length; index += 1) {
     const previousQuote = quotes[index - 1]
@@ -427,10 +413,8 @@ export const logProfitPercentages = (trades: Array<Trade>, initialAmount: number
   }
 
   const profitPercentage = (lastTrade.quote / initialAmount) * 100
-  const profitPercentages = trades.map((entry) =>
-    100 - (entry.endPrice / entry.startPrice) * 100)
-  const winningTrades = profitPercentages.filter((entry) =>
-    entry > 0)
+  const profitPercentages = trades.map((entry) => 100 - (entry.endPrice / entry.startPrice) * 100)
+  const winningTrades = profitPercentages.filter((entry) => entry > 0)
   const profitabilityPercentage = (winningTrades.length / trades.length) * 100
 
   console.log(`Profit Percentage: ${profitPercentage.toFixed(2)}%`)

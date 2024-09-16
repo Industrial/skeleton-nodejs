@@ -44,20 +44,11 @@ describe('ema', () => {
 
         describe('When the alpha function is provided', () => {
           it('should return an array with the exponential moving average using the provided alpha function', () => {
-            const alpha = (length: number): number =>
-              1 / length
+            const alpha = (length: number): number => 1 / length
             const actual = E.runSync(ema(5, alpha)(E.succeed([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])))
             const expected: Array<number> = [
-              1,
-              1.2000000000000002,
-              1.5600000000000003,
-              2.048,
-              2.6384,
-              3.3107200000000003,
-              4.048576000000001,
-              4.838860800000001,
-              5.671088640000001,
-              6.536870912,
+              1, 1.2000000000000002, 1.5600000000000003, 2.048, 2.6384, 3.3107200000000003, 4.048576000000001, 4.838860800000001,
+              5.671088640000001, 6.536870912,
             ]
             expect(actual).toStrictEqual(expected)
           })

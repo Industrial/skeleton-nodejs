@@ -109,8 +109,7 @@ describe('array', () => {
       it('should return the value of that element', () => {
         const result = average([1])
         expect(Option.isSome(result)).toBe(true)
-        expect(Option.getOrElse(() =>
-          0)(result)).toBe(1)
+        expect(Option.getOrElse(() => 0)(result)).toBe(1)
       })
     })
 
@@ -119,8 +118,7 @@ describe('array', () => {
         it('should return the correct average', () => {
           const result = average([1, 2, 3])
           expect(Option.isSome(result)).toBe(true)
-          expect(Option.getOrElse(() =>
-            0)(result)).toBe(2)
+          expect(Option.getOrElse(() => 0)(result)).toBe(2)
         })
       })
 
@@ -128,8 +126,7 @@ describe('array', () => {
         it('should return the correct average', () => {
           const result = average([-1, -2, -3])
           expect(Option.isSome(result)).toBe(true)
-          expect(Option.getOrElse(() =>
-            0)(result)).toBe(-2)
+          expect(Option.getOrElse(() => 0)(result)).toBe(-2)
         })
       })
 
@@ -137,8 +134,7 @@ describe('array', () => {
         it('should return the correct average', () => {
           const result = average([-1, -2, -3])
           expect(Option.isSome(result)).toBe(true)
-          expect(Option.getOrElse(() =>
-            0)(result)).toBe(-2)
+          expect(Option.getOrElse(() => 0)(result)).toBe(-2)
         })
       })
 
@@ -146,8 +142,7 @@ describe('array', () => {
         it('should return the correct average', () => {
           const result = average([0, 0, 0])
           expect(Option.isSome(result)).toBe(true)
-          expect(Option.getOrElse(() =>
-            0)(result)).toBe(0)
+          expect(Option.getOrElse(() => 0)(result)).toBe(0)
         })
       })
     })
@@ -156,8 +151,7 @@ describe('array', () => {
       it('should return the correct average', () => {
         const result = average([1.5, 2.5, 3.5])
         expect(Option.isSome(result)).toBe(true)
-        expect(Option.getOrElse(() =>
-          0)(result)).toBe(2.5)
+        expect(Option.getOrElse(() => 0)(result)).toBe(2.5)
       })
     })
   })

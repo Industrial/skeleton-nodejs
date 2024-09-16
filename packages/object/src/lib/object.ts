@@ -1,4 +1,4 @@
-import { PrefixedString, SuffixedString } from '@code9/string'
+import type { PrefixedString, SuffixedString } from '@code9/string'
 
 /**
  * Represents an object where keys are prefixed strings.
@@ -27,9 +27,7 @@ export type SuffixedKeyObject<Suffix extends string, Value> = {
  * @param entries - The array of entries.
  * @returns An array of values.
  */
-export const entriesValues = <T>(entries: Array<[string, T]>): Array<T> =>
-  entries.map(([, value]) =>
-    value)
+export const entriesValues = <T>(entries: Array<[string, T]>): Array<T> => entries.map(([, value]) => value)
 
 /**
  * Returns the entries of an object sorted by their keys.
@@ -39,8 +37,7 @@ export const entriesValues = <T>(entries: Array<[string, T]>): Array<T> =>
  * @returns An array of entries sorted by keys.
  */
 export const sortedEntries = <T>(object: Record<string, T>): Array<[string, T]> =>
-  Object.entries(object).sort((a, b) =>
-    a[0].localeCompare(b[0]))
+  Object.entries(object).sort((a, b) => a[0].localeCompare(b[0]))
 
 /**
  * Creates a "bag" object by limiting the number of entries and optionally adding a new entry.

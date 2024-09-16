@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'bun:test'
+
 import { assertIsNotNull, assertIsNull, isNotNull, isNull } from './null.ts'
 
 describe('isNull', () => {

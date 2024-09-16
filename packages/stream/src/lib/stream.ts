@@ -3,16 +3,18 @@ import { isUndefined } from '@code9/undefined'
 import { newProperty, type Observer, type Property } from '@frp-ts/core'
 import * as E from 'fp-ts/Either'
 import * as TE from 'fp-ts/TaskEither'
-import { Readable } from 'stream'
+import type { Readable } from 'stream'
 
-export const createHandleError = (writer: WritableStreamDefaultWriter<Uint8Array>) =>
+export const createHandleError =
+  (writer: WritableStreamDefaultWriter<Uint8Array>) =>
   (error: Error): void => {
     // Made this promise 'floating' because there is no way to handle the error.
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     writer.abort(error)
   }
 
-export const createHandleData = (writer: WritableStreamDefaultWriter<Uint8Array>) =>
+export const createHandleData =
+  (writer: WritableStreamDefaultWriter<Uint8Array>) =>
   async (chunk: Buffer | null | undefined): Promise<void> => {
     if (isNull(chunk) || isUndefined(chunk)) {
       await writer.close()
@@ -22,10 +24,9 @@ export const createHandleData = (writer: WritableStreamDefaultWriter<Uint8Array>
     await writer.write(uint8Array)
   }
 
-export const createHandleEnd = (writer: WritableStreamDefaultWriter<Uint8Array>) =>
-  async (): Promise<void> => {
-    await writer.close()
-  }
+export const createHandleEnd = (writer: WritableStreamDefaultWriter<Uint8Array>) => async (): Promise<void> => {
+  await writer.close()
+}
 
 export const nodeReadableToReadableStream = (nodeStream: Readable): ReadableStream => {
   const transformStream = new TransformStream<Uint8Array, Uint8Array>()
@@ -39,16 +40,13 @@ export const nodeReadableToReadableStream = (nodeStream: Readable): ReadableStre
 }
 
 export const streamToString = (stream: Readable): TE.TaskEither<Error, string> =>
-  TE.tryCatch(
-    async () => {
-      let data = ''
-      for await (const chunk of stream) {
-        data += chunk
-      }
-      return data
-    },
-    E.toError,
-  )
+  TE.tryCatch(async () => {
+    let data = ''
+    for await (const chunk of stream) {
+      data += chunk
+    }
+    return data
+  }, E.toError)
 
 export const createReadableStreamProperty = <T>(stream: ReadableStream): Property<E.Either<Error, Uint8Array>> => {
   const reader = stream.getReader()
@@ -57,10 +55,9 @@ export const createReadableStreamProperty = <T>(stream: ReadableStream): Propert
   const handleError = (error: Error) => {
     currentValue = E.left(error)
   }
-  const get = () =>
-    currentValue
+  const get = () => currentValue
   const subscribe = (observer: Observer<E.Either<Error, Uint8Array>>) => {
-    (async () => {
+    ;(async () => {
       try {
         subscribed = true
         // eslint-disable-next-line @stylistic/js/max-len

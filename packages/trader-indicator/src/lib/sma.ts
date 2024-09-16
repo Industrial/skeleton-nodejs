@@ -16,24 +16,25 @@ import { Array as A, Effect as E, Either, pipe } from 'effect'
  * const result = await E.runPromise(sma5(values));
  * // result is [3, 4, 5, 6, 7, 8]
  */
-export const sma = (length: number) =>
-  (values: E.Effect<Array<number>>) =>
-    pipe(
-      values,
-      E.flatMap((as) =>
-        pipe(
-          A.range(0, as.length - length + 1),
-          A.map((i) =>
-            pipe(
-              as,
-              sliceE(i, i + length),
-              E.flatMap((b) =>
-                pipe(
-                  average(b),
-                  Either.fromOption(() =>
-                    new Error('Calculation failed')),
-                )),
-            )),
-          E.all,
-        )),
-    )
+export const sma = (length: number) => (values: E.Effect<Array<number>>) =>
+  pipe(
+    values,
+    E.flatMap((as) =>
+      pipe(
+        A.range(0, as.length - length + 1),
+        A.map((i) =>
+          pipe(
+            as,
+            sliceE(i, i + length),
+            E.flatMap((b) =>
+              pipe(
+                average(b),
+                Either.fromOption(() => new Error('Calculation failed')),
+              ),
+            ),
+          ),
+        ),
+        E.all,
+      ),
+    ),
+  )

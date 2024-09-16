@@ -1,7 +1,17 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Either, Effect as Fx, Option } from 'effect'
+import { Effect as Fx, Either, Option } from 'effect'
 
-import { decimalPlaces, factorial, factorialByIteration, getPrecision, getRandomNumber, isInteger, isScientificNotation, safeDivide, scientificDecimalPlaces } from './number.ts'
+import {
+  decimalPlaces,
+  factorial,
+  factorialByIteration,
+  getPrecision,
+  getRandomNumber,
+  isInteger,
+  isScientificNotation,
+  safeDivide,
+  scientificDecimalPlaces,
+} from './number.ts'
 
 describe('number', () => {
   describe('factorial', () => {
@@ -97,8 +107,7 @@ describe('number', () => {
     test('should divide two numbers when the denominator is not zero', () => {
       const result = safeDivide(6, 2)
       expect(Option.isSome(result)).toBe(true)
-      expect(Option.getOrElse(() =>
-        0)(result)).toBe(3)
+      expect(Option.getOrElse(() => 0)(result)).toBe(3)
     })
 
     test('should return none when the denominator is zero', () => {
@@ -114,8 +123,7 @@ describe('number', () => {
     test('should handle negative numbers properly', () => {
       const result = safeDivide(-6, 2)
       expect(Option.isSome(result)).toBe(true)
-      expect(Option.getOrElse(() =>
-        0)(result)).toBe(-3)
+      expect(Option.getOrElse(() => 0)(result)).toBe(-3)
     })
   })
 

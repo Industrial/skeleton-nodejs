@@ -33,19 +33,17 @@ const conversions: Record<TimeUnit, number> = {
  * console.log(unsafeUnwrap(result)) // 120
  * ```
  */
-export const convertTime = <A extends number>(
-  sourceUnit: TimeUnit,
-  targetUnit: TimeUnit,
-) =>
-    (a: A): O.Option<A> =>
-      sourceUnit === targetUnit
-        ? O.some(a)
-        : pipe(
+export const convertTime =
+  <A extends number>(sourceUnit: TimeUnit, targetUnit: TimeUnit) =>
+  (a: A): O.Option<A> =>
+    sourceUnit === targetUnit
+      ? O.some(a)
+      : (pipe(
           O.fromNullable(conversions[sourceUnit]),
           O.flatMap((source) =>
             pipe(
               O.fromNullable(conversions[targetUnit]),
-              O.flatMap((target) =>
-                safeDivide(a * source, target)),
-            )),
-        ) as O.Option<A>
+              O.flatMap((target) => safeDivide(a * source, target)),
+            ),
+          ),
+        ) as O.Option<A>)

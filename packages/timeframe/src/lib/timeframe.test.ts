@@ -1,15 +1,7 @@
 import { describe, expect, it } from 'bun:test'
 import { Effect as Fx } from 'effect'
 
-import {
-  add,
-  between,
-  fromMs,
-  millisecondsUntilNextTimeframe,
-  start,
-  subtract,
-  toMs,
-} from './timeframe.ts'
+import { add, between, fromMs, millisecondsUntilNextTimeframe, start, subtract, toMs } from './timeframe.ts'
 
 describe('timeframe', () => {
   describe('toMs', () => {
@@ -119,9 +111,7 @@ describe('timeframe', () => {
           const startDate = new Date('2000-01-01T00:00:00.000Z')
           const endDate = new Date('2000-01-01T00:30:00.000Z')
           const result = Fx.runSync(between(timeframe, startDate, endDate))
-          const expected = [
-            new Date('2000-01-01T00:00:00.000Z'),
-          ]
+          const expected = [new Date('2000-01-01T00:00:00.000Z')]
           expect(result).toStrictEqual(expected)
         })
       })
@@ -131,9 +121,7 @@ describe('timeframe', () => {
           const startDate = new Date('2000-01-01T00:00:00.000Z')
           const endDate = new Date('2000-01-01T01:00:00.000Z')
           const result = Fx.runSync(between(timeframe, startDate, endDate))
-          const expected = [
-            new Date('2000-01-01T00:00:00.000Z'),
-          ]
+          const expected = [new Date('2000-01-01T00:00:00.000Z')]
           expect(result).toStrictEqual(expected)
         })
       })
@@ -143,10 +131,7 @@ describe('timeframe', () => {
           const startDate = new Date('2000-01-01T00:00:00.000Z')
           const endDate = new Date('2000-01-01T02:00:00.000Z')
           const result = Fx.runSync(between(timeframe, startDate, endDate))
-          const expected = [
-            new Date('2000-01-01T00:00:00.000Z'),
-            new Date('2000-01-01T01:00:00.000Z'),
-          ]
+          const expected = [new Date('2000-01-01T00:00:00.000Z'), new Date('2000-01-01T01:00:00.000Z')]
           expect(result).toStrictEqual(expected)
         })
       })

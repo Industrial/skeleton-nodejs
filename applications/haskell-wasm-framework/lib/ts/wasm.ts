@@ -1,7 +1,8 @@
-import { readFile } from "fs/promises"
-import { wasi } from "./wasi"
+import { readFile } from 'fs/promises'
 
-export interface InstanceWithExports<T extends Bun.WebAssembly.Exports> extends Bun.WebAssembly.Instance {
+import { wasi } from './wasi'
+
+export type InstanceWithExports<T extends Bun.WebAssembly.Exports> = Bun.WebAssembly.Instance & {
   exports: T
 }
 
@@ -34,13 +35,10 @@ export const loadStreaming = async () => {
   const __exports = {}
   const wasm_url = `${import.meta.dirname}/haskell/dist/Main.wasm`
   const js_url = `${import.meta.dirname}/haskell/dist/Main.js`
-  const { instance } = await WebAssembly.instantiateStreaming(
-    fetch(wasm_url),
-    {
-      ghc_wasm_jsffi: (await import(js_url)).default(__exports),
-      wasi_snapshot_preview1: wasi.wasiImport
-    },
-  )
+  const { instance } = await WebAssembly.instantiateStreaming(fetch(wasm_url), {
+    ghc_wasm_jsffi: (await import(js_url)).default(__exports),
+    wasi_snapshot_preview1: wasi.wasiImport,
+  })
   Object.assign(__exports, instance.exports)
   wasi.initialize(__exports)
   return __exports

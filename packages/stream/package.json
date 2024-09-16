@@ -1,12 +1,8 @@
 {
-  "name": "@code9/stream",
-  "version": "0.1.0",
-  "type": "module",
-  "module": "src/index.ts",
-  "main": "src/index.ts",
-  "scripts": {
-    "update-packages": "npm-check-updates -u",
-    "lint": "tsc -p . --noEmit && eslint --fix ."
+  "dependencies": {
+    "@code9/null": "workspace:*",
+    "@code9/undefined": "workspace:*",
+    "bun": "^1.1.26"
   },
   "devDependencies": {
     "@types/node": "^22.5.1",
@@ -17,9 +13,13 @@
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
   },
-  "dependencies": {
-    "@code9/null": "workspace:*",
-    "@code9/undefined": "workspace:*",
-    "bun": "^1.1.26"
-  }
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "name": "@code9/stream",
+  "scripts": {
+    "lint": "tsc -p . --noEmit && eslint --fix .",
+    "update-packages": "npm-check-updates -u"
+  },
+  "type": "module",
+  "version": "0.1.0"
 }

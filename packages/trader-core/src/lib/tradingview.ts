@@ -1,7 +1,9 @@
-import { Cause as C, Effect as Fx, pipe } from 'effect'
+import type { Cause as C } from 'effect'
+import { Effect as Fx, pipe } from 'effect'
 
-import { OHLCV } from './ohlcv.ts'
-import { start, subtract, Timeframe } from './timeframe.ts'
+import type { OHLCV } from './ohlcv.ts'
+import type { Timeframe } from './timeframe.ts'
+import { start, subtract } from './timeframe.ts'
 
 // TODO: Type
 export type PromiseResolveFunction<T = unknown> = (value?: T) => void
@@ -14,18 +16,17 @@ export type TV = {
       symbolInfo: TVSymbolInfo,
       resolution: string,
       range: {
-        from: number,
-        to: number,
+        from: number
+        to: number
         countBack: number
       },
       resolve: PromiseResolveFunction,
-      reject: PromiseRejectFunction
+      reject: PromiseRejectFunction,
     ) => void
   }
 }
 
-export type TVResolution =
-  '1' | '1D' | '3' | '5' | '15' | '30' | '60' | '120' | '240' | '480' | '720'
+export type TVResolution = '1' | '1D' | '3' | '5' | '15' | '30' | '60' | '120' | '240' | '480' | '720'
 
 export type TVSymbolInfo = {
   description: string
@@ -142,10 +143,8 @@ export const tvResolutionToTimeframe = <E, R>(resolution: TVResolution): Fx.Effe
  */
 export const getTradingView = <E, R>(): Fx.Effect<TV, C.NoSuchElementException | E, R> =>
   pipe(
-    Fx.fromNullable(Object.keys(globalThis).filter((x) =>
-      x.startsWith('tradingview_'))[0]),
-    Fx.flatMap((tvKey) =>
-      pipe(Fx.fromNullable(globalThis[tvKey as keyof typeof globalThis]))),
+    Fx.fromNullable(Object.keys(globalThis).filter((x) => x.startsWith('tradingview_'))[0]),
+    Fx.flatMap((tvKey) => pipe(Fx.fromNullable(globalThis[tvKey as keyof typeof globalThis]))),
   )
 
 /**
@@ -169,47 +168,50 @@ export const getTradingView = <E, R>(): Fx.Effect<TV, C.NoSuchElementException |
  * ```
  */
 export const getSymbolInfo = <E extends Error, R>(tv: TV, symbolName: string): Fx.Effect<TVSymbolInfo, E | Error, R> =>
-  pipe(Fx.async<TVSymbolInfo, E | Error, R>((cb) => {
-    tv.datafeed.resolveSymbol(
-      symbolName,
-      (value) => {
-        cb(Fx.succeed(value as TVSymbolInfo))
-      },
-      (reason) => {
-        cb(Fx.fail(new Error(reason as string)))
-      },
-    )
-  }))
-
-export const createGetBatchBarsTE = <E, R>(
-  tv: TV,
-  symbolInfo: TVSymbolInfo,
-  timeframe: Timeframe,
-  limit: number,
-): ((batchFrom: Date, batchTo: Date) => Fx.Effect<Array<OHLCV>, E, R>) =>
-    (batchFrom: Date, batchTo: Date) =>
-      pipe(
-        timeframeToTVResolution(timeframe),
-        Fx.flatMap((resolution) => {
-          const a = Fx.async<Array<OHLCV>, E, R>((cb) => {
-            tv.datafeed.getBars(
-              symbolInfo,
-              resolution,
-              {
-                from: batchFrom.valueOf() / 1000,
-                to: batchTo.valueOf() / 1000,
-                countBack: limit,
-              },
-              (value) => {
-                cb(Fx.succeed(value as Array<OHLCV>) as Fx.Effect<Array<OHLCV>, E, R>)
-              },
-              (reason) => {
-                cb(Fx.fail(new Error(reason as string)) as Fx.Effect<Array<OHLCV>, E, R>)
-              },
-            )
-          })
-        }),
+  pipe(
+    Fx.async<TVSymbolInfo, E | Error, R>((cb) => {
+      tv.datafeed.resolveSymbol(
+        symbolName,
+        (value) => {
+          cb(Fx.succeed(value as TVSymbolInfo))
+        },
+        (reason) => {
+          cb(Fx.fail(new Error(reason as string)))
+        },
       )
+    }),
+  )
+
+export const createGetBatchBarsTE =
+  <E, R>(
+    tv: TV,
+    symbolInfo: TVSymbolInfo,
+    timeframe: Timeframe,
+    limit: number,
+  ): ((batchFrom: Date, batchTo: Date) => Fx.Effect<Array<OHLCV>, E, R>) =>
+  (batchFrom: Date, batchTo: Date) =>
+    pipe(
+      timeframeToTVResolution(timeframe),
+      Fx.flatMap((resolution) => {
+        const a = Fx.async<Array<OHLCV>, E, R>((cb) => {
+          tv.datafeed.getBars(
+            symbolInfo,
+            resolution,
+            {
+              from: batchFrom.valueOf() / 1000,
+              to: batchTo.valueOf() / 1000,
+              countBack: limit,
+            },
+            (value) => {
+              cb(Fx.succeed(value as Array<OHLCV>) as Fx.Effect<Array<OHLCV>, E, R>)
+            },
+            (reason) => {
+              cb(Fx.fail(new Error(reason as string)) as Fx.Effect<Array<OHLCV>, E, R>)
+            },
+          )
+        })
+      }),
+    )
 
 // export const createGetBatchBarsTE = (
 //   tv: TV,
@@ -238,18 +240,13 @@ export const createGetBatchBarsTE = <E, R>(
 
 export const processBatchBars = (
   timeframe: Timeframe,
-  limit: number, batchBars: Array<OHLCV>, bars: Array<OHLCV>,
+  limit: number,
+  batchBars: Array<OHLCV>,
+  bars: Array<OHLCV>,
 ): [Date, Date, Array<OHLCV>] => {
   const newTo = subtract(timeframe, new Date(batchBars[0].time), 1)
   const newFrom = subtract(timeframe, newTo, limit)
-  return [
-    newFrom,
-    newTo,
-    [
-      ...batchBars,
-      ...bars,
-    ],
-  ]
+  return [newFrom, newTo, [...batchBars, ...bars]]
 }
 
 export const fetchBatch = (
@@ -264,18 +261,19 @@ export const fetchBatch = (
   currentCountBack <= 0
     ? TE.right(bars)
     : FN.pipe(
-      getBatchBarsTE(currentFrom, currentTo),
-      TE.chain((batchBars) =>
-        batchBars.length === 0
-          ? TE.right(bars)
-          : fetchBatch(
-            getBatchBarsTE,
-            timeframe,
-            limit,
-            currentCountBack - limit,
-            ...processBatchBars(timeframe, limit, batchBars, bars),
-          )),
-    )
+        getBatchBarsTE(currentFrom, currentTo),
+        TE.chain((batchBars) =>
+          batchBars.length === 0
+            ? TE.right(bars)
+            : fetchBatch(
+                getBatchBarsTE,
+                timeframe,
+                limit,
+                currentCountBack - limit,
+                ...processBatchBars(timeframe, limit, batchBars, bars),
+              ),
+        ),
+      )
 
 export const fetchBarsInBatches = (
   tv: TV,
@@ -295,12 +293,11 @@ export const getSymbol = (): string =>
   document.title
     .split('/')
     .slice(0, 2)
-    .map((entry) =>
-      entry.split(' '))
+    .map((entry) => entry.split(' '))
     .map((entry) =>
       entry
-        .filter((word) =>
-          word !== '')
+        .filter((word) => word !== '')
         .slice(0, 1)
-        .pop())
+        .pop(),
+    )
     .join('/')

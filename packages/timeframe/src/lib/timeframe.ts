@@ -10,23 +10,22 @@ export type Timeframe = `${number}${TimeframeUnit}`
  * @param timeframe - A string representing the timeframe (e.g., '5d' for 5 days).
  * @returns The unit of the timeframe (e.g., 'd').
  */
-export const unitOf = (timeframe: Timeframe): TimeframeUnit =>
-  timeframe.slice(-1) as TimeframeUnit
+export const unitOf = (timeframe: Timeframe): TimeframeUnit => timeframe.slice(-1) as TimeframeUnit
 
 /**
  * Extracts the numeric value from a given timeframe.
  * @param timeframe - A string representing the timeframe (e.g., '5d' for 5 days).
  * @returns The numeric value of the timeframe (e.g., 5).
  */
-export const valueOf = (timeframe: Timeframe): number =>
-  parseInt(timeframe.slice(0, -1), 10)
+export const valueOf = (timeframe: Timeframe): number => parseInt(timeframe.slice(0, -1), 10)
 
 /**
  * Creates a timeframe from a unit and value.
  * @param unit - The unit of the timeframe (e.g., 'd' for days).
  * @returns A function that takes a numeric value and returns the corresponding timeframe string.
  */
-export const fromValue = (unit: TimeframeUnit) =>
+export const fromValue =
+  (unit: TimeframeUnit) =>
   (value: number): Timeframe =>
     `${value}${unit}`
 
@@ -38,12 +37,8 @@ export const fromValue = (unit: TimeframeUnit) =>
 export const toMs = <E, R>(timeframe: Timeframe): Fx.Effect<number, E | Error, R> =>
   pipe(
     valueOf(timeframe),
-    convertTime(
-      unitOf(timeframe),
-      'ms',
-    ),
-    fromOption(() =>
-      new Error(`Invalid timeframe: ${timeframe}`)),
+    convertTime(unitOf(timeframe), 'ms'),
+    fromOption(() => new Error(`Invalid timeframe: ${timeframe}`)),
   )
 
 /**
@@ -56,8 +51,7 @@ export const fromMs = <E, R>(milliseconds: number, unit: TimeframeUnit): Fx.Effe
   pipe(
     milliseconds,
     convertTime('ms', unit),
-    fromOption(() =>
-      new Error(`Invalid timeframe unit: ${unit}`)),
+    fromOption(() => new Error(`Invalid timeframe unit: ${unit}`)),
     Fx.map(fromValue(unit)),
   ) as Fx.Effect<Timeframe, E | Error, R>
 
@@ -68,15 +62,10 @@ export const fromMs = <E, R>(milliseconds: number, unit: TimeframeUnit): Fx.Effe
  * @param amount - The multiplier for the timeframe (default is 1).
  * @returns An effect that resolves to the new date.
  */
-export const add = <E, R>(
-  timeframe: Timeframe,
-  date: Date,
-  amount = 1,
-): Fx.Effect<Date, E | Error, R> =>
+export const add = <E, R>(timeframe: Timeframe, date: Date, amount = 1): Fx.Effect<Date, E | Error, R> =>
   pipe(
     toMs(timeframe),
-    Fx.map((timeframeMs) =>
-      new Date(date.valueOf() + timeframeMs * amount)),
+    Fx.map((timeframeMs) => new Date(date.valueOf() + timeframeMs * amount)),
   ) as Fx.Effect<Date, E | Error, R>
 
 /**
@@ -86,15 +75,10 @@ export const add = <E, R>(
  * @param amount - The multiplier for the timeframe (default is 1).
  * @returns An effect that resolves to the new date.
  */
-export const subtract = <E, R>(
-  timeframe: Timeframe,
-  date: Date,
-  amount = 1,
-): Fx.Effect<Date, E | Error, R> =>
+export const subtract = <E, R>(timeframe: Timeframe, date: Date, amount = 1): Fx.Effect<Date, E | Error, R> =>
   pipe(
     toMs(timeframe),
-    Fx.map((timeframeMs) =>
-      new Date(date.valueOf() - timeframeMs * amount)),
+    Fx.map((timeframeMs) => new Date(date.valueOf() - timeframeMs * amount)),
   ) as Fx.Effect<Date, E | Error, R>
 
 /**
@@ -103,14 +87,10 @@ export const subtract = <E, R>(
  * @param amount - The number of seconds to subtract (default is 1).
  * @returns An effect that resolves to the new date.
  */
-export const subtractSeconds = <E, R>(
-  date: Date,
-  amount = 1,
-): Fx.Effect<Date, E | Error, R> =>
+export const subtractSeconds = <E, R>(date: Date, amount = 1): Fx.Effect<Date, E | Error, R> =>
   pipe(
     Fx.succeed(1000),
-    Fx.map((millisecond) =>
-      new Date(date.valueOf() - millisecond * amount)),
+    Fx.map((millisecond) => new Date(date.valueOf() - millisecond * amount)),
   ) as Fx.Effect<Date, E | Error, R>
 
 /**
@@ -119,14 +99,10 @@ export const subtractSeconds = <E, R>(
  * @param date - The date to be aligned.
  * @returns An effect that resolves to the aligned date.
  */
-export const start = <E, R>(
-  timeframe: Timeframe,
-  date: Date,
-): Fx.Effect<Date, E | Error, R> =>
+export const start = <E, R>(timeframe: Timeframe, date: Date): Fx.Effect<Date, E | Error, R> =>
   pipe(
     toMs(timeframe),
-    Fx.map((timeframeMs) =>
-      new Date(date.valueOf() - (date.valueOf() % timeframeMs))),
+    Fx.map((timeframeMs) => new Date(date.valueOf() - (date.valueOf() % timeframeMs))),
   ) as Fx.Effect<Date, E | Error, R>
 
 /**
@@ -135,14 +111,10 @@ export const start = <E, R>(
  * @param date - The reference date.
  * @returns An effect that resolves to the duration in milliseconds until the next timeframe.
  */
-export const millisecondsUntilNextTimeframe = <E, R>(
-  timeframe: Timeframe,
-  date: Date,
-): Fx.Effect<number, E | Error, R> =>
+export const millisecondsUntilNextTimeframe = <E, R>(timeframe: Timeframe, date: Date): Fx.Effect<number, E | Error, R> =>
   pipe(
     toMs(timeframe),
-    Fx.map((timeframeMs) =>
-      timeframeMs - (date.valueOf() % timeframeMs)),
+    Fx.map((timeframeMs) => timeframeMs - (date.valueOf() % timeframeMs)),
   ) as Fx.Effect<number, E | Error, R>
 
 /**
@@ -160,18 +132,12 @@ const generateDateRange = <E, R>(
   endDate: Date,
   dates: Array<Date>,
 ): Fx.Effect<Array<Date>, E | Error, R> =>
-    currentDate >= endDate
-      ? Fx.succeed(dates)
-      : pipe(
+  currentDate >= endDate
+    ? Fx.succeed(dates)
+    : (pipe(
         add(timeframe, currentDate),
-        Fx.flatMap((nextDate) =>
-          generateDateRange(
-            timeframe,
-            nextDate,
-            endDate,
-            [...dates, currentDate],
-          )),
-      ) as Fx.Effect<Array<Date>, E | Error, R>
+        Fx.flatMap((nextDate) => generateDateRange(timeframe, nextDate, endDate, [...dates, currentDate])),
+      ) as Fx.Effect<Array<Date>, E | Error, R>)
 
 /**
  * Generates a range of dates between two dates separated by the specified timeframe.
@@ -180,15 +146,8 @@ const generateDateRange = <E, R>(
  * @param endDate - The end date of the range.
  * @returns An effect that resolves to an array of dates within the range.
  */
-export const between = <E, R>(
-  timeframe: Timeframe,
-  startDate: Date,
-  endDate: Date,
-): Fx.Effect<Array<Date>, E | Error, R> =>
+export const between = <E, R>(timeframe: Timeframe, startDate: Date, endDate: Date): Fx.Effect<Array<Date>, E | Error, R> =>
   pipe(
     Fx.succeed(startDate <= endDate ? startDate : null),
-    Fx.flatMap((result) =>
-      result
-        ? generateDateRange(timeframe, startDate, endDate, [])
-        : Fx.succeed(null)),
+    Fx.flatMap((result) => (result ? generateDateRange(timeframe, startDate, endDate, []) : Fx.succeed(null))),
   ) as Fx.Effect<Array<Date>, E | Error, R>

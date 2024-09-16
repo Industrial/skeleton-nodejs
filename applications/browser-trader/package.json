@@ -1,14 +1,4 @@
 {
-  "name": "@code9/browser-trader",
-  "version": "0.1.0",
-  "type": "module",
-  "main": "src/index.ts",
-  "scripts": {
-    "build": "mkdir -p dist && bun build src/index.ts > dist/index.js",
-    "update-packages": "npm-check-updates -u",
-    "lint": "tsc -p . --noEmit && eslint --fix .",
-    "start": "bun run dist/index.js"
-  },
   "dependencies": {
     "@code9/async": "workspace:*",
     "@code9/number": "workspace:*",
@@ -30,12 +20,19 @@
     "@vitest/ui": "^2.0.5",
     "concurrently": "^8.2.2",
     "esbuild": "^0.23.1",
-    "eslint": "^9.9.1",
-    "eslint-config-code9": "^0.6.0",
-    "eslint-plugin-prettier": "5.2.1",
     "jsdom": "^25.0.0",
     "npm-check-updates": "^17.1.0",
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
-  }
+  },
+  "main": "src/index.ts",
+  "name": "@code9/browser-trader",
+  "scripts": {
+    "build": "mkdir -p dist && bun build src/index.ts > dist/index.js",
+    "lint": "tsc -p . --noEmit && eslint --fix .",
+    "start": "bun run dist/index.js",
+    "update-packages": "npm-check-updates -u"
+  },
+  "type": "module",
+  "version": "0.1.0"
 }

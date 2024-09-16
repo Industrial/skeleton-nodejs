@@ -4,5 +4,5 @@ export const wasi = new WASI({
   args: [],
   env: {},
   preopens: {},
-  version: "preview1"
+  version: 'preview1',
 })

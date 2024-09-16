@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [
+    "./src/**/*.ts",
+    "../effect/src/lib/effect.ts"
+  ]
+}

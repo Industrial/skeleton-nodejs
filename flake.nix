@@ -36,8 +36,8 @@
         custom-hooks = {
           pre-commit = {
             enable = true;
-            name = "Pre Push";
-            entry = "bun test && bun build";
+            name = "Pre Commit";
+            entry = "bun lint && bun test && bun build";
             pass_filenames = false;
             stages = ["pre-commit"];
           };
@@ -52,7 +52,12 @@
       inputs.flake-devshells.devshells {
         packages = with pkgs; [
           # Repository
-          inotify-tools
+          (
+            if system == "x86_64-linux"
+            then inotify-tools
+            else null
+          )
+          # inotify-tools
           pre-commit
           direnv
 
@@ -79,7 +84,7 @@
           cabal-install
 
           # GHC with WASM
-          # haskell.compiler.ghc910
+          haskell.compiler.ghc910
           inputs.ghc-wasm-meta.packages.${system}.all_9_10
 
           # Haskell Packages

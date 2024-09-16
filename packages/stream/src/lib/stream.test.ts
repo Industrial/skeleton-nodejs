@@ -56,14 +56,13 @@ describe('stream', () => {
           })
           const readableStream = nodeReadableToReadableStream(stream)
           return new Promise<void>((resolve, reject) => {
-            (async () => {
+            ;(async () => {
               try {
                 await readableStream.getReader().read()
               } catch (error: unknown) {
                 resolve()
               }
-            })()
-              .catch(reject)
+            })().catch(reject)
           })
         })
       })
@@ -76,7 +75,7 @@ describe('stream', () => {
           })
           const readableStream = nodeReadableToReadableStream(stream)
           return new Promise<void>((resolve, reject) => {
-            (async () => {
+            ;(async () => {
               try {
                 const result = await readableStream.getReader().read()
                 expect(result).toStrictEqual({
@@ -87,8 +86,7 @@ describe('stream', () => {
               } catch (error: unknown) {
                 reject(new Error('should not throw an error'))
               }
-            })()
-              .catch(reject)
+            })().catch(reject)
           })
         })
       })
@@ -103,7 +101,7 @@ describe('stream', () => {
           })
           const readableStream = nodeReadableToReadableStream(stream)
           return new Promise<void>((resolve, reject) => {
-            (async () => {
+            ;(async () => {
               const reader = readableStream.getReader()
               const { done, value } = await reader.read()
               expect(done).toBe(false)
@@ -114,8 +112,7 @@ describe('stream', () => {
               const { done: done3 } = await reader.read()
               expect(done3).toBe(true)
               resolve()
-            })()
-              .catch(reject)
+            })().catch(reject)
           })
         })
       })
@@ -173,15 +170,17 @@ describe('stream', () => {
           const stream = new ReadableStream({
             start(controller) {
               // eslint-disable-next-line @typescript-eslint/no-floating-promises
-              (async () => {
+              ;(async () => {
                 controller.enqueue(new TextEncoder().encode('hello'))
                 await new Promise((resolve) =>
                   // eslint-disable-next-line no-promise-executor-return
-                  setTimeout(resolve, 100))
+                  setTimeout(resolve, 100),
+                )
                 controller.enqueue(new TextEncoder().encode('world'))
                 await new Promise((resolve) =>
                   // eslint-disable-next-line no-promise-executor-return
-                  setTimeout(resolve, 100))
+                  setTimeout(resolve, 100),
+                )
                 controller.close()
               })()
             },
@@ -232,15 +231,17 @@ describe('stream', () => {
           const stream = new ReadableStream({
             start(controller) {
               // eslint-disable-next-line @typescript-eslint/no-floating-promises
-              (async () => {
+              ;(async () => {
                 controller.enqueue(new TextEncoder().encode('hello'))
                 await new Promise((resolve) =>
                   // eslint-disable-next-line no-promise-executor-return
-                  setTimeout(resolve, 100))
+                  setTimeout(resolve, 100),
+                )
                 controller.enqueue(new TextEncoder().encode('world'))
                 await new Promise((resolve) =>
                   // eslint-disable-next-line no-promise-executor-return
-                  setTimeout(resolve, 100))
+                  setTimeout(resolve, 100),
+                )
                 controller.close()
               })()
             },
@@ -268,4 +269,3 @@ describe('stream', () => {
     })
   })
 })
-

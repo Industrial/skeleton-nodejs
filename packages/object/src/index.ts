@@ -1,2 +1,1 @@
-export * as object from './lib/object.ts'
-
+export * from './lib/object.ts'

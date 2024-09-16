@@ -19,8 +19,7 @@ describe('delay function tests', () => {
 
 describe('retryTimes function', () => {
   test('should resolve if the function succeeds on first try', async () => {
-    const result = await retryTimes(3, async () =>
-      'Success')
+    const result = await retryTimes(3, async () => 'Success')
 
     expect(result).toBe('Success')
   })

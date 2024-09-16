@@ -1,33 +1,30 @@
-import { readFile } from 'node:fs/promises';
-import { WASI } from 'wasi';
+import { readFile } from 'node:fs/promises'
 
-export const wasi = new WASI({
-  args: [],
-  env: {},
-  preopens: {},
-  version: "preview1"
-})
+import { wasi } from './lib/ts/wasi'
 
-const wasmUrl = `${import.meta.dirname}/dist/Main.wasm`;
-const jsUrl = `${import.meta.dirname}/dist/Main.js`;
+const wasmUrl = `${import.meta.dirname}/dist/Main.wasm`
+const jsUrl = `${import.meta.dirname}/dist/Main.js`
 
 const wasmBinary = await readFile(wasmUrl)
 const wasmModule = await WebAssembly.compile(wasmBinary)
 
 const memory = new WebAssembly.Memory({
-  initial: 1
+  initial: 1,
 })
 
+// eslint-disable-next-line no-underscore-dangle
 const __exports = {
   test123: async (x: number) => {
     console.log('test123:env', x)
     return x + 1
   },
 }
-const ghc_wasm_jsffi = (await import(jsUrl)).default(__exports)
+const ghcWASMFFI = (await import(jsUrl)).default(__exports)
 
 const instance = await WebAssembly.instantiate(wasmModule, {
-  ghc_wasm_jsffi,
+  // eslint-disable-next-line camelcase
+  ghc_wasm_jsffi: ghcWASMFFI,
+  // eslint-disable-next-line camelcase
   wasi_snapshot_preview1: wasi.wasiImport,
   env: {
     memory,
@@ -35,7 +32,7 @@ const instance = await WebAssembly.instantiate(wasmModule, {
 })
 Object.assign(__exports, instance.exports)
 
-export interface Exports extends WebAssembly.Exports {
+export type Exports = WebAssembly.Exports & {
   hs_init: (argc: number, argv: number) => void
   main: () => Promise<void>
 }

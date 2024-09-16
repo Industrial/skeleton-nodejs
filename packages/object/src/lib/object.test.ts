@@ -1,5 +1,5 @@
+import { bag, entriesValues, sortedEntries } from '@code9/object'
 import { describe, expect, it } from 'bun:test'
-import { bag, entriesValues, sortedEntries } from './object'
 
 describe('entriesValues', () => {
   describe('When the array is empty', () => {
@@ -100,21 +100,31 @@ describe('bag', () => {
 
     describe('When a new entry is added with a key that does not exist in the object', () => {
       it('should return the object with the new entry included and limited to the specified size', () => {
-        const result = bag(3, {
-          key1: 'value1',
-          key2: 'value2',
-        }, 'value3', 'key3')
+        const result = bag(
+          3,
+          {
+            key1: 'value1',
+            key2: 'value2',
+          },
+          'value3',
+          'key3',
+        )
         expect(result.key3).toBe('value3')
       })
     })
 
     describe('When a new entry is added with a key that exists in the object', () => {
       it('should return the object with the updated entry included and limited to the specified size', () => {
-        const result = bag(3, {
-          key1: 'value1',
-          key2: 'value2',
-          key3: 'value3',
-        }, 'value3-updated', 'key3')
+        const result = bag(
+          3,
+          {
+            key1: 'value1',
+            key2: 'value2',
+            key3: 'value3',
+          },
+          'value3-updated',
+          'key3',
+        )
         expect(result.key3).toBe('value3-updated')
       })
     })

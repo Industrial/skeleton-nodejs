@@ -6,5 +6,4 @@ if (!appElement) {
   throw new Error('No app element found')
 }
 
-mount(() =>
-  <StartClient />, appElement)
+mount(() => <StartClient />, appElement)

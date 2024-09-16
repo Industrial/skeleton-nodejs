@@ -1,12 +1,9 @@
 {
-  "name": "@code9/component-compositor",
-  "version": "0.1.0",
-  "type": "module",
-  "module": "src/index.ts",
-  "main": "src/index.ts",
-  "scripts": {
-    "update-packages": "npm-check-updates -u",
-    "lint": "tsc -p . --noEmit && eslint --fix ."
+  "dependencies": {
+    "@preact/signals": "^1.3.0",
+    "@stylexjs/stylex": "^0.7.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/node": "^22.5.1",
@@ -19,10 +16,13 @@
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
   },
-  "dependencies": {
-    "@preact/signals": "^1.3.0",
-    "@stylexjs/stylex": "^0.7.5",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  }
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "name": "@code9/component-compositor",
+  "scripts": {
+    "lint": "tsc -p . --noEmit && eslint --fix .",
+    "update-packages": "npm-check-updates -u"
+  },
+  "type": "module",
+  "version": "0.1.0"
 }

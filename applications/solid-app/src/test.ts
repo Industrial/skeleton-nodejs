@@ -5,9 +5,9 @@ const wasi = new WASI({
   args: [],
   env: {},
   preopens: {
-    "/sandbox": "./"
+    '/sandbox': './',
   },
-  version: "preview1"
+  version: 'preview1',
 })
 
 const loadStreaming = async () => {
@@ -15,13 +15,10 @@ const loadStreaming = async () => {
   const __exports = {}
   const wasm_url = `${import.meta.dirname}/haskell/dist/MyLib.wasm`
   const js_url = `${import.meta.dirname}/haskell/dist/MyLib.js`
-  const { instance } = await WebAssembly.instantiateStreaming(
-    fetch(wasm_url),
-    {
-      ghc_wasm_jsffi: (await import(js_url)).default(__exports),
-      wasi_snapshot_preview1: wasi.wasiImport
-    },
-  )
+  const { instance } = await WebAssembly.instantiateStreaming(fetch(wasm_url), {
+    ghc_wasm_jsffi: (await import(js_url)).default(__exports),
+    wasi_snapshot_preview1: wasi.wasiImport,
+  })
   Object.assign(__exports, instance.exports)
   wasi.initialize(__exports)
   return __exports
@@ -41,7 +38,7 @@ const loadCompiled = async <T>(): Promise<T> => {
   const __exports = {}
   const instance = await WebAssembly.instantiate(wasmModule, {
     ghc_wasm_jsffi: (await import(jsUrl)).default(__exports),
-    wasi_snapshot_preview1: wasi.wasiImport
+    wasi_snapshot_preview1: wasi.wasiImport,
   })
   wasi.start(instance)
   return instance.exports as T

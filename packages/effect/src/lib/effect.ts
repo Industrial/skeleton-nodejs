@@ -1,4 +1,5 @@
-import { Data, Either as E, Effect as Fx, Option as O, Predicate as P } from 'effect'
+import type { Predicate as P } from 'effect'
+import { Data, Effect as Fx, Either as E, Option as O } from 'effect'
 
 /**
  * Custom error class for predicate failure.
@@ -18,11 +19,10 @@ export class PredicateError extends Data.TaggedError('PredicateError')<{
  * @param onFalse - A function that returns an error when the predicate returns false.
  * @returns A function that takes an input and returns an effect.
  */
-export const fromPredicate = <A, E, R>(predicate: P.Predicate<A>, onFalse: () => E) =>
+export const fromPredicate =
+  <A, E, R>(predicate: P.Predicate<A>, onFalse: () => E) =>
   (a: A): Fx.Effect<A, E, R> =>
-    predicate(a)
-      ? Fx.succeed(a)
-      : Fx.fail(onFalse())
+    predicate(a) ? Fx.succeed(a) : Fx.fail(onFalse())
 
 /**
  * Creates an effect from a refinement function.
@@ -35,11 +35,10 @@ export const fromPredicate = <A, E, R>(predicate: P.Predicate<A>, onFalse: () =>
  * @param onFalse - A function that returns an error when the refinement returns false.
  * @returns A function that takes an input and returns an effect.
  */
-export const fromRefinement = <A, B extends A, E, R>(refinement: P.Refinement<A, B>, onFalse: () => E) =>
+export const fromRefinement =
+  <A, B extends A, E, R>(refinement: P.Refinement<A, B>, onFalse: () => E) =>
   (a: A): Fx.Effect<B, E, R> =>
-    refinement(a)
-      ? Fx.succeed(a as B)
-      : Fx.fail(onFalse())
+    refinement(a) ? Fx.succeed(a as B) : Fx.fail(onFalse())
 
 /**
  * Converts an Either type to an effect.
@@ -51,9 +50,7 @@ export const fromRefinement = <A, B extends A, E, R>(refinement: P.Refinement<A,
  * @returns An effect that represents the conversion of the Either instance.
  */
 export const fromEither = <A, E, R>(e: E.Either<A, E>): Fx.Effect<A, E, R> =>
-  E.isLeft(e)
-    ? Fx.fail(e.left)
-    : Fx.succeed(e.right)
+  E.isLeft(e) ? Fx.fail(e.left) : Fx.succeed(e.right)
 
 /**
  * Converts an Option to an Effect. If the Option is `None`, it applies the
@@ -66,8 +63,7 @@ export const fromEither = <A, E, R>(e: E.Either<A, E>): Fx.Effect<A, E, R> =>
  * @param option - The Option to be converted.
  * @returns The corresponding Effect which is either a success with type A or a failure with type E.
  */
-export const fromOption = <A, E, R>(onError: () => E) =>
+export const fromOption =
+  <A, E, R>(onError: () => E) =>
   (o: O.Option<A>): Fx.Effect<A, E, R> =>
-    O.isSome(o)
-      ? Fx.succeed(o.value)
-      : Fx.fail(onError())
+    O.isSome(o) ? Fx.succeed(o.value) : Fx.fail(onError())
