@@ -1,12 +1,13 @@
-/node_modules/
-/src/**/*.test.ts
 /.eslintcache
 /.eslintrc.json
 /.prettierignore
 /.prettierrc.json
 /.swcrc
 /.tsbuildinfo
+/dist-newstyle/
+/node_modules/
 /package.json
 /project.json
+/src/**/*.test.ts
 /tsconfig.json
 /vitest.config.ts

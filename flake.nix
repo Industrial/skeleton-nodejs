@@ -68,13 +68,28 @@
           ollama
 
           # Haskell & WASM
-          #haskell.packages.ghcjs.ghcjs-base
-          #haskellPackages.ghc-experimental
+          # haskell.compiler.ghcjs
+          # haskell.packages.ghcjs.ghcjs-base
+          # haskellPackages.base_4_20_0_1
+          # haskellPackages.ghc-experimental
+          # haskellPackages.ghcjs-base
+          # haskellPackages.ghcjs-fetch
+
+          # Cabal
           cabal-install
-          haskell-language-server
-          haskell.compiler.ghcjs
-          haskellPackages.hlint
+
+          # GHC with WASM
+          # haskell.compiler.ghc910
           inputs.ghc-wasm-meta.packages.${system}.all_9_10
+
+          # Haskell Packages
+          haskell-language-server
+          haskellPackages.cabal-fmt
+          haskellPackages.cabal-gild
+          haskellPackages.fourmolu
+          haskellPackages.hlint
+
+          # WASM Tools
           wabt
           wasmtime
         ];
