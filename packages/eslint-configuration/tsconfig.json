@@ -1,8 +1,7 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../typescript-configuration/src/lib/tsconfig.base.json",
   "files": [],
   "include": [
-    "./src/**/*.ts",
-    "../effect/src/lib/effect.ts"
+    "./src/**/*.ts"
   ]
 }

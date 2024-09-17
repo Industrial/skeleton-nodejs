@@ -1,0 +1,13 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "@code9/array",
+  "projectType": "library",
+  "sourceRoot": "packages/array/src",
+  "tags": [],
+  "targets": {
+    "build": {},
+    "lint": {},
+    "test": {},
+    "update-packages": {}
+  }
+}
