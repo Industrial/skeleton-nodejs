@@ -11,6 +11,7 @@ export type Exports = WebAssembly.Exports & {
 
 const instance = await loadCompiled<Exports>(wasmUrl, jsUrl, {
   test123: async (x: number) => {
+    // eslint-disable-next-line no-console
     console.log('test123:env', x)
     return x + 1
   },
