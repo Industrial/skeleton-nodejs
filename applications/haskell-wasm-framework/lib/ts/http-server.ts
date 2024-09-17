@@ -1,4 +1,4 @@
-import { Server } from 'bun'
+import type { Server } from 'bun'
 
 export type HTTPServerPort = number
 
@@ -11,14 +11,14 @@ export const startHTTPServer: StartHTTPServer = async (port = 3000, handleReques
   return Bun.serve({
     fetch: async (req: Request) => {
       console.log('startHTTPServer:fetch', req.url)
-      const url = new URL(req.url);
-      const response = await handleRequest(url.pathname);
-      return new Response(response);
+      const url = new URL(req.url)
+      const response = await handleRequest(url.pathname)
+      return new Response(response)
     },
     error: (error: Error) => {
       console.log('startHTTPServer:error', error)
-      console.error(error);
-      return new Response('Internal Server Error', { status: 500 });
+      console.error(error)
+      return new Response('Internal Server Error', { status: 500 })
     },
     port,
   })

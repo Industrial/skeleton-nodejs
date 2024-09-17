@@ -1,5 +1,5 @@
 {
-  "extends": "../typescript-configuration/src/lib/tsconfig.base.json",
+  "extends": "../../packages/typescript-configuration/src/lib/tsconfig.base.json",
   "files": [
     "./src/index.ts"
   ],

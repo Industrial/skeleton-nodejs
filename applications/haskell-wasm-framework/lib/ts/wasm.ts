@@ -9,20 +9,25 @@ export type InstanceWithExports<T extends Bun.WebAssembly.Exports> = Bun.WebAsse
 export const loadCompiled = async <T extends Bun.WebAssembly.Exports>(
   wasmUrl: string,
   jsUrl: string,
-  env: Bun.WebAssembly.ModuleImports,
+  exports: Bun.WebAssembly.Exports,
 ): Promise<InstanceWithExports<T>> => {
   const wasmBinary = await readFile(wasmUrl)
   const wasmModule = await WebAssembly.compile(wasmBinary)
 
-  const __exports = {}
-
-  const instance = await WebAssembly.instantiate(wasmModule, {
-    ghc_wasm_jsffi: (await import(jsUrl)).default(__exports),
-    wasi_snapshot_preview1: wasi.wasiImport,
-    env,
+  const memory = new WebAssembly.Memory({
+    initial: 1,
   })
 
-  wasi.start(instance)
+  const instance = await WebAssembly.instantiate(wasmModule, {
+    ghc_wasm_jsffi: (await import(jsUrl)).default(exports),
+    wasi_snapshot_preview1: wasi.wasiImport,
+    env: {
+      memory,
+    },
+  })
+
+  // We use Object.assign here because instance.exports is read-only.
+  Object.assign(exports, instance.exports)
 
   return {
     ...instance,

@@ -4,6 +4,12 @@ exec > >(tee -i "log/clean.log") 2>&1
 
 echo "> bin/clean"
 
+echo "> bin/clean > mkdir -p dist"
+mkdir -p dist
+
+echo "> bin/clean > mkdir -p log"
+mkdir -p log
+
 echo "> bin/clean > rm -rf dist/*"
 rm -rf dist/*
 
