@@ -1,0 +1,13 @@
+{
+  "name": "@code9/haskell-wasm-framework",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "applications/testwasmedge/src",
+  "projectType": "application",
+  "targets": {
+    "lint": {},
+    "test": {},
+    "build": {},
+    "update-packages": {}
+  },
+  "tags": []
+}

@@ -1,14 +1,17 @@
 {
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/node": "^22.5.1",
+    "@vitest/coverage-v8": "^2.0.5",
+    "@vitest/spy": "^2.0.5",
+    "@vitest/ui": "^2.0.5",
+    "npm-check-updates": "^17.1.0",
+    "vitest": "^2.0.5"
   },
-  "module": "src/index.ts",
-  "name": "ls",
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
+  "name": "@code9/haskell-wasm-framework",
   "scripts": {
-    "lint": "tsc -p . --noEmit && eslint --fix ."
+    "lint": "tsc -p . --noEmit && eslint --fix .",
+    "update-packages": "npm-check-updates -u"
   },
-  "type": "module"
+  "type": "module",
+  "version": "0.1.0"
 }
