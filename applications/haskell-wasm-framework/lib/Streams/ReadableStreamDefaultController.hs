@@ -1,5 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
-module Streams.ReadableStreamController where
+module Streams.ReadableStreamDefaultController where
 
 import Foreign.C (CString, withCString)
 import GHC.Wasm.Prim

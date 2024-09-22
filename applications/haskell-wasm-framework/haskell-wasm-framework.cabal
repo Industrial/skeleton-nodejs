@@ -8,24 +8,39 @@ category:           Web
 build-type:         Simple
 extra-doc-files:     CHANGELOG.md
 
--- common warnings
---     ghc-options: -Wall
+common warnings
+    ghc-options: -Wall
 
 library
     import:           warnings
     exposed-modules:  Main
+    hs-source-dirs:   lib
+    default-language: GHC2021
     build-depends:
         base >=4.20,
         ghc-experimental
-    hs-source-dirs:   lib
-    default-language: GHC2021
+    exposed-modules:  Streams.ReadableStream
+                      Streams.ReadableStreamSpec
+                      Streams.ReadableStreamDefaultController
+                      Streams.WritableStream
+                      Streams.WritableStreamSpec
+                      Streams.WritableStreamDefaultController
+                      Streams.WritableStreamDefaultWriter
+                      GHC.Wasm.Prim
 
--- test-suite haskell-wasm-framework-test
---     import:           warnings
---     default-language: GHC2021
---     type:             exitcode-stdio-1.0
---     hs-source-dirs:   test
---     main-is:          Main.hs
---     build-depends:
---         base >=4.20,
---         ghc-experimental
+test-suite haskell-wasm-framework-test
+    import:           warnings
+    default-language: GHC2021
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   lib
+    main-is:          Spec.hs
+    build-depends:
+        base >=4.20,
+        hspec >=2.7 && <3.0,
+        hspec-discover >=2.7 && <3.0,
+        ghc-experimental
+    other-modules:
+        Streams.ReadableStream
+        Streams.ReadableStreamSpec
+        Streams.WritableStream
+        Streams.WritableStreamSpec

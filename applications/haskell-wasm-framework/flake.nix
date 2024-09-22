@@ -57,6 +57,7 @@
           haskellPackages.fourmolu
           haskellPackages.haskell-language-server
           haskellPackages.hlint
+          haskellPackages.hspec-discover
           ghcid
           cabal-install
 
