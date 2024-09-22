@@ -18,6 +18,7 @@
   };
 
   outputs = inputs @ {self, ...}: let
+    packageName = "haskell-wasm-framework";
     systems = ["x86_64-linux" "aarch64-darwin"];
     forAllSystems = inputs.for-all-systems.forAllSystems {
       inherit systems;
@@ -44,12 +45,24 @@
         };
       });
 
+    packages = forAllSystems ({ system, pkgs, ... }: {
+      "${packageName}" = pkgs.haskellPackages.callCabal2nix packageName self {
+        # Dependency overrides go here
+      };
+    });
+
+    # packages.default = self.packages.${system}.${packageName};
+    # defaultPackage = self.packages.${system}.default;
+
     devShells = forAllSystems ({
       system,
       pkgs,
       ...
-    }:
-      inputs.flake-devshells.devshells {
+    }: {
+      default = pkgs.mkShell {
+        shellHook = self.checks.${system}.pre-commit-check.shellHook;
+        buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
+        inputsFrom = map (__getAttr "env") (__attrValues self.packages.${system});
         packages = with pkgs; [
           # Repository
           (
@@ -79,24 +92,24 @@
           # haskellPackages.ghcjs-base
           # haskellPackages.ghcjs-fetch
 
-          # Cabal
+          # # GHC with WASM
+          # haskell.compiler.ghc910
+          # inputs.ghc-wasm-meta.packages.${system}.all_9_10
+
+          # Haskell
+          haskellPackages.cabal-fmt
+          haskellPackages.cabal-gild
+          haskellPackages.fourmolu
+          haskellPackages.haskell-language-server
+          haskellPackages.hlint
+          ghcid
           cabal-install
-
-          # GHC with WASM
-          haskell.compiler.ghc910
-          inputs.ghc-wasm-meta.packages.${system}.all_9_10
-
-          # # Haskell Packages
-          # haskell-language-server
-          # haskellPackages.cabal-fmt
-          # haskellPackages.cabal-gild
-          # haskellPackages.fourmolu
-          # haskellPackages.hlint
 
           # WASM Tools
           wabt
           wasmtime
         ];
-      } {inherit self system pkgs;});
+      };
+    });
   };
 }

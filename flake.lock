@@ -44,11 +44,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1722971563,
-        "narHash": "sha256-QUHPl8Hxm3aXcpz/cyyWDLXi9MdQEMKa/YZ0nvASQTY=",
+        "lastModified": 1727022419,
+        "narHash": "sha256-gjeOen+sOrFBV3zZ/iONSmb0uGDcE7qDZnCpW3IoyXk=",
         "owner": "Industrial",
         "repo": "flake-devshells",
-        "rev": "e98f5697d00ea472895b5de31ea021641e16009a",
+        "rev": "fa9710933725266d23cd0deeed6de050f20816d1",
         "type": "github"
       },
       "original": {
