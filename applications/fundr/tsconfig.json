@@ -1,4 +1,5 @@
 {
+  "extends": "../../packages/typescript-configuration/src/lib/tsconfig.base.json",
   "compilerOptions": {
     "allowImportingTsExtensions": true,
     "allowJs": true,

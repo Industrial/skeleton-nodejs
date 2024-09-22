@@ -57,7 +57,6 @@
             then inotify-tools
             else null
           )
-          # inotify-tools
           pre-commit
           direnv
 
@@ -87,12 +86,12 @@
           haskell.compiler.ghc910
           inputs.ghc-wasm-meta.packages.${system}.all_9_10
 
-          # Haskell Packages
-          haskell-language-server
-          haskellPackages.cabal-fmt
-          haskellPackages.cabal-gild
-          haskellPackages.fourmolu
-          haskellPackages.hlint
+          # # Haskell Packages
+          # haskell-language-server
+          # haskellPackages.cabal-fmt
+          # haskellPackages.cabal-gild
+          # haskellPackages.fourmolu
+          # haskellPackages.hlint
 
           # WASM Tools
           wabt

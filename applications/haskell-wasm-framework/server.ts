@@ -15,6 +15,9 @@ const instance = await loadCompiled<Exports>(wasmUrl, jsUrl, {
     console.log('test123:env', x)
     return x + 1
   },
+  handleRequest: (req: Request): Promise<Response> => {
+    return new Response('Hello World')
+  },
 })
 
 wasi.start(instance)

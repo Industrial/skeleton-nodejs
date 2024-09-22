@@ -1,3 +1,5 @@
+import { readdir } from 'fs/promises'
+
 import { wasi } from './lib/ts/wasi'
 import { loadCompiled } from './lib/ts/wasm'
 
@@ -10,6 +12,7 @@ export type Exports = WebAssembly.Exports & {
 }
 
 const instance = await loadCompiled<Exports>(wasmUrl, jsUrl, {
+  readdir,
   test123: async (x: number) => {
     // eslint-disable-next-line no-console
     console.log('test123:env', x)

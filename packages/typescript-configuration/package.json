@@ -27,7 +27,7 @@
   },
   "main": "src/index.js",
   "module": "src/index.js",
-  "name": "@code9/eslint-configuration",
+  "name": "@code9/typescript-configuration",
   "scripts": {
     "lint": "tsc -p . --noEmit && eslint --fix .",
     "update-packages": "npm-check-updates -u"

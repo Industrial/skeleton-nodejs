@@ -1,0 +1,36 @@
+# snapshot
+resolver: lts-20.10
+packages:
+  - .
+#compiler: ghc-9.10.1
+#compiler-check: match-exact
+# name:                haskell-wasm-framework
+# version:             0.1.0.0
+# synopsis:            Example project
+# description:         Example project
+# author:              Tom Wieland
+# maintainer:          tom.wieland@gmail.com
+# license:             MIT
+# build-type:          Simple
+# extra-source-files:   README.md
+# cabal-version:       >=3.12.1.0
+
+# library
+#   exposed-modules:     Main
+#   other-modules:       Streams.ReadableStream
+#                        Streams.ReadableStreamController
+#                        Streams.WritableStream
+#                        Streams.WritableStreamDefaultWriter
+#                        Streams.WritableStreamDefaultController
+#   hs-source-dirs:      lib
+#   default-language:    Haskell2010
+#   ghc-options:         -Wall
+#   build-depends:       base >=4.7 && <5, ghcjs-base, ghcjs-prim
+
+# test-suite spec
+#   type:                exitcode-stdio-1.0
+#   main-is:             MainSpec.hs
+#   hs-source-dirs:      test
+#   ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N
+#   build-depends:       base, hspec, haskell-wasm-framework
+#   default-language:    Haskell2010
