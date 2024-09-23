@@ -16,8 +16,9 @@
       default = pkgs.mkShell {
         packages = with pkgs; [
           bun
-          purescript
-          spago
+          # Had to use PureScript and Spago from package.json
+          #purescript
+          #spago
           stack
           esbuild
         ];
