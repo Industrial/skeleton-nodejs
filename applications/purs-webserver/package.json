@@ -1,6 +1,6 @@
 {
-  "name": "@code9/template-purescript",
-  "module": "index.ts",
+  "name": "@code9/purs-webserver",
+  "module": "dist/mod.js",
   "type": "module",
   "scripts": {
     "build": "spago bundle-app --to dist/mod.js",

@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-#set -euo pipefail
-exec > >(tee -i "log/start.log") 2>&1
-
-echo "> bin/start"
-
-echo "> bin/start > bun run server.ts"
-bun run server.ts
