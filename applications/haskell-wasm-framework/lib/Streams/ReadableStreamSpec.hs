@@ -33,7 +33,7 @@ spec = do
 
     --     -- Add more contexts if cancel can be called without a reason
     --     -- describe "without a reason" ...
-      
+
     -- describe "pipeTo" $ do
     --   describe "to a valid destination stream" $ do
     --     it "should pipe to another stream from the ReadableStream" $ do
@@ -44,7 +44,7 @@ spec = do
     --       (result /= jsNull) `shouldBe` True
 
     --   -- Add more contexts for invalid destination, options, etc.
-      
+
     -- describe "pipeThrough" $ do
     --   describe "with a valid transform stream" $ do
     --     it "should pipe through a transform stream from the ReadableStream" $ do
@@ -64,7 +64,7 @@ spec = do
     --       isLocked `shouldBe` False
 
     --   -- Add more contexts to test a locked stream if possible
-      
+
     -- describe "getReader" $ do
     --   describe "when getting a reader" $ do
     --     it "should get a reader from the ReadableStream" $ do

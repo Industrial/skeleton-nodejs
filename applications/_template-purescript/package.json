@@ -1,0 +1,17 @@
+{
+  "name": "_template-purescript",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "spago bundle-app --to dist/mod.js",
+    "build:watch": "bun run build --watch",
+    "start": "bun run dist/mod.js",
+    "start:watch": "bun run --watch -A dist/mod.js"
+  },
+  "devDependencies": {
+    "bun-types": "^0.5.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

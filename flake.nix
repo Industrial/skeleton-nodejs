@@ -45,7 +45,11 @@
         };
       });
 
-    packages = forAllSystems ({ system, pkgs, ... }: {
+    packages = forAllSystems ({
+      system,
+      pkgs,
+      ...
+    }: {
       "${packageName}" = pkgs.haskellPackages.callCabal2nix packageName self {
         # Dependency overrides go here
       };
@@ -62,7 +66,7 @@
       default = pkgs.mkShell {
         shellHook = self.checks.${system}.pre-commit-check.shellHook;
         buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
-        inputsFrom = map (__getAttr "env") (__attrValues self.packages.${system});
+        # inputsFrom = map (__getAttr "env") (__attrValues self.packages.${system});
         packages = with pkgs; [
           # Repository
           (
@@ -96,18 +100,18 @@
           # haskell.compiler.ghc910
           # inputs.ghc-wasm-meta.packages.${system}.all_9_10
 
-          # Haskell
-          haskellPackages.cabal-fmt
-          haskellPackages.cabal-gild
-          haskellPackages.fourmolu
-          haskellPackages.haskell-language-server
-          haskellPackages.hlint
-          ghcid
-          cabal-install
+          # # Haskell
+          # haskellPackages.cabal-fmt
+          # haskellPackages.cabal-gild
+          # haskellPackages.fourmolu
+          # haskellPackages.haskell-language-server
+          # haskellPackages.hlint
+          # ghcid
+          # cabal-install
 
-          # WASM Tools
-          wabt
-          wasmtime
+          # # WASM Tools
+          # wabt
+          # wasmtime
         ];
       };
     });
