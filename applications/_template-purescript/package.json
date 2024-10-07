@@ -3,10 +3,12 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "build": "spago bundle-app --to dist/mod.js",
+    "clean": "rm -rf .spago dist output",
+    "deps": "spago install",
+    "build": "spago bundle-app --to dist/mod.js --platform=node",
     "build:watch": "bun run build --watch",
     "start": "bun run dist/mod.js",
-    "start:watch": "bun run --watch -A dist/mod.js"
+    "start:watch": "bun run --watch dist/mod.js"
   },
   "devDependencies": {
     "bun-types": "^0.5.0"

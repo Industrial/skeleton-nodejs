@@ -1,6 +1,6 @@
 {
-  "name": "@code9/purs-webserver",
-  "module": "dist/mod.js",
+  "name": "@code9/permutation-generator",
+  "module": "index.ts",
   "type": "module",
   "scripts": {
     "clean": "rm -rf .spago dist output",
@@ -15,10 +15,5 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "pulp": "^16.0.2",
-    "purescript": "^0.15.15",
-    "spago": "^0.21.0"
   }
 }

@@ -9,22 +9,27 @@ import Lib.Stream (endAff, writeStringAff)
 import Node.Encoding (Encoding(..))
 import Node.HTTP as HTTP
 
-locationHeader :: String -> Handler
-locationHeader location _ response = do
-  liftEffect $ HTTP.setHeader response "Location" location
+locationHeader :: forall a. String -> Handler a
+locationHeader location ctx = do
+  liftEffect $ HTTP.setHeader ctx.res "Location" location
+  pure ctx
 
-contentTypeHeader :: String -> Handler
-contentTypeHeader contentType _ response = do
-  liftEffect $ HTTP.setHeader response "Content-Type" contentType
+contentTypeHeader :: forall a. String -> Handler a
+contentTypeHeader contentType ctx = do
+  liftEffect $ HTTP.setHeader ctx.res "Content-Type" contentType
+  pure ctx
 
-jsonContentTypeHeader :: Handler
-jsonContentTypeHeader = contentTypeHeader "application/json"
+jsonContentTypeHeader :: forall a. Handler a
+jsonContentTypeHeader = do
+  ctx <- contentTypeHeader "application/json"
+  pure ctx
 
-statusCode :: Int -> Handler
-statusCode code _ response = do
-  liftEffect $ HTTP.setStatusCode response code
+statusCode :: forall a. Int -> Handler a
+statusCode code ctx = do
+  liftEffect $ HTTP.setStatusCode ctx.res code
+  pure ctx
 
-bodyHandlerOf :: Int -> Maybe String -> Handler
+bodyHandlerOf :: forall a. Int -> Maybe String -> Handler a
 bodyHandlerOf code maybeBody request response = do
   let responseStream = HTTP.responseAsStream response
   statusCode code request response
@@ -34,7 +39,7 @@ bodyHandlerOf code maybeBody request response = do
     Nothing -> pure unit
   endAff responseStream
 
-redirectHandlerOf :: Int -> String -> Handler
+redirectHandlerOf :: forall a. Int -> String -> Handler a
 redirectHandlerOf code redirectURL request response = do
   let responseStream = HTTP.responseAsStream response
   locationHeader redirectURL request response

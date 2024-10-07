@@ -53,7 +53,9 @@ handleRequest app request response = do
   launchAff_ do
     case matchingEndpoint of
       Just endpoint -> do
+        -- let middleware = getMiddleware endpoint
         let handler = getHandler endpoint
+        -- runMiddlewareChain middleware request response handler
         handler request response
       _ -> do
         HTTPResponse.notFound request response

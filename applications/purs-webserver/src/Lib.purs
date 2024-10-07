@@ -1,17 +1,28 @@
 module Lib where
 
-import Prelude
-
 import Data.Tuple.Nested (Tuple3)
 import Effect.Aff (Aff)
 import Node.HTTP (Request, Response)
 
-type Handler = Request -> Response -> Aff Unit
+type Context a =
+  { req :: Request
+  , res :: Response
+  | a
+  }
+
+type Handler a =
+  Context a
+  -> Aff (Context a)
+
+type Middleware a =
+  Context a
+  -> (Context a -> Aff (Context a))
+  -> Aff (Context a)
 
 type Method = String
 
 type Route = String
 
-type Endpoint = Tuple3 Method Route Handler
+type Endpoint a = Tuple3 Method Route (Handler a)
 
-type Application = Array Endpoint
+type Application a = Array (Endpoint a)
