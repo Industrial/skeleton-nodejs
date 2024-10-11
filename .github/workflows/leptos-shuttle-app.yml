@@ -21,7 +21,7 @@ jobs:
 
       - name: Build with Nix Flake
         working-directory: applications/test-leptos
-        run: nix build --extra-experimental-features 'nix-command flakes' .#my-crate
+        run: nix build --extra-experimental-features 'nix-command flakes' .#default
 
       - name: Deploy to Shuttle.rs
         working-directory: applications/test-leptos
