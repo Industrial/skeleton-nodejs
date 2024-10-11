@@ -1,0 +1,4 @@
+edition = "2024"
+tab_spaces = 2
+brace_style = "PreferSameLine"
+fn_params_layout = "Vertical"

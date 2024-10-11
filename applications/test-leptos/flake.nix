@@ -81,29 +81,6 @@
         // {
           inherit cargoArtifacts;
         });
-      # my-crate = craneLib.buildPackage {
-      #   inherit src;
-      #   strictDeps = true;
-      #   cargoVendorDir = craneLib.vendorMultipleCargoDeps {
-      #     inherit (craneLib.findCargoFiles src) cargoConfigs;
-      #     cargoLockList = [
-      #       ./Cargo.lock
-      #       # Unfortunately this approach requires IFD (import-from-derivation)
-      #       # otherwise Nix will refuse to read the Cargo.lock from our toolchain
-      #       # (unless we build with `--impure`).
-      #       #
-      #       # Another way around this is to manually copy the rustlib `Cargo.lock`
-      #       # to the repo and import it with `./path/to/rustlib/Cargo.lock` which
-      #       # will avoid IFD entirely but will require manually keeping the file
-      #       # up to date!
-      #       "${rustToolchain.passthru.availableComponents.rust-src}/lib/rustlib/src/rust/library/Cargo.lock"
-      #     ];
-      #   };
-      #   cargoExtraArgs = "-Z build-std --target x86_64-unknown-linux-gnu";
-      #   buildInputs = [
-      #     # Add additional build inputs here
-      #   ];
-      # };
     in {
       checks = {
         # Build the crate as part of `nix flake check` for convenience
@@ -176,8 +153,17 @@
         # MY_CUSTOM_DEVELOPMENT_VAR = "something else";
         # Extra inputs can be added here; cargo and rustc are provided by default.
         packages = with pkgs; [
+          cargo-generate
+
+          # Development Server
           trunk
-          # pkgs.ripgrep
+
+          # SSR Setup
+          cargo-leptos
+
+          # Formatters
+          rustfmt
+          leptosfmt
         ];
       };
     });

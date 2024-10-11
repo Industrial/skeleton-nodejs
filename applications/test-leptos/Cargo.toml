@@ -11,10 +11,10 @@ leptos_router = { version = "0.6.15", features = ["csr", "nightly"] }
 console_log = "1"
 log = "0.4"
 console_error_panic_hook = "0.1"
-
-# utils
-# strum = { version = "0.25", features = ["derive", "strum_macros"] }
-# strum_macros = "0.25"
+edgedb-tokio = "0.5.1"
+anyhow = "1.0.89"
+tokio = { version = "1.0", features = ["full"] }
+cargo-generate = "0.22.0"
 
 [dev-dependencies]
 wasm-bindgen = "0.2"
