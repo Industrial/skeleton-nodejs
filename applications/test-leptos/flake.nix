@@ -12,41 +12,85 @@
       url = "github:rustsec/advisory-db";
       flake = false;
     };
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-  outputs = { self, nixpkgs, crane, fenix, flake-utils, advisory-db, ... }:
+  outputs = { self, nixpkgs, crane, fenix, flake-utils, advisory-db, rust-overlay, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
-        inherit (pkgs) lib;
-        craneLib = crane.mkLib pkgs;
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [ (import rust-overlay) ];
+        };
+
+        craneLib = (crane.mkLib pkgs).overrideToolchain (p: p.rust-bin.selectLatestNightlyWith (toolchain: toolchain.default.override {
+          targets = [
+            "wasm32-wasi"
+          ];
+        }));
+
         src = craneLib.cleanCargoSource ./.;
         # Common arguments can be set here to avoid repeating them later
         commonArgs = {
           inherit src;
           strictDeps = true;
+          # Tests currently need to be run via `cargo wasi` which
+          # isn't packaged in nixpkgs yet...
+          doCheck = false;
+          cargoExtraArgs = "--target wasm32-wasi";
           buildInputs = [
             # Add additional build inputs here
-          ] ++ lib.optionals pkgs.stdenv.isDarwin [
+          ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
             # Additional darwin specific inputs can be set here
             pkgs.libiconv
           ];
           # Additional environment variables can be set directly
           # MY_CUSTOM_VAR = "some value";
         };
+
+        # TODO: Understand why we are creating a LLVM version.
         craneLibLLvmTools = craneLib.overrideToolchain
           (fenix.packages.${system}.complete.withComponents [
             "cargo"
             "llvm-tools"
             "rustc"
           ]);
+
         # Build *just* the cargo dependencies, so we can reuse
         # all of that work (e.g. via cachix) when running in CI
         cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+
         # Build the actual crate itself, reusing the dependency
         # artifacts from above.
         my-crate = craneLib.buildPackage (commonArgs // {
           inherit cargoArtifacts;
         });
+
+        # my-crate = craneLib.buildPackage {
+        #   inherit src;
+        #   strictDeps = true;
+        #   cargoVendorDir = craneLib.vendorMultipleCargoDeps {
+        #     inherit (craneLib.findCargoFiles src) cargoConfigs;
+        #     cargoLockList = [
+        #       ./Cargo.lock
+        #       # Unfortunately this approach requires IFD (import-from-derivation)
+        #       # otherwise Nix will refuse to read the Cargo.lock from our toolchain
+        #       # (unless we build with `--impure`).
+        #       #
+        #       # Another way around this is to manually copy the rustlib `Cargo.lock`
+        #       # to the repo and import it with `./path/to/rustlib/Cargo.lock` which
+        #       # will avoid IFD entirely but will require manually keeping the file
+        #       # up to date!
+        #       "${rustToolchain.passthru.availableComponents.rust-src}/lib/rustlib/src/rust/library/Cargo.lock"
+        #     ];
+        #   };
+        #   cargoExtraArgs = "-Z build-std --target x86_64-unknown-linux-gnu";
+        #   buildInputs = [
+        #     # Add additional build inputs here
+        #   ];
+        # };
       in
       {
         checks = {
@@ -93,13 +137,19 @@
         };
         packages = {
           default = my-crate;
-        } // lib.optionalAttrs (!pkgs.stdenv.isDarwin) {
+        } // pkgs.lib.optionalAttrs (!pkgs.stdenv.isDarwin) {
+          # TODO: Understand why we are creating a LLVM version.
           my-crate-llvm-coverage = craneLibLLvmTools.cargoLlvmCov (commonArgs // {
             inherit cargoArtifacts;
           });
         };
+        # apps.default = flake-utils.lib.mkApp {
+        #   drv = my-crate;
+        # };
         apps.default = flake-utils.lib.mkApp {
-          drv = my-crate;
+          drv = pkgs.writeShellScriptBin "my-app" ''
+            ${pkgs.wasmtime}/bin/wasmtime run ${my-crate}/bin/custom-toolchain.wasm
+          '';
         };
         devShells.default = craneLib.devShell {
           # Inherit inputs from checks.
