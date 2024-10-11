@@ -153,17 +153,17 @@
         # MY_CUSTOM_DEVELOPMENT_VAR = "something else";
         # Extra inputs can be added here; cargo and rustc are provided by default.
         packages = with pkgs; [
+          # Rust
+          rustfmt
+          leptosfmt
+
+          # Leptos
           cargo-generate
+          cargo-leptos
+          sass
 
           # Development Server
           trunk
-
-          # SSR Setup
-          cargo-leptos
-
-          # Formatters
-          rustfmt
-          leptosfmt
         ];
       };
     });
