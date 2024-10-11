@@ -19,6 +19,21 @@ jobs:
         with:
           nix_path: https://nixos.org/nix/install
 
+      - name: Set up Cachix
+        if: success()
+        uses: cachix/cachix-action@v10
+        with:
+          name: your-cachix-cache-name
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Cache Nix Store
+        uses: actions/cache@v3
+        with:
+          path: /nix/store
+          key: ${{ runner.os }}-nix-store-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-nix-store-
+
       - name: Build with Nix Flake
         working-directory: applications/test-leptos
         run: nix build --extra-experimental-features 'nix-command flakes' .#default
