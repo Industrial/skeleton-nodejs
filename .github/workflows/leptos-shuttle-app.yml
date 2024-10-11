@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'applications/test-leptos/**'
-      - '.workflows/leptos-shuttle-app.yml'
+      - '.github/workflows/leptos-shuttle-app.yml'
 
 jobs:
   build-deploy:
