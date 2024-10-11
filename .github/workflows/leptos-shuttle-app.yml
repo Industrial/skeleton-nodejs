@@ -1,0 +1,31 @@
+name: Deploy to Shuttle.rs
+
+on:
+  push:
+    paths:
+      - 'applications/test-leptos/**'
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v14
+        with:
+          nix_path: https://nixos.org/nix/install
+
+      - name: Build with Nix Flake
+        working-directory: applications/test-leptos
+        run: nix build .#my-crate
+
+      - name: Deploy to Shuttle.rs
+        working-directory: applications/test-leptos
+        env:
+          SHUTTLE_API_KEY: ${{ secrets.SHUTTLE_API_KEY }}
+        run: |
+          # Replace with the actual shuttle-cli command
+          cargo shuttle deploy result

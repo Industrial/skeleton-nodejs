@@ -160,6 +160,7 @@
           # Leptos
           cargo-generate
           cargo-leptos
+          cargo-shuttle
           sass
 
           # Development Server
