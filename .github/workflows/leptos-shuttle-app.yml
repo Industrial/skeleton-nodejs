@@ -23,7 +23,8 @@ jobs:
         run: nix-env --quiet -j8 -iA cachix -f https://cachix.org/api/v1/install
 
       - name: Add Nix store to PATH
-        run: echo "::add-path::/nix/var/nix/profiles/per-user/runner/profile/bin"
+        run: |
+          echo "/nix/var/nix/profiles/per-user/runner/profile/bin" >> $GITHUB_PATH
 
       - name: Verify Cachix Installation
         run: cachix --version
