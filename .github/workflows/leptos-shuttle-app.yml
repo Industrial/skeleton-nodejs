@@ -24,6 +24,7 @@ jobs:
 
       - name: Add Nix store to PATH
         run: |
+          echo "cachix: $(which cachix)"
           echo "$(dirname $(which cachix))" >> $GITHUB_PATH
 
       - name: Verify Cachix Installation
