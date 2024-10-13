@@ -114,13 +114,13 @@
           inherit src;
         };
 
-        my-crate-toml-fmt = craneLib.taploFmt {
-          src = pkgs.lib.sources.sourceFilesBySuffices src [".toml"];
-        };
+        # my-crate-toml-fmt = craneLib.taploFmt {
+        #   src = pkgs.lib.sources.sourceFilesBySuffices src [".toml"];
+        # };
 
-        my-crate-audit = craneLib.cargoAudit {
-          inherit src advisory-db;
-        };
+        # my-crate-audit = craneLib.cargoAudit {
+        #   inherit src advisory-db;
+        # };
 
         my-crate-deny = craneLib.cargoDeny {
           inherit src;

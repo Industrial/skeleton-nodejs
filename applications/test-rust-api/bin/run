@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-exec > >(tee -i "log/run.log") 2>&1
-echo "> bin/run"
-
-nix run --extra-experimental-features 'nix-command flakes' .#default
