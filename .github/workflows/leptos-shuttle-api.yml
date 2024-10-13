@@ -44,7 +44,7 @@ jobs:
       - name: Deploy
         working-directory: applications/test-rust-api
         env:
-          SHUTTLE_API_KEY: ${{ secrets.SHUTTLE_API_KEY }}
+          SHUTTLE_API_KEY: '${{ secrets.SHUTTLE_API_KEY }}'
         # run: bin/deploy
         run: |
           nix develop .#ci --command bin/deploy
