@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+exec > >(tee -i "log/lint.log") 2>&1
+echo "> bin/lint"
+
+cargo fmt --all

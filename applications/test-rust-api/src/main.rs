@@ -1,11 +1,11 @@
 use axum::{Router, routing::get};
 
 async fn hello_world() -> &'static str {
-    "Hello world!"
+  "Hello world!"
 }
 
 fn init_router() -> Router {
-    Router::new().route("/", get(hello_world))
+  Router::new().route("/", get(hello_world))
 }
 
 // fn main() {
