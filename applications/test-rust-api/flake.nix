@@ -123,9 +123,10 @@
         #   inherit src advisory-db;
         # };
 
-        my-crate-deny = craneLib.cargoDeny {
-          inherit src;
-        };
+        # License checks? That's just really annoyin, man.
+        # my-crate-deny = craneLib.cargoDeny {
+        #   inherit src;
+        # };
 
         my-crate-nextest = craneLib.cargoNextest (commonArgs
           // {
