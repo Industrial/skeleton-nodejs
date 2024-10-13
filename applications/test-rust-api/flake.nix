@@ -56,6 +56,8 @@
           toolchain.default.override {
             targets = [
               target
+              "x86_64-unknown-linux-gnu"
+              "aarch64-unknown-linux-gnu"
               # "wasm32-unknown-unknown"
             ];
           }));
@@ -66,7 +68,7 @@
         inherit src;
         strictDeps = true;
         doCheck = false;
-        cargoExtraArgs = "--target ${target}";
+        # cargoExtraArgs = "--target ${target}";
         buildInputs =
           [
           ]
