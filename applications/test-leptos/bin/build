@@ -1,2 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
+exec > >(tee -i "log/build.log") 2>&1
+
 cargo build

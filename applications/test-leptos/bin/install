@@ -1,2 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
+exec > >(tee -i "log/install.log") 2>&1
+
 cargo install --path .
