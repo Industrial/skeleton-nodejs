@@ -33,11 +33,15 @@ jobs:
 
       - name: Check
         working-directory: applications/test-rust-api
-        run: bin/check
+        run: |
+          nix run github:nicknovitski/nix-develop/v1
+          bin/check
 
       - name: Build
         working-directory: applications/test-rust-api
-        run: bin/build
+        run: |
+          nix run github:nicknovitski/nix-develop/v1
+          bin/build
 
       - name: Deploy
         working-directory: applications/test-rust-api
@@ -45,4 +49,5 @@ jobs:
           SHUTTLE_API_KEY: ${{ secrets.SHUTTLE_API_KEY }}
         # run: bin/deploy
         run: |
-          cargo shuttle deploy result
+          nix run github:nicknovitski/nix-develop/v1
+          bin/deploy
