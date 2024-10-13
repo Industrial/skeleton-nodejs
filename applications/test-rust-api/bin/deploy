@@ -3,4 +3,6 @@ set -euo pipefail
 exec > >(tee -i "log/deploy.log") 2>&1
 echo "> bin/deploy"
 
+cargo --list
+
 cargo shuttle deploy result
