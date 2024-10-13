@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "test-rust-api"
+name = "code9-test-rust-api"
 version = "0.1.0"
