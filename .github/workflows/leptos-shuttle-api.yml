@@ -31,18 +31,16 @@ jobs:
       - name: Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v2
 
-      - name: Test
-        working-directory: applications/test-leptos
-        run: nix --extra-experimental-features 'nix-command flakes' flake check
+      - name: Check
+        working-directory: applications/test-rust-api
+        run: bin/check
 
       - name: Build
-        working-directory: applications/test-leptos
-        run: nix build --extra-experimental-features 'nix-command flakes' .#default
+        working-directory: applications/test-rust-api
+        run: bin/build
 
       - name: Deploy
-        working-directory: applications/test-leptos
+        working-directory: applications/test-rust-api
         env:
           SHUTTLE_API_KEY: ${{ secrets.SHUTTLE_API_KEY }}
-        run: |
-          # Replace with the actual shuttle-cli command
-          cargo shuttle deploy result
+        run: bin/deploy
