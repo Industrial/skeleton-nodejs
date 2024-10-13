@@ -11,14 +11,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: cachix/install-nix-action@v25
+      - name: Nix Install
+        uses: cachix/install-nix-action@v25
         with:
           nix_path: nixpkgs=channel:nixos-unstable
 
-      - uses: cachix/cachix-action@v14
+      - name: Nix Cachix Install
+        uses: cachix/cachix-action@v14
         with:
           name: skeleton1nodejs0test1leptos
           # # If you chose signing key for write access
@@ -26,21 +28,18 @@ jobs:
           # If you chose API tokens for write access OR if you have a private cache
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - uses: DeterminateSystems/magic-nix-cache-action@v2
+      - name: Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v2
 
-      # - name: Cache Nix Store
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: /nix/store
-      #     key: ${{ runner.os }}-nix-store-${{ github.ref }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-nix-store-
+      - name: Test
+        working-directory: applications/test-leptos
+        run: nix --extra-experimental-features 'nix-command flakes' flake check
 
-      - name: Build with Nix Flake
+      - name: Build
         working-directory: applications/test-leptos
         run: nix build --extra-experimental-features 'nix-command flakes' .#default
 
-      - name: Deploy to Shuttle.rs
+      - name: Deploy
         working-directory: applications/test-leptos
         env:
           SHUTTLE_API_KEY: ${{ secrets.SHUTTLE_API_KEY }}
