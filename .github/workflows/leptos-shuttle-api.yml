@@ -34,12 +34,12 @@ jobs:
       - name: Check
         working-directory: applications/test-rust-api
         run: |
-          nix develop --command bin/check
+          nix develop .#ci --command bin/check
 
       - name: Build
         working-directory: applications/test-rust-api
         run: |
-          nix develop --command bin/build
+          nix develop .#ci --command bin/build
 
       - name: Deploy
         working-directory: applications/test-rust-api
@@ -47,4 +47,4 @@ jobs:
           SHUTTLE_API_KEY: ${{ secrets.SHUTTLE_API_KEY }}
         # run: bin/deploy
         run: |
-          nix develop --command bin/deploy
+          nix develop .#ci --command bin/deploy

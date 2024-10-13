@@ -149,25 +149,35 @@
         '';
       };
 
-      devShells.default = craneLib.devShell {
-        checks = self.checks.${system};
-        packages = with pkgs; [
-          # Rust
-          rustfmt
-          leptosfmt
+      devShells = {
+        ci = craneLib.devShell {
+          checks = self.checks.${system};
+          packages = with pkgs; [
+            cargo-shuttle
+          ];
+        };
 
-          # Leptos
-          cargo-generate
-          cargo-leptos
-          cargo-shuttle
-          sass
+        default = craneLib.devShell {
+          checks = self.checks.${system};
+          packages = with pkgs; [
+            # Rust
+            rustfmt
+            leptosfmt
 
-          # Development Server
-          trunk
+            # Leptos
+            cargo-generate
+            cargo-leptos
+            cargo-shuttle
+            sass
 
-          # Wasmtime
-          wasmtime
-        ];
+            # Development Server
+            trunk
+
+            # Wasmtime
+            wasmtime
+          ];
+        };
       };
+
     });
 }
