@@ -44,6 +44,7 @@
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       name = "_template-rust";
+      target = "wasm32-wasip2";
 
       pkgs = import nixpkgs {
         inherit system;
@@ -54,7 +55,8 @@
         p.rust-bin.selectLatestNightlyWith (toolchain:
           toolchain.default.override {
             targets = [
-              "wasm32-unknown-unknown"
+              target
+              # "wasm32-unknown-unknown"
             ];
           }));
 
@@ -64,7 +66,7 @@
         inherit src;
         strictDeps = true;
         doCheck = false;
-        cargoExtraArgs = "--target wasm32-unknown-unknown";
+        cargoExtraArgs = "--target ${target}";
         buildInputs =
           [
           ]
@@ -142,7 +144,7 @@
         };
 
       apps.default = flake-utils.lib.mkApp {
-        drv = pkgs.writeShellScriptBin "my-app" ''
+        drv = pkgs.writeShellScriptBin "${name}" ''
           ${pkgs.wasmtime}/bin/wasmtime run ${my-crate}/bin/${name}.wasm
         '';
       };
