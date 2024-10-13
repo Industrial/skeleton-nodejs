@@ -12,7 +12,7 @@
 
 use axum::{routing::get, Router};
 use shuttle_axum::ShuttleAxum;
-use shuttle_runtime::Error;
+// use shuttle_runtime::Error;
 
 async fn root() -> &'static str {
   "Hello, World!"

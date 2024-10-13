@@ -71,10 +71,11 @@
         doCheck = false;
         # cargoExtraArgs = "--target ${target}";
         buildInputs =
-          [
-          ]
+          []
           ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
             pkgs.libiconv
+            pkgs.darwin.apple_sdk.frameworks.SystemConfiguration
+            pkgs.darwin.apple_sdk.frameworks.CoreFoundation
           ];
       };
 
@@ -147,8 +148,11 @@
         };
 
       apps.default = flake-utils.lib.mkApp {
+        # drv = pkgs.writeShellScriptBin "${name}" ''
+        #   ${pkgs.wasmtime}/bin/wasmtime run ${my-crate}/bin/${name}.wasm
+        # '';
         drv = pkgs.writeShellScriptBin "${name}" ''
-          ${pkgs.wasmtime}/bin/wasmtime run ${my-crate}/bin/${name}.wasm
+          cargo shuttle run
         '';
       };
 
