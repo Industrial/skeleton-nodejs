@@ -43,4 +43,6 @@ jobs:
         working-directory: applications/test-rust-api
         env:
           SHUTTLE_API_KEY: ${{ secrets.SHUTTLE_API_KEY }}
-        run: bin/deploy
+        # run: bin/deploy
+        run: |
+          cargo shuttle deploy result
