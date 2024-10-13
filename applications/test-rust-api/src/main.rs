@@ -5,8 +5,7 @@ async fn hello_world() -> &'static str {
 }
 
 fn init_router() -> Router {
-    Router::new()
-        .route("/", get(hello_world))
+    Router::new().route("/", get(hello_world))
 }
 
 // fn main() {

@@ -58,6 +58,7 @@
               target
               "x86_64-unknown-linux-gnu"
               "aarch64-unknown-linux-gnu"
+              "aarch64-apple-darwin"
               # "wasm32-unknown-unknown"
             ];
           }));
