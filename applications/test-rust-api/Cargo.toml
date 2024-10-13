@@ -1,5 +1,5 @@
 [package]
-name = "_template-rust"
+name = "test-rust-api"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
