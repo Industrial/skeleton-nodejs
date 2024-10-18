@@ -38,7 +38,7 @@
     crane,
     fenix,
     flake-utils,
-    advisory-db,
+    # advisory-db,
     rust-overlay,
     ...
   }:
@@ -50,6 +50,16 @@
         inherit system;
         overlays = [(import rust-overlay)];
       };
+
+      # updatedCargoShuttle = pkgs.cargo-shuttle.overrideAttrs (old: rec {
+      #   version = "0.48.0";
+      #   src = pkgs.fetchFromGitHub {
+      #     owner = "shuttle-hq";
+      #     repo = "shuttle";
+      #     rev = "v${version}";
+      #     hash = "sha256-<new-hash-here>";
+      #   };
+      # });
 
       craneLib = (crane.mkLib pkgs).overrideToolchain (p:
         p.rust-bin.selectLatestNightlyWith (toolchain:
@@ -94,8 +104,7 @@
         // {
           inherit cargoArtifacts;
         });
-    in
-    {
+    in {
       checks = {
         inherit my-crate;
 
@@ -162,6 +171,7 @@
           checks = self.checks.${system};
           packages = with pkgs; [
             cargo-shuttle
+            # updatedCargoShuttle
           ];
         };
 
@@ -176,6 +186,7 @@
             cargo-generate
             cargo-leptos
             cargo-shuttle
+            # updatedCargoShuttle
             sass
 
             # Development Server
@@ -186,6 +197,5 @@
           ];
         };
       };
-
     });
 }

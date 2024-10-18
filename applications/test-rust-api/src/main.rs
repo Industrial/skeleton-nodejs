@@ -1,26 +1,28 @@
-// use axum::{routing::get, Router};
-// use tokio::net::TcpListener;
-// #[tokio::main]
-// async fn main() {
-//   let app = Router::new().route("/", get(root));
-//   let listener = TcpListener::bind("0.0.0.0:3000").await.unwrap();
-//   axum::serve(listener, app).await.unwrap();
-// }
-// async fn root() -> &'static str {
-//   "Hello, World!"
-// }
-
-use axum::{routing::get, Router};
+use axum::{response::Html, routing::get, Router};
 use shuttle_axum::ShuttleAxum;
-// use shuttle_runtime::Error;
+use streamweave::source::GlobalVariable;
 
-async fn root() -> &'static str {
-  "Hello, World!"
+async fn root() -> Html<&'static str> {
+  Html("Hello, World!")
+}
+
+async fn global_variable_demo() -> Html<String> {
+  let global_var = GlobalVariable::new("Hello from StreamWeave!".to_string());
+  let mut stream = global_var.create_stream();
+
+  let mut result = String::new();
+  while let Some(value) = stream.next().await {
+    result.push_str(&value);
+  }
+
+  Html(result)
 }
 
 #[shuttle_runtime::main]
 async fn axum() -> ShuttleAxum {
-  let router = Router::new().route("/", get(root));
+  let router = Router::new()
+    .route("/", get(root))
+    .route("/global", get(global_variable_demo));
 
   Ok(router.into())
 }
