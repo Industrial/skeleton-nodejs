@@ -1,11 +1,12 @@
 pub mod streamweave;
 
 use axum::{Router, response::Html, routing::get};
-use futures::stream::StreamExt;
 use shuttle_axum::ShuttleAxum;
 use std::convert::Infallible;
 use streamweave::operator::Operator;
 use streamweave::operator::map::Map;
+use streamweave::sink::Sink;
+use streamweave::sink::http_response::HttpResponse;
 use streamweave::source::{Source, StaticSource};
 
 async fn root() -> Html<&'static str> {
@@ -22,18 +23,12 @@ async fn stream_example() -> Result<Html<String>, Infallible> {
   ]);
 
   let map = Map::new(|s: String| s.to_uppercase());
+  let sink = HttpResponse::new();
 
   let operated_stream = map.apply(source.stream());
+  let response = sink.run(operated_stream);
 
-  let mut output = String::new();
-  let mut stream = operated_stream;
-
-  while let Some(data) = stream.next().await {
-    output.push_str(&data);
-    output.push(' ');
-  }
-
-  Ok(Html(output.trim().to_string()))
+  Ok(response)
 }
 
 #[shuttle_runtime::main]

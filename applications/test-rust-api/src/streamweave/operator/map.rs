@@ -1,4 +1,4 @@
-use crate::Operator;
+use crate::streamweave::operator::Operator;
 use futures::stream::{Stream, StreamExt};
 use std::marker::PhantomData;
 use std::pin::Pin;
