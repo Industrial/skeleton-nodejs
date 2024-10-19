@@ -1,28 +1,46 @@
-use axum::{response::Html, routing::get, Router};
+pub mod streamweave;
+
+use axum::{Router, response::Html, routing::get};
+use futures::stream::StreamExt;
 use shuttle_axum::ShuttleAxum;
-use streamweave::source::GlobalVariable;
+use std::convert::Infallible;
+use streamweave::operator::Operator;
+use streamweave::operator::map::Map;
+use streamweave::source::{Source, StaticSource};
 
 async fn root() -> Html<&'static str> {
   Html("Hello, World!")
 }
 
-async fn global_variable_demo() -> Html<String> {
-  let global_var = GlobalVariable::new("Hello from StreamWeave!".to_string());
-  let mut stream = global_var.create_stream();
+#[axum::debug_handler]
+async fn stream_example() -> Result<Html<String>, Infallible> {
+  let source = StaticSource::new(vec![
+    "Hello".to_string(),
+    "from".to_string(),
+    "Rust".to_string(),
+    "Streams!".to_string(),
+  ]);
 
-  let mut result = String::new();
-  while let Some(value) = stream.next().await {
-    result.push_str(&value);
+  let map = Map::new(|s: String| s.to_uppercase());
+
+  let operated_stream = map.apply(source.stream());
+
+  let mut output = String::new();
+  let mut stream = operated_stream;
+
+  while let Some(data) = stream.next().await {
+    output.push_str(&data);
+    output.push(' ');
   }
 
-  Html(result)
+  Ok(Html(output.trim().to_string()))
 }
 
 #[shuttle_runtime::main]
 async fn axum() -> ShuttleAxum {
   let router = Router::new()
     .route("/", get(root))
-    .route("/global", get(global_variable_demo));
+    .route("/stream", get(stream_example));
 
   Ok(router.into())
 }
