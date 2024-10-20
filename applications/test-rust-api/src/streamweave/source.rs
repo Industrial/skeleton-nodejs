@@ -1,23 +1,22 @@
-use futures::{Stream, stream};
+pub mod array;
+pub mod command;
+pub mod env_var;
+pub mod file;
+pub mod hash_map;
+pub mod hash_set;
+pub mod interval;
+pub mod iterator;
+pub mod json_string;
+pub mod mpsc_receiver;
+pub mod random_number;
+pub mod string;
+pub mod tcp_stream;
+pub mod timeout;
+pub mod vec;
+
+use futures::Stream;
 use std::pin::Pin;
 
-pub trait Source {
-  fn stream(&self) -> Pin<Box<dyn Stream<Item = String> + Send>>;
-}
-
-pub struct StaticSource {
-  data: Vec<String>,
-}
-
-impl StaticSource {
-  pub fn new(data: Vec<String>) -> Self {
-    StaticSource { data }
-  }
-}
-
-impl Source for StaticSource {
-  fn stream(&self) -> Pin<Box<dyn Stream<Item = String> + Send>> {
-    let stream = stream::iter(self.data.clone());
-    Box::pin(stream)
-  }
+pub trait Source<I> {
+  fn stream(&self) -> Pin<Box<dyn Stream<Item = I> + Send>>;
 }

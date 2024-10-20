@@ -4,18 +4,18 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 use std::sync::Arc;
 
-pub struct Map<F, I, O> {
+pub struct MapOperator<F, I, O> {
   func: Arc<F>,
   _input: PhantomData<I>,
   _output: PhantomData<O>,
 }
 
-impl<F, I, O> Map<F, I, O>
+impl<F, I, O> MapOperator<F, I, O>
 where
   F: Fn(I) -> O + Send + Sync + 'static,
 {
   pub fn new(func: F) -> Self {
-    Map {
+    MapOperator {
       func: Arc::new(func),
       _input: PhantomData,
       _output: PhantomData,
@@ -23,7 +23,7 @@ where
   }
 }
 
-impl<F, I, O> Operator<I, O> for Map<F, I, O>
+impl<F, I, O> Operator<I, O> for MapOperator<F, I, O>
 where
   F: Fn(I) -> O + Send + Sync + 'static,
   I: Send + 'static,

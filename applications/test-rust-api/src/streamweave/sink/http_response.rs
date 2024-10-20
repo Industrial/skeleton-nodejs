@@ -3,15 +3,15 @@ use axum::response::Html;
 use futures::stream::{Stream, StreamExt};
 use std::pin::Pin;
 
-pub struct HttpResponse;
+pub struct HttpResponseSink;
 
-impl HttpResponse {
+impl HttpResponseSink {
   pub fn new() -> Self {
-    HttpResponse
+    HttpResponseSink
   }
 }
 
-impl Sink<String, Html<String>> for HttpResponse {
+impl Sink<String, Html<String>> for HttpResponseSink {
   fn run(
     self,
     input: Pin<Box<dyn Stream<Item = String> + Send>>,
