@@ -2,7 +2,7 @@ use crate::streamweave::source::Source;
 use futures::Stream;
 use std::pin::Pin;
 use std::sync::Arc;
-use tokio::sync::{Mutex, mpsc};
+use tokio::sync::{mpsc, Mutex};
 
 // Streams messages received from a tokio::sync::mpsc::Receiver.
 pub struct MpscReceiverSource<T> {

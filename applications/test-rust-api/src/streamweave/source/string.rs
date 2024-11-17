@@ -1,5 +1,5 @@
 use crate::streamweave::source::Source;
-use futures::{Stream, stream};
+use futures::{stream, Stream};
 use std::pin::Pin;
 use std::string::String;
 

@@ -1,11 +1,11 @@
 pub mod streamweave;
 
-use axum::{Router, response::Html, routing::get};
+use axum::{response::Html, routing::get, Router};
 use shuttle_axum::ShuttleAxum;
 use std::{convert::Infallible, time::Duration};
-use streamweave::operator::{Operator, map::MapOperator};
-use streamweave::sink::{Sink, http_response::HttpResponseSink};
-use streamweave::source::{Source, timeout::TimeoutSource, vec::VecSource};
+use streamweave::operator::{map::MapOperator, Operator};
+use streamweave::sink::{http_response::HttpResponseSink, Sink};
+use streamweave::source::{timeout::TimeoutSource, vec::VecSource, Source};
 
 async fn root() -> Html<&'static str> {
   Html("Hello, World!")
@@ -45,6 +45,5 @@ async fn axum() -> ShuttleAxum {
     .route("/", get(root))
     .route("/stream", get(stream_example))
     .route("/timeout", get(timeout_example));
-
   Ok(router.into())
 }
