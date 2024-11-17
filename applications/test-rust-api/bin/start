@@ -5,4 +5,4 @@ echo "> bin/start"
 
 # nix run --extra-experimental-features 'nix-command flakes' .#default
 # ./result/bin/code9-test-rust-api
-cargo shuttle run
+cargo shuttle run --port 3000
