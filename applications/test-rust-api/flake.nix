@@ -79,14 +79,22 @@
         inherit src;
         strictDeps = true;
         doCheck = false;
-        # cargoExtraArgs = "--target ${target}";
-        buildInputs =
-          []
-          ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
-            pkgs.libiconv
-            pkgs.darwin.apple_sdk.frameworks.SystemConfiguration
-            pkgs.darwin.apple_sdk.frameworks.CoreFoundation
-          ];
+        nativeBuildInputs = with pkgs; [
+          pkg-config
+        ];
+        buildInputs = with pkgs;
+          [
+            openssl
+            openssl.dev
+          ]
+          ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs; [
+            libiconv
+            darwin.apple_sdk.frameworks.SystemConfiguration
+            darwin.apple_sdk.frameworks.CoreFoundation
+          ]);
+        env = {
+          PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+        };
       };
 
       # TODO: Understand why we are creating a LLVM version.
