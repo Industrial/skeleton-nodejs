@@ -9,6 +9,7 @@ license = "MIT"
 
 [dependencies]
 # axum = { version = "0.6.4", optional = true }
+# http = "0.2.8"
 # shuttle-axum = { version = "0.28.0", optional = true }
 # shuttle-runtime = { version = "0.28.0", default-features = false, optional = true }
 # tokio = { version = "1.25.0", optional = true }
@@ -20,7 +21,7 @@ cfg-if = "1"
 console_error_panic_hook = "0.1"
 console_log = "1"
 futures = "0.3.31"
-http = "0.2.8"
+http = "1.1.0"
 hyper = "1.5.0"
 leptos = { version = "0.5" }
 leptos_axum = { version = "0.5", optional = true }

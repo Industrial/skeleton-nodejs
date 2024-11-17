@@ -56,7 +56,7 @@ async fn stream_example() -> Result<Html<String>, Infallible> {
 async fn axum() -> shuttle_axum::ShuttleAxum {
   use axum::{routing::post, Router};
   use code9_test_rust_api::app::App;
-  use code9_test_rust_api::fileserv::file_and_error_handler;
+  // use code9_test_rust_api::fileserv::file_and_error_handler;
   use leptos::*;
   use leptos_axum::{generate_route_list, LeptosRoutes};
   use std::path::Path;
@@ -90,7 +90,7 @@ async fn axum() -> shuttle_axum::ShuttleAxum {
   let app = Router::new()
     .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
     .leptos_routes(&leptos_options, routes, App)
-    .fallback(file_and_error_handler)
+    // .fallback(file_and_error_handler)
     .with_state(leptos_options);
 
   Ok(app.into())

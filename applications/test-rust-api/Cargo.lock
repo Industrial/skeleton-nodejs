@@ -953,7 +953,7 @@ dependencies = [
  "console_error_panic_hook",
  "console_log",
  "futures",
- "http 0.2.12",
+ "http 1.1.0",
  "hyper 1.5.0",
  "leptos",
  "leptos_axum",
