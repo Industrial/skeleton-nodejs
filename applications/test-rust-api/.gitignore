@@ -1,2 +1,8 @@
-/target/
+**/*.rs.bk
 /log/
+/site/
+/target/
+end2end/playwright-report/
+node_modules/
+playwright/.cache/
+test-results/

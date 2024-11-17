@@ -3,4 +3,5 @@ set -euo pipefail
 exec > >(tee -i "log/check.log") 2>&1
 echo "> bin/check"
 
-nix flake check
+nix flake check \
+    --log-format bar-with-logs \
