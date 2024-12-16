@@ -10,10 +10,13 @@
 
   # https://devenv.sh/packages/
   packages = with pkgs; [
-    bun
+    # bun
+    # spago
     esbuild
+    inotify-tools
+    nodePackages_latest.pnpm
+    nodejs_latest
     purescript
-    spago
     stack
   ];
 
