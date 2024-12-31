@@ -1,0 +1,32 @@
+package:
+  dependencies:
+    - aff
+    - argonaut
+    - argonaut-codecs
+    - argonaut-core
+    - arrays
+    - console
+    - effect
+    - either
+    - exceptions
+    - foreign
+    - js-date
+    - lists
+    - maybe
+    - node-buffer
+    - node-http
+    - node-streams
+    - ordered-collections
+    - prelude
+    - react-basic
+    - react-basic-dom
+    - react-basic-hooks
+    - refs
+    - spec
+    - strings
+    - tuples
+  name: my-project
+workspace:
+  extraPackages: {}
+  packageSet:
+    url: https://raw.githubusercontent.com/purescript/package-sets/psc-0.15.15-20241215/packages.json

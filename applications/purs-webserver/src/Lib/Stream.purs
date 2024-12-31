@@ -8,7 +8,7 @@ import Effect.Ref as Ref
 import Lib.Aff (affVersion)
 import Node.Buffer (Buffer, concat)
 import Node.Encoding (Encoding)
-import Node.Stream (Read, Stream, Write, end, onData, onEnd, writeString)
+import Node.Stream (Read, Stream, Write, end, dataH, endH, writeString)
 
 writeStringAff ∷ Stream (write ∷ Write) → Encoding → String → Aff Unit
 writeStringAff stream encoding string = affVersion $ writeString stream encoding string
@@ -21,9 +21,9 @@ toBuffer :: Stream (read :: Read) -> Aff Buffer
 toBuffer stream =
   makeAff \done -> do
     output <- Ref.new []
-    onData stream \buffer -> do
+    stream # on dataH \buffer -> do
       void $ Ref.modify (_ <> [ buffer ]) output
-    onEnd stream do
+    stream # on endH do
       body <- Ref.read output >>= concat
       done $ Right body
     pure nonCanceler

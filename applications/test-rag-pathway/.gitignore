@@ -1,11 +1,7 @@
-.direnv/
-.venv/
-# Devenv
 .devenv*
-devenv.local.nix
-
-# direnv
 .direnv
-
-# pre-commit
+.direnv/
 .pre-commit-config.yaml
+.venv/
+/src/data/**/*
+devenv.local.nix

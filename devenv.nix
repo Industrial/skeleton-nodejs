@@ -1,5 +1,7 @@
 {pkgs, ...}: {
-  dotenv.enable = true;
+  dotenv = {
+    enable = true;
+  };
 
   # # https://devenv.sh/basics/
   # env.GREET = "devenv";
@@ -23,10 +25,18 @@
         };
       };
     };
-    # node = {
-    #   enable = true;
-    #   # package = pkgs.nodejs_21;
-    # };
+    javascript = {
+      enable = true;
+      bun = {
+        enable = true;
+        install = {
+          enable = true;
+        };
+      };
+    };
+    typescript = {
+      enable = true;
+    };
     rust = {
       enable = true;
       channel = "nightly";

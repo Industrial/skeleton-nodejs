@@ -2,11 +2,11 @@ module Lib where
 
 import Data.Tuple.Nested (Tuple3)
 import Effect.Aff (Aff)
-import Node.HTTP (Request, Response)
+import Node.HTTP.Types (ClientRequest, ServerResponse)
 
 type Context a =
-  { req :: Request
-  , res :: Response
+  { req :: ClientRequest
+  , res :: ServerResponse
   | a
   }
 

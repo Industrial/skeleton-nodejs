@@ -1,24 +1,20 @@
 {
-  "name": "@code9/purs-webserver",
-  "module": "dist/mod.js",
-  "type": "module",
-  "scripts": {
-    "clean": "rm -rf .spago dist output",
-    "deps": "spago install",
-    "build": "spago bundle-app --to dist/mod.js --platform=node",
-    "build:watch": "bun run build --watch",
-    "start": "bun run dist/mod.js",
-    "start:watch": "bun run --watch dist/mod.js"
-  },
-  "devDependencies": {
-    "bun-types": "^0.5.0"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "pulp": "^16.0.2",
-    "purescript": "^0.15.15",
-    "spago": "^0.21.0"
-  }
+	"name": "@code9/purs-webserver",
+	"module": "dist/mod.js",
+	"type": "module",
+	"scripts": {
+		"clean": "rm -rf .spago dist output",
+		"deps": "spago install",
+		"build": "spago bundle --outfile dist/mod.js --platform node --source-maps",
+		"build:watch": "inotifywait -m -r -e modify ./src --format '%w%f' | while read file; do echo \"Changed: $file\" && pnpm run build; done",
+		"start": "node dist/mod.js",
+		"start:watch": "node --watch dist/mod.js"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"spago": "^0.93.41"
+	}
 }
