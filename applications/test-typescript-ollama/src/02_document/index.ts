@@ -17,7 +17,7 @@ console.log("Created embedding model");
 const vectorstore = new MemoryVectorStore(embeddingModel);
 console.log("Created vectorstore");
 
-const documentsPath = path.join(process.cwd(), "src/document.txt");
+const documentsPath = path.join(process.cwd(), "document.txt");
 console.log("documentsPath", documentsPath);
 const textLoader = new TextLoader(documentsPath);
 console.log("Created textLoader");
