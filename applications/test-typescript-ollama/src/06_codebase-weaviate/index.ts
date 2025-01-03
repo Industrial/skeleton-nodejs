@@ -28,36 +28,44 @@ const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
 const sourceDirectory = path.join(__dirname, "src");
 console.log("Starting document import from:", sourceDirectory);
 
-const documents = await importDocuments(
-	sourceDirectory,
-	async (filePath, currentHash, previousHash) => {
-		if (previousHash) {
-			// Delete vectors for previous version of the file
-			console.log(`Removing vectors for changed file: ${filePath}`);
-			await vectorStore.delete({
-				filter: {
-					fileHash: previousHash,
-				},
-			});
-		}
-	},
-);
+// Metadata file path
+const metadataFilePath = path.join(__dirname, ".import-metadata.json");
 
-if (documents.length > 0) {
-	// Add new/changed documents to vector store
+const result = await importDocuments(sourceDirectory, metadataFilePath);
+
+// Remove old documents if any files changed
+if (result.oldDocuments.length > 0) {
 	console.log(
-		`Adding ${documents.length} changed documents to vector store...`,
+		`Removing vectors for ${result.oldDocuments.length} changed documents...`,
 	);
-	await vectorStore.addDocuments(documents);
-	console.log("Documents added successfully");
+	await vectorStore.delete({
+		filter: {
+			$or: result.oldDocuments.map((doc) => ({
+				fileHash: doc.metadata.fileHash,
+			})),
+		},
+	});
+	console.log("Old vectors removed successfully");
 }
+
+// Add new documents if any files changed
+if (result.newDocuments.length > 0) {
+	console.log(
+		`Adding ${result.newDocuments.length} new documents to vector store...`,
+	);
+	await vectorStore.addDocuments(result.newDocuments);
+	console.log("New documents added successfully");
+}
+
+// Get total document count for retriever configuration
+const totalDocuments = (await vectorStore.similaritySearch("", 9999)).length;
 
 // Configure retriever
 const retriever = vectorStore.asRetriever({
-	k: documents.length,
+	k: totalDocuments,
 });
 console.log(
-	`Retriever configured successfully using ${documents.length} documents`,
+	`Retriever configured successfully using ${totalDocuments} total documents`,
 );
 
 // Define the retrieval model using the codegemma model
