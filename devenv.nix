@@ -8,7 +8,11 @@
 
   # https://devenv.sh/packages/
   packages = with pkgs;
-    [git]
+    [
+      git
+      redis
+      qdrant
+    ]
     ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
       # For OSX, use `brew install ta-lib`
       pkgs.ta-lib
