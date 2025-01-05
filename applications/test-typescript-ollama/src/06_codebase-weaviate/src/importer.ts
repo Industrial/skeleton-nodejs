@@ -10,7 +10,7 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 const CHUNK_SIZE = 500;
 const CHUNK_OVERLAP = 100;
 
-const addMetadata =
+export const addMetadata =
 	(filePath: string) =>
 	(documents: Document[]): Document[] =>
 		pipe(
@@ -19,12 +19,12 @@ const addMetadata =
 				...doc,
 				metadata: {
 					...doc.metadata,
-					source: filePath,
+					filePath: filePath.replace(__dirname, ""),
 				},
 			})),
 		);
 
-const processFile = (
+export const processFile = (
 	filePath: string,
 ): E.Effect<Document[], UnknownException, never> => {
 	const textLoader = new TextLoader(filePath);
@@ -39,10 +39,11 @@ const processFile = (
 			E.tryPromise(() => textSplitter.splitDocuments(loadedTexts)),
 		),
 		E.map(addMetadata(filePath)),
+		E.tap((documents) => E.succeed(console.log(documents))),
 	);
 };
 
-const listFilesRecursively = (
+export const listFilesRecursively = (
 	directoryPath: string,
 ): E.Effect<string[], UnknownException, never> =>
 	pipe(
@@ -66,6 +67,7 @@ export const importDocuments = (
 ): E.Effect<Document[], UnknownException, never> =>
 	pipe(
 		listFilesRecursively(directory),
+		E.tap((filePaths) => E.succeed(console.log(filePaths))),
 		E.map((filePaths) => {
 			console.log(`Found ${filePaths.length} files to process`);
 			return filePaths;
