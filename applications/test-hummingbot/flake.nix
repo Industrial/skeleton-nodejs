@@ -19,23 +19,24 @@
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let
-        myapp = {
-          poetry2nix,
-        }:
+        myapp = {poetry2nix}:
           poetry2nix.mkPoetryApplication {
             projectDir = self;
             overrides = poetry2nix.overrides.withDefaults (
               final: super: let
-                addCommonDeps = name: super.${name}.overridePythonAttrs (old: {
-                  nativeBuildInputs = (old.nativeBuildInputs or []) ++ [
-                    final.hatchling
-                    final.poetry-core
-                    final.scikit-build
-                    final.setuptools
-                    final.wheel
-                  ];
-                  buildInputs = (old.buildInputs or []) ++ [final.scikit-build];
-                });
+                addCommonDeps = name:
+                  super.${name}.overridePythonAttrs (old: {
+                    nativeBuildInputs =
+                      (old.nativeBuildInputs or [])
+                      ++ [
+                        final.hatchling
+                        final.poetry-core
+                        final.scikit-build
+                        final.setuptools
+                        final.wheel
+                      ];
+                    buildInputs = (old.buildInputs or []) ++ [final.scikit-build];
+                  });
               in {
                 asyncio = addCommonDeps "asyncio";
                 coincurve = addCommonDeps "coincurve";
@@ -45,6 +46,8 @@
                 mnemonic = addCommonDeps "mnemonic";
                 pyunormalize = addCommonDeps "pyunormalize";
                 safe-pysha3 = addCommonDeps "safe-pysha3";
+                eth-bloom = addCommonDeps "eth-bloom";
+                ruamel-yaml = addCommonDeps "ruamel-yaml";
                 # Make pysha3 the safe version.
                 pysha3 = super.safe-pysha3.overridePythonAttrs (old: {
                   nativeBuildInputs = (old.nativeBuildInputs or []) ++ [final.poetry-core final.setuptools final.wheel];
