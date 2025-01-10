@@ -1,16 +1,16 @@
 {
-	"devDependencies": {
-		"@types/node": "^22.5.1",
-		"npm-check-updates": "^17.1.0",
-		"typescript": "^5.5.4"
-	},
-	"main": "src/index.ts",
-	"module": "src/index.ts",
-	"name": "@code9/fs",
-	"scripts": {
-		"lint": "tsc -p . --noEmit && biome lint",
-		"update-packages": "npm-check-updates -u"
-	},
-	"type": "module",
-	"version": "0.1.0"
+  "devDependencies": {
+    "@types/node": "^22.5.1",
+    "npm-check-updates": "^17.1.0",
+    "typescript": "^5.5.4"
+  },
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "name": "@code9/fs",
+  "scripts": {
+    "lint": "tsc -p . --noEmit && biome lint",
+    "update-packages": "npm-check-updates -u"
+  },
+  "type": "module",
+  "version": "0.1.0"
 }

@@ -1,11 +1,11 @@
 import {
-	Array as A,
-	Equal,
-	Effect as Fx,
-	Number as N,
-	Option,
-	pipe,
-} from "effect";
+  Array as A,
+  Equal,
+  Effect as Fx,
+  Number as N,
+  Option,
+  pipe,
+} from 'effect'
 
 /**
  * Create a new array with a section sliced out based on the given start and end indices.
@@ -18,8 +18,8 @@ import {
  *          the sliced section of the array or undefined if the start and end are out of bounds.
  */
 export const sliceE =
-	(start: number | undefined, end: number | undefined) => (as: Array<number>) =>
-		pipe(as.slice(start, end), Fx.fromNullable);
+  (start: number | undefined, end: number | undefined) => (as: Array<number>) =>
+    pipe(as.slice(start, end), Fx.fromNullable)
 
 /**
  * Find all indexes of a specified item in an array.
@@ -30,12 +30,12 @@ export const sliceE =
  *          If the item is not found, returns an empty array.
  */
 export const allIndexesOf = <T>(item: T, array: Array<T>): Array<number> =>
-	pipe(
-		array,
-		A.filterMap((value, index) =>
-			Equal.equals(value, item) ? Option.some(index) : Option.none(),
-		),
-	);
+  pipe(
+    array,
+    A.filterMap((value, index) =>
+      Equal.equals(value, item) ? Option.some(index) : Option.none(),
+    ),
+  )
 
 /**
  * Calculate the average of an array of numbers.
@@ -44,4 +44,4 @@ export const allIndexesOf = <T>(item: T, array: Array<T>): Array<number> =>
  * @returns The average of the numbers in the array.
  */
 export const average = (values: Array<number>): Option.Option<number> =>
-	pipe(N.sumAll(values), N.divide(values.length));
+  pipe(N.sumAll(values), N.divide(values.length))

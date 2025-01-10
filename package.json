@@ -1,34 +1,34 @@
 {
-	"author": "",
-	"dependencies": {
-		"axios": "^1.6.8",
-		"dotenv": "^16.4.5",
-		"tslib": "^2.6.2",
-		"type-fest": "^4.14.0"
-	},
-	"description": "",
-	"devDependencies": {
-		"@types/bun": "^1.1.1",
-		"@types/node": "^20.11.30",
-		"biome": "^0.3.3",
-		"esbuild": "^0.20.2",
-		"npm-check-updates": "^17.1.0",
-		"prettier": "^3.2.5",
-		"ts-node": "10.9.2",
-		"typescript": "^5.4.5"
-	},
-	"keywords": [],
-	"license": "ISC",
-	"main": "index.js",
-	"name": "skeleton-nodejs",
-	"private": true,
-	"scripts": {
-		"build": "bun run --filter '*' build",
-		"lint": "bun run --filter '*' lint",
-		"test": "bun run --filter '*' test",
-		"update-packages": "bun run --filter '*' update-packages"
-	},
-	"type": "module",
-	"version": "1.0.0",
-	"workspaces": ["applications/*", "packages/*"]
+  "author": "",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "tslib": "^2.6.2",
+    "type-fest": "^4.14.0"
+  },
+  "description": "",
+  "devDependencies": {
+    "@types/bun": "^1.1.1",
+    "@types/node": "^20.11.30",
+    "biome": "^0.3.3",
+    "esbuild": "^0.20.2",
+    "npm-check-updates": "^17.1.0",
+    "prettier": "^3.2.5",
+    "ts-node": "10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "skeleton-nodejs",
+  "private": true,
+  "scripts": {
+    "build": "bun run --filter '*' build",
+    "lint": "bun run --filter '*' lint",
+    "test": "bun run --filter '*' test",
+    "update-packages": "bun run --filter '*' update-packages"
+  },
+  "type": "module",
+  "version": "1.0.0",
+  "workspaces": ["applications/*", "packages/*"]
 }
