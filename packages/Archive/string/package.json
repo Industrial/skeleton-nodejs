@@ -1,0 +1,35 @@
+{
+  "name": "@susu/string",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./index": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "cross-env pnpm build:clean && cross-env pnpm build:tsc",
+    "build:clean": "cross-env rm -rf dist && cross-env rm -rf tsconfig.build.tsbuildinfo",
+    "build:tsc": "cross-env tsc --project tsconfig.build.json",
+    "lint": "cross-env pnpm lint:tsc && cross-env pnpm lint:biome",
+    "lint:biome": "cross-env biome check --write --no-errors-on-unmatched",
+    "lint:tsc": "cross-env tsc -p . --noEmit",
+    "test": "cross-env vitest run",
+    "test:coverage": "cross-env vitest run --coverage",
+    "update-packages": "cross-env pnpx npm-check-updates -u && cross-env pnpm i"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@vitest/coverage-v8": "^2.1.3",
+    "@vitest/ui": "^2.1.3",
+    "vitest": "^2.1.3"
+  }
+}

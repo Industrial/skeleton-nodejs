@@ -1,0 +1,32 @@
+{
+  "name": "@susu/string",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/string/src",
+  "projectType": "library",
+  "targets": {
+    "nx-lint": {
+      "cache": true,
+      "dependsOn": ["^nx-lint", "^nx-build"]
+    },
+    "nx-test": {
+      "cache": true,
+      "dependsOn": ["^nx-test", "nx-lint"]
+    },
+    "nx-test-coverage": {
+      "cache": true,
+      "dependsOn": ["nx-lint"]
+    },
+    "nx-build": {
+      "cache": true,
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["cross-env pnpm run build"],
+        "cwd": "{projectRoot}"
+      },
+      "inputs": ["{projectRoot}/src/**/*"],
+      "outputs": ["{projectRoot}/dist/**"],
+      "dependsOn": ["^nx-build", "nx-test"]
+    }
+  },
+  "tags": []
+}

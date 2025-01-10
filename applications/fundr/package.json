@@ -1,17 +1,17 @@
 {
-  "dependencies": {
-    "ollama": "^0.5.8"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "module": "src/index.ts",
-  "name": "fundr",
-  "peerDependencies": {
-    "typescript": "^5.5.4"
-  },
-  "scripts": {
-    "lint": "tsc -p . --noEmit && eslint --fix ."
-  },
-  "type": "module"
+	"dependencies": {
+		"ollama": "^0.5.8"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"module": "src/index.ts",
+	"name": "fundr",
+	"peerDependencies": {
+		"typescript": "^5.5.4"
+	},
+	"scripts": {
+		"lint": "tsc -p . --noEmit && biome lint"
+	},
+	"type": "module"
 }

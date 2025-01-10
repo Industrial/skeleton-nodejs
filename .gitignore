@@ -43,7 +43,6 @@ Thumbs.db
 .coverage/
 .direnv/
 .env
-.eslintcache
 .nx/cache/
 .pytest_cache/
 .tsbuildinfo

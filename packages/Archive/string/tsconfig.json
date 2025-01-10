@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": [
+    "../../vitest.base.config.ts",
+    "./src/**/*.cjs",
+    "./src/**/*.cts",
+    "./src/**/*.js",
+    "./src/**/*.jsx",
+    "./src/**/*.mjs",
+    "./src/**/*.mts",
+    "./src/**/*.ts",
+    "./src/**/*.tsx"
+  ],
+  "compilerOptions": {
+    "composite": true
+  }
+}
