@@ -1,0 +1,5 @@
+{
+  "extends": "../typescript-configuration/src/lib/tsconfig.base.json",
+  "files": ["src/index.ts"],
+  "include": ["./src/**/*.ts"]
+}

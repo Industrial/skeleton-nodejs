@@ -4,10 +4,22 @@
   "sourceRoot": "packages/effect/src",
   "projectType": "library",
   "targets": {
-    "lint": {},
-    "test": {},
-    "build": {},
-    "update-packages": {}
+    "nx-lint": {
+      "cache": true,
+      "dependsOn": ["^nx-lint", "^nx-build"]
+    },
+    "nx-test": {
+      "cache": true,
+      "dependsOn": ["^nx-test", "nx-lint"]
+    },
+    "nx-build": {
+      "cache": true,
+      "dependsOn": ["^nx-build", "nx-test"]
+    },
+    "nx-update-packages": {
+      "cache": false,
+      "dependsOn": []
+    }
   },
   "tags": []
 }

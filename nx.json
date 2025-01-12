@@ -1,69 +1,48 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
-    "lint": {
+    "nx-lint": {
       "cache": true,
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "bun run lint"
-        ],
+        "commands": ["bun run lint"],
         "cwd": "{projectRoot}"
       },
-      "dependsOn": [],
-      "inputs": [
-        "{projectRoot}/src"
-      ],
+      "dependsOn": ["^nx-lint", "^nx-build"],
+      "inputs": ["{projectRoot}/src"],
       "outputs": []
     },
-    "test": {
+    "nx-test": {
       "cache": true,
-      "executor": "@nx-bun/nx:test",
+      "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "bun run test"
-        ],
+        "commands": ["bun run test"],
         "cwd": "{projectRoot}"
       },
-      "dependsOn": [
-        "^lint"
-      ],
-      "inputs": [
-        "{projectRoot}/src"
-      ],
+      "dependsOn": ["^nx-test", "nx-lint"],
+      "inputs": ["{projectRoot}/src"],
       "outputs": []
     },
-    "build": {
+    "nx-build": {
       "cache": true,
-      "executor": "@nx-bun/nx:build",
+      "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "bun run build"
-        ],
+        "commands": ["bun run build"],
         "cwd": "{projectRoot}"
       },
-      "inputs": [
-        "{projectRoot}/src"
-      ],
-      "outputs": [
-        "{projectRoot}/dist"
-      ]
+      "dependsOn": ["^nx-build", "nx-test"],
+      "inputs": ["{projectRoot}/src/**/*"],
+      "outputs": ["{projectRoot}/dist/**"]
     },
-    "update-packages": {
+    "nx-update-packages": {
       "cache": false,
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "bun run update-packages"
-        ],
+        "commands": ["bun run update-packages"],
         "cwd": "{projectRoot}"
       },
-      "inputs": [
-        "{projectRoot}/package.json"
-      ],
-      "outputs": [
-        "{projectRoot}/package.json"
-      ]
+      "inputs": ["{projectRoot}/package.json"],
+      "outputs": ["{projectRoot}/package.json"]
     }
   }
 }
