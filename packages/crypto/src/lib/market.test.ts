@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'bun:test'
-
-import { filterActiveMarkets, filterSpotMarkets, mapToPairs } from '../lib/market.ts'
-import { createPair, Pair } from '../lib/pair.ts'
+import {
+  filterActiveMarkets,
+  filterSpotMarkets,
+  mapToPairs,
+} from '../lib/market.ts'
+import { type Base, type Pair, type Quote, createPair } from '../lib/pair.ts'
 import { createMarket } from './test/market.ts'
 
 describe('Market', () => {
@@ -62,8 +65,8 @@ describe('Market', () => {
           ['ETH/USDT' as Pair, createMarket('ETH', 'USDT', true, 'spot')],
         ])
         expect(actual).toStrictEqual([
-          createPair('BTC', 'USDT'),
-          createPair('ETH', 'USDT'),
+          createPair('BTC' as Base, 'USDT' as Quote),
+          createPair('ETH' as Base, 'USDT' as Quote),
         ])
       })
     })

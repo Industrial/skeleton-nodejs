@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'bun:test'
-
-import { Pair } from '../lib/pair.ts'
-import { sortedPairs, Volume } from '../lib/pairList.ts'
+import type { Pair } from '../lib/pair.ts'
+import { type Volume, sortedPairs } from '../lib/pairList.ts'
 
 describe.skip('pairList', () => {
   // describe('filterWantedPairs', () => {
