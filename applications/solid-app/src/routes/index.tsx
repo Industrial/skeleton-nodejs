@@ -1,7 +1,7 @@
 import { Title } from '@solidjs/meta'
 import type { JSX } from 'solid-js'
 
-import Counter from '~/components/Counter'
+import Counter from '../components/Counter'
 
 export default function Home(): JSX.Element {
   return (
@@ -11,7 +11,7 @@ export default function Home(): JSX.Element {
       <Counter />
       <p>
         Visit{' '}
-        <a href="https://start.solidjs.com" target="_blank">
+        <a href="https://start.solidjs.com" target="_blank" rel="noreferrer">
           start.solidjs.com
         </a>{' '}
         to learn how to build SolidStart apps.
