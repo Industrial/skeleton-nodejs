@@ -5,6 +5,14 @@ import { Effect as Fx } from 'effect'
 
 import { directoryExists, fileExists, pathExists } from './fs.ts'
 
+const fsStatMockImplementation = (async (
+  path: PathLike,
+  opts?: StatOptions & { bigint?: false | undefined },
+): Promise<Stats> =>
+  ({
+    isFile: () => true,
+  }) as unknown as Stats) as unknown as typeof fs.stat
+
 describe('fs', () => {
   describe('pathExists', () => {
     describe('When an error is thrown', () => {
@@ -38,28 +46,7 @@ describe('fs', () => {
     describe('When the path exists', () => {
       it('should return true', async () => {
         const spy = spyOn(fs, 'stat').mockImplementation(
-          async (
-            path: PathLike,
-            opts?: StatOptions & { bigint?: false | undefined },
-          ) =>
-            ({
-              isFile: () => true,
-              isDirectory: () => false,
-              dev: 0,
-              ino: 0,
-              mode: 0,
-              nlink: 1,
-              uid: 0,
-              gid: 0,
-              rdev: 0,
-              size: 0,
-              blksize: 0,
-              blocks: 0,
-              atime: new Date(),
-              mtime: new Date(),
-              ctime: new Date(),
-              birthtime: new Date(),
-            }) as Stats,
+          fsStatMockImplementation,
         )
         const filename = 'test.txt'
         const result = await Fx.runPromise(pathExists(filename))
@@ -102,28 +89,7 @@ describe('fs', () => {
     describe('When the path exists', () => {
       it('should return true', async () => {
         const spy = spyOn(fs, 'stat').mockImplementation(
-          async (
-            path: PathLike,
-            opts?: StatOptions & { bigint?: false | undefined },
-          ) =>
-            ({
-              isFile: () => true,
-              isDirectory: () => false,
-              dev: 0,
-              ino: 0,
-              mode: 0,
-              nlink: 1,
-              uid: 0,
-              gid: 0,
-              rdev: 0,
-              size: 0,
-              blksize: 0,
-              blocks: 0,
-              atime: new Date(),
-              mtime: new Date(),
-              ctime: new Date(),
-              birthtime: new Date(),
-            }) as Stats,
+          fsStatMockImplementation,
         )
         const filename = 'test.txt'
         const result = await Fx.runPromise(fileExists(filename))
@@ -166,28 +132,7 @@ describe('fs', () => {
     describe('When the path exists', () => {
       it('should return true', async () => {
         const spy = spyOn(fs, 'stat').mockImplementation(
-          async (
-            path: PathLike,
-            opts?: StatOptions & { bigint?: false | undefined },
-          ) =>
-            ({
-              isFile: () => false,
-              isDirectory: () => true,
-              dev: 0,
-              ino: 0,
-              mode: 0,
-              nlink: 1,
-              uid: 0,
-              gid: 0,
-              rdev: 0,
-              size: 0,
-              blksize: 0,
-              blocks: 0,
-              atime: new Date(),
-              mtime: new Date(),
-              ctime: new Date(),
-              birthtime: new Date(),
-            }) as Stats,
+          fsStatMockImplementation,
         )
         const filename = 'test.txt'
         const result = await Fx.runPromise(directoryExists(filename))

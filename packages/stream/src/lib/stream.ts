@@ -1,15 +1,13 @@
+import type { Readable } from 'stream'
 import { isNull } from '@code9/null'
 import { isUndefined } from '@code9/undefined'
-import { newProperty, type Observer, type Property } from '@frp-ts/core'
+import { type Observer, type Property, newProperty } from '@frp-ts/core'
 import * as E from 'fp-ts/Either'
 import * as TE from 'fp-ts/TaskEither'
-import type { Readable } from 'stream'
 
 export const createHandleError =
   (writer: WritableStreamDefaultWriter<Uint8Array>) =>
   (error: Error): void => {
-    // Made this promise 'floating' because there is no way to handle the error.
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     writer.abort(error)
   }
 
@@ -20,15 +18,23 @@ export const createHandleData =
       await writer.close()
       return
     }
-    const uint8Array = new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength)
+    const uint8Array = new Uint8Array(
+      chunk.buffer,
+      chunk.byteOffset,
+      chunk.byteLength,
+    )
     await writer.write(uint8Array)
   }
 
-export const createHandleEnd = (writer: WritableStreamDefaultWriter<Uint8Array>) => async (): Promise<void> => {
-  await writer.close()
-}
+export const createHandleEnd =
+  (writer: WritableStreamDefaultWriter<Uint8Array>) =>
+  async (): Promise<void> => {
+    await writer.close()
+  }
 
-export const nodeReadableToReadableStream = (nodeStream: Readable): ReadableStream => {
+export const nodeReadableToReadableStream = (
+  nodeStream: Readable,
+): ReadableStream => {
   const transformStream = new TransformStream<Uint8Array, Uint8Array>()
   const writer = transformStream.writable.getWriter()
 
@@ -39,7 +45,9 @@ export const nodeReadableToReadableStream = (nodeStream: Readable): ReadableStre
   return transformStream.readable
 }
 
-export const streamToString = (stream: Readable): TE.TaskEither<Error, string> =>
+export const streamToString = (
+  stream: Readable,
+): TE.TaskEither<Error, string> =>
   TE.tryCatch(async () => {
     let data = ''
     for await (const chunk of stream) {
@@ -48,7 +56,9 @@ export const streamToString = (stream: Readable): TE.TaskEither<Error, string> =
     return data
   }, E.toError)
 
-export const createReadableStreamProperty = <T>(stream: ReadableStream): Property<E.Either<Error, Uint8Array>> => {
+export const createReadableStreamProperty = <T>(
+  stream: ReadableStream,
+): Property<E.Either<Error, Uint8Array>> => {
   const reader = stream.getReader()
   let currentValue: E.Either<Error, Uint8Array> = E.right(new Uint8Array())
   let subscribed = false
@@ -87,6 +97,5 @@ export const createReadableStreamProperty = <T>(stream: ReadableStream): Propert
     }
   }
 
-  // @ts-expect-error why only number
   return newProperty(get, subscribe)
 }

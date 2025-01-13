@@ -26,7 +26,7 @@
   "scripts": {
     "build": "bun nx run-many -t build",
     "lint": "bun nx run-many -t lint",
-    "test": "bun nx run-many -t test",
+    "test": "bun test",
     "update-packages": "bun nx run-many -t update-packages"
   },
   "type": "module",
