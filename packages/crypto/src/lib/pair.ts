@@ -1,6 +1,5 @@
-import * as E from 'fp-ts/Either'
-import { pipe } from 'fp-ts/function'
-import { Opaque } from 'type-fest'
+import { Either as E, pipe } from 'effect'
+import type { Opaque } from 'type-fest'
 
 export type Base = Opaque<string, 'Base'>
 export type Quote = Opaque<string, 'Base'>
@@ -8,60 +7,50 @@ export type Pair = `${Base}/${Quote}`
 
 export const uppercaseCharactersRegex = /^[A-Z]+$/u
 
-export const isCorrectBaseE = (base: string): E.Either<Error, Base> =>
-  pipe(
-    base,
-    E.fromPredicate(
-      (a: string) =>
-        a !== '' && uppercaseCharactersRegex.test(a),
-      () =>
-        new Error('Base must not be empty and must be alphanumeric uppercase characters'),
-    ),
-  ) as E.Either<Error, Base>
+export const isCorrectBaseE = (a: Base): E.Either<Base, Error> =>
+  a !== '' && uppercaseCharactersRegex.test(a)
+    ? E.right(a)
+    : E.left(
+        new Error(
+          'Base must not be empty and must be alphanumeric uppercase characters',
+        ),
+      )
 
-export const isCorrectQuoteE = (quote: string): E.Either<Error, Quote> =>
-  pipe(
-    quote,
-    E.fromPredicate(
-      (a: string) =>
-        a !== '' && uppercaseCharactersRegex.test(a),
-      () =>
-        new Error('Quote must not be empty and must be alphanumeric uppercase characters'),
-    ),
-  ) as E.Either<Error, Quote>
+export const isCorrectQuoteE = (a: Base): E.Either<Base, Error> =>
+  a !== '' && uppercaseCharactersRegex.test(a)
+    ? E.right(a)
+    : E.left(
+        new Error(
+          'Quote must not be empty and must be alphanumeric uppercase characters',
+        ),
+      )
 
-export const isCorrectPairFormatE = (format: Array<string>): E.Either<Error, Array<string>> =>
-  pipe(
-    format,
-    E.fromPredicate(
-      (parts) =>
-        parts.length === 2,
-      () =>
-        new Error('Invalid pair format'),
-    ),
-  )
+export const isCorrectPairFormatE = (
+  a: Array<string>,
+): E.Either<Array<string>, Error> =>
+  a.length === 2 ? E.right(a) : E.left(new Error('Invalid pair format'))
 
-export const createPair = (base: string, quote: string): E.Either<Error, Pair> =>
+export const createPair = (base: Base, quote: Quote): E.Either<Pair, Error> =>
   pipe(
     isCorrectBaseE(base),
-    E.chain(() =>
-      pipe(isCorrectQuoteE(quote))),
-    E.map(() =>
-      `${base as Base}/${quote as Quote}`),
-  ) as E.Either<Error, Pair>
-
-export const getBase = (pair: Pair): E.Either<Error, Base> =>
-  pipe(
-    pair.split('/'),
-    isCorrectPairFormatE,
-    E.map((parts) =>
-parts[0] as Base),
+    E.flatMap(() =>
+      pipe(
+        isCorrectQuoteE(quote),
+        E.map(() => `${base as Base}/${quote as Quote}` as Pair),
+      ),
+    ),
   )
 
-export const getQuote = (pair: Pair): E.Either<Error, Quote> =>
+export const getBase = (pair: Pair): E.Either<Base, Error> =>
   pipe(
     pair.split('/'),
     isCorrectPairFormatE,
-    E.map((parts) =>
-parts[1] as Base),
+    E.map((parts) => parts[0] as Base),
+  )
+
+export const getQuote = (pair: Pair): E.Either<Quote, Error> =>
+  pipe(
+    pair.split('/'),
+    isCorrectPairFormatE,
+    E.map((parts) => parts[1] as Base),
   )

@@ -1,4 +1,4 @@
-import { Market } from '../market.ts'
+import type { Market } from '../market.ts'
 
 export const createMarket = (
   base: string,

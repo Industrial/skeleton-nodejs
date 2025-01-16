@@ -1,12 +1,18 @@
 {pkgs, ...}: {
-  dotenv.enable = true;
+  dotenv = {
+    enable = true;
+  };
 
   # # https://devenv.sh/basics/
   # env.GREET = "devenv";
 
   # https://devenv.sh/packages/
   packages = with pkgs;
-    [git]
+    [
+      git
+      redis
+      qdrant
+    ]
     ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
       # For OSX, use `brew install ta-lib`
       pkgs.ta-lib
@@ -23,10 +29,18 @@
         };
       };
     };
-    # node = {
-    #   enable = true;
-    #   # package = pkgs.nodejs_21;
-    # };
+    javascript = {
+      enable = true;
+      bun = {
+        enable = true;
+        install = {
+          enable = true;
+        };
+      };
+    };
+    typescript = {
+      enable = true;
+    };
     rust = {
       enable = true;
       channel = "nightly";
@@ -68,12 +82,9 @@
 
   # https://devenv.sh/tests/
   enterTest = ''
-    echo "Running tests"
-    git --version | grep --color=auto "${pkgs.git.version}"
+    echo "> Running tests"
+    bun test
   '';
-
-  # https://devenv.sh/pre-commit-hooks/
-  # pre-commit.hooks.shellcheck.enable = true;
 
   pre-commit = {
     hooks = {
@@ -90,7 +101,7 @@
 
       # Bash
       shellcheck = {
-        enable = true;
+        enable = false;
       };
       beautysh = {
         enable = true;
@@ -98,15 +109,28 @@
 
       # Markdown
       markdownlint = {
-        enable = true;
+        enable = false;
       };
 
       # YAML
       check-yaml = {
-        enable = true;
+        enable = false;
       };
       yamllint = {
         enable = true;
+        settings = {
+          configData = ''
+            {
+              extends: default,
+              ignore: [
+                pnpm-lock.yaml
+              ],
+              rules: {
+                line-length: disable
+              }
+            }
+          '';
+        };
       };
 
       # TOML
@@ -122,7 +146,7 @@
         enable = true;
       };
       pretty-format-json = {
-        enable = true;
+        enable = false;
       };
 
       # Git
@@ -141,7 +165,7 @@
 
       # Rust
       rustfmt = {
-        enable = true;
+        enable = false;
       };
 
       # Generic

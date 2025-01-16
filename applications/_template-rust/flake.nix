@@ -90,8 +90,7 @@
         // {
           inherit cargoArtifacts;
         });
-    in
-    {
+    in {
       checks = {
         inherit my-crate;
 

@@ -41,26 +41,20 @@ Thumbs.db
 *.log
 .coverage
 .coverage/
+.devenv*
 .direnv/
 .env
-.eslintcache
-.nx/cache/
+.pre-commit-config.yaml
+.psc-ide-port
 .pytest_cache/
 .tsbuildinfo
 .venv/
+/.nx
 /applications/debank-scraper/src/lib/db/generated/
 /logs/
 __pycache__/
 coverage/
+devenv.local.nix
 node_modules/
 reports/
 result
-# Devenv
-.devenv*
-devenv.local.nix
-
-# direnv
-.direnv
-
-# pre-commit
-.pre-commit-config.yaml

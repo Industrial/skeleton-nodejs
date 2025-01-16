@@ -1,5 +1,5 @@
 import type { Predicate as P } from 'effect'
-import { Data, Effect as Fx, Either as E, Option as O } from 'effect'
+import { Data, Either as E, Effect as Fx, Option as O } from 'effect'
 
 /**
  * Custom error class for predicate failure.

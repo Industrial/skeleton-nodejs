@@ -1,23 +1,20 @@
-import type { ReaderTask } from 'fp-ts/ReaderTask'
+import { Effect as Fx } from 'effect'
 
-export const delay: ReaderTask<number, void> = (ms) => async () => {
-  await new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve()
-    }, ms)
-  })
-}
+export const delay = (ms: number) =>
+  Fx.tryPromise(() => new Promise((resolve) => setTimeout(resolve, ms)))
 
-export const retryTimes = async <T>(retries: number, fn: () => Promise<T>): Promise<T> => {
-  try {
-    return await fn()
-  } catch (error: unknown) {
-    if (retries > 0) {
-      return retryTimes(retries - 1, fn)
-    }
-    throw error
-  }
-}
+export const retryTimes = <T>(
+  retries: number,
+  fn: () => Promise<T>,
+): Fx.Effect<T, Error, never> =>
+  Fx.tryPromise({
+    try: fn,
+    catch: (e) => new Error(String(e)),
+  }).pipe(
+    Fx.retry({
+      times: retries,
+    }),
+  )
 
 export const retryForever = async <T>(fn: () => Promise<T>): Promise<T> => {
   try {
@@ -27,7 +24,10 @@ export const retryForever = async <T>(fn: () => Promise<T>): Promise<T> => {
   }
 }
 
-export const retryUntil = async <T>(predicate: (value: T) => boolean, fn: () => Promise<T>): Promise<T> => {
+export const retryUntil = async <T>(
+  predicate: (value: T) => boolean,
+  fn: () => Promise<T>,
+): Promise<T> => {
   try {
     const value = await fn()
     if (predicate(value)) {
@@ -39,4 +39,5 @@ export const retryUntil = async <T>(predicate: (value: T) => boolean, fn: () => 
   }
 }
 
-export const retry = async <T>(fn: () => Promise<T>): Promise<T> => retryForever(fn)
+export const retry = async <T>(fn: () => Promise<T>): Promise<T> =>
+  retryForever(fn)

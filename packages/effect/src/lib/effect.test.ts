@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'bun:test'
-import { Effect as Fx, Either as E, Option as O } from 'effect'
+import { Either as E, Effect as Fx, Option as O } from 'effect'
 
-import { fromEither, fromOption, fromPredicate, PredicateError } from './effect.ts'
+import {
+  PredicateError,
+  fromEither,
+  fromOption,
+  fromPredicate,
+} from './effect.ts'
 
 describe('When using fromPredicate', () => {
   describe('When the predicate function returns true', () => {
@@ -20,7 +25,9 @@ describe('When using fromPredicate', () => {
         (a: number) => a > 0,
         () => new PredicateError({ message: 'Predicate failed' }),
       )
-      expect(() => Fx.runSync(result(-1))).toThrowError(new PredicateError({ message: 'Predicate failed' }))
+      expect(() => Fx.runSync(result(-1))).toThrowError(
+        new PredicateError({ message: 'Predicate failed' }),
+      )
     })
   })
 })
@@ -28,8 +35,12 @@ describe('When using fromPredicate', () => {
 describe('When using fromEither', () => {
   describe('When the Either is a Left value', () => {
     it('should return a failure effect with the left value', () => {
-      const result = fromEither<number, PredicateError, never>(E.left(new PredicateError({ message: 'Predicate failed' })))
-      expect(() => Fx.runSync(result)).toThrowError(new PredicateError({ message: 'Predicate failed' }))
+      const result = fromEither<number, PredicateError, never>(
+        E.left(new PredicateError({ message: 'Predicate failed' })),
+      )
+      expect(() => Fx.runSync(result)).toThrowError(
+        new PredicateError({ message: 'Predicate failed' }),
+      )
     })
   })
 
@@ -44,15 +55,21 @@ describe('When using fromEither', () => {
 describe('When using fromOption', () => {
   describe('When the Option is Some', () => {
     it('should return a success effect with the value', () => {
-      const result = fromOption<number, PredicateError, never>(() => new PredicateError({ message: 'Predicate failed' }))
+      const result = fromOption<number, PredicateError, never>(
+        () => new PredicateError({ message: 'Predicate failed' }),
+      )
       expect(Fx.runSync(result(O.some(1)))).toBe(1)
     })
   })
 
   describe('When the Option is None', () => {
     it('should return a failure effect with the error', () => {
-      const result = fromOption<number, PredicateError, never>(() => new PredicateError({ message: 'Predicate failed' }))
-      expect(() => Fx.runSync(result(O.none()))).toThrowError(new PredicateError({ message: 'Predicate failed' }))
+      const result = fromOption<number, PredicateError, never>(
+        () => new PredicateError({ message: 'Predicate failed' }),
+      )
+      expect(() => Fx.runSync(result(O.none()))).toThrowError(
+        new PredicateError({ message: 'Predicate failed' }),
+      )
     })
   })
 })

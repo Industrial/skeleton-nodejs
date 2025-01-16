@@ -3,7 +3,8 @@ module Lib.HTTPRequest where
 import Prelude
 
 import Data.String (toUpper)
-import Node.HTTP as HTTP
+import Node.HTTP.Types (ClientRequest)
+import Node.HTTP.ClientRequest (method)
 
-requestMethod :: HTTP.Request -> String
-requestMethod request = toUpper $ HTTP.requestMethod request
+requestMethod :: ClientRequest -> String
+requestMethod request = toUpper $ method request

@@ -1,0 +1,241 @@
+---
+title: Pattern Matching
+description: Simplify complex branching with pattern matching using the Match module.
+sidebar:
+  order: 4
+---
+
+import { Aside } from "@astrojs/starlight/components"
+
+Pattern matching is a method that allows developers to handle intricate conditions within a single, concise expression. It simplifies code, making it more concise and easier to understand. Additionally, it includes a process called exhaustiveness checking, which helps to ensure that no possible case has been overlooked.
+
+Originating from functional programming languages, pattern matching stands as a powerful technique for code branching. It often offers a more potent and less verbose solution compared to imperative alternatives such as if/else or switch statements, particularly when dealing with complex conditions.
+
+Although not yet a native feature in JavaScript, there's an ongoing [tc39 proposal](https://github.com/tc39/proposal-pattern-matching) in its early stages to introduce pattern matching to JavaScript. However, this proposal is at stage 1 and might take several years to be implemented. Nonetheless, developers can implement pattern matching in their codebase. The `effect/Match` module provides a reliable, type-safe pattern matching implementation that is available for immediate use.
+
+## Defining a Matcher
+
+### type
+
+Creating a `Matcher` involves using the `Match.type` constructor function with a specified type.
+This sets the foundation for pattern matching against that particular type.
+Once the `Matcher` is established, developers can employ various combinators like `Match.when`, `Match.not`, and `Match.tag` to define patterns that the `Matcher` will check against.
+
+**Example** (Defining a Type Matcher)
+
+```ts twoslash
+import { Match } from "effect"
+
+// Create a Matcher for objects with properties 'a' or 'b'
+//
+//      ┌─── (u: { a: number; } | { b: string; }) => string | number
+//      ▼
+const match = Match.type<{ a: number } | { b: string }>().pipe(
+  // Match an object with a numeric property 'a'
+  Match.when({ a: Match.number }, (_) => _.a),
+  // Match an object with a string property 'b'
+  Match.when({ b: Match.string }, (_) => _.b),
+  // Ensure all cases are covered
+  Match.exhaustive
+)
+
+console.log(match({ a: 0 }))
+// Output: 0
+
+console.log(match({ b: "hello" }))
+// Output: "hello"
+```
+
+### value
+
+In addition to defining a `Matcher` based on a specific type, developers can also create a `Matcher` directly from a value utilizing the `Match.value` constructor. This method allows matching patterns against the provided value.
+
+**Example** (Matching Against a Value)
+
+```ts twoslash
+import { Match } from "effect"
+
+// Create a Matcher for a specific value
+const result = Match.value({ name: "John", age: 30 }).pipe(
+  // Match when the 'name' property is "John"
+  Match.when(
+    { name: "John" },
+    (user) => `${user.name} is ${user.age} years old`
+  ),
+  // Provide a fallback for unmatched cases
+  Match.orElse(() => "Oh, not John")
+)
+
+console.log(result)
+// Output: "John is 30 years old"
+```
+
+## Patterns
+
+### when
+
+The `Match.when` function allows you to define conditions for matching values. It uses predicates to create rules that the data must satisfy.
+
+**Example** (Using Predicates for Matching)
+
+```ts twoslash
+import { Match } from "effect"
+
+// Define a matcher for objects with an "age" property
+const match = Match.type<{ age: number }>().pipe(
+  // Match when age is 5 or greater
+  Match.when({ age: (age) => age >= 5 }, (user) => `Age: ${user.age}`),
+  // Fallback for when the age condition is not met
+  Match.orElse((user) => `${user.age} is too young`)
+)
+
+console.log(match({ age: 5 }))
+// Output: "Age: 5"
+
+console.log(match({ age: 4 }))
+// Output: "4 is too young"
+```
+
+### not
+
+`Match.not` allows for excluding a specific value while matching other conditions.
+
+**Example** (Excluding a Specific Value)
+
+```ts twoslash
+import { Match } from "effect"
+
+// Create a matcher for string or number values
+const match = Match.type<string | number>().pipe(
+  // Exclude the value "hi" and return "a" for anything else
+  Match.not("hi", (_) => "ok"),
+  // Fallback for when the value is "hi"
+  Match.orElse(() => "fallback")
+)
+
+console.log(match("hello"))
+// Output: "ok"
+
+console.log(match("hi"))
+// Output: "fallback"
+```
+
+### tag
+
+The `Match.tag` function enables pattern matching against the tag within a [Discriminated Union](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#discriminated-unions).
+
+**Example** (Pattern Matching on a Discriminated Union)
+
+```ts twoslash
+import { Match, Either } from "effect"
+
+// Create a Matcher for Either<number, string>
+const match = Match.type<Either.Either<number, string>>().pipe(
+  // Match when the tag is "Right" and extract the value
+  Match.tag("Right", (_) => _.right),
+  // Match when the tag is "Left" and extract the error
+  Match.tag("Left", (_) => _.left),
+  // Ensure all possible cases are covered
+  Match.exhaustive
+)
+
+console.log(match(Either.right(123)))
+// Output: 123
+
+console.log(match(Either.left("Oh no!")))
+// Output: "Oh no!"
+```
+
+<Aside type="caution" title="Tag Field Naming Convention">
+  The `Match.tag` function relies on the convention within the Effect
+  ecosystem of naming the tag field as `"_tag"`. Ensure that your
+  discriminated unions follow this naming convention for proper
+  functionality.
+</Aside>
+
+## Transforming a Matcher
+
+### exhaustive
+
+The `Match.exhaustive` transformation is used to signal the end of the matching process. It ensures that all possible patterns have been accounted for, either by returning the match (when using `Match.value`) or the evaluation function (when using `Match.type`). This check helps prevent situations where a possible case is left unhandled.
+
+**Example** (Ensuring All Cases Are Handled)
+
+```ts twoslash
+import { Match, Either } from "effect"
+
+const result = Match.value(Either.right(0)).pipe(
+  Match.when({ _tag: "Right" }, (_) => _.right),
+  // The "Left" case is missing in the match
+  // Using Match.exhaustive to ensure all cases are considered
+  // @ts-expect-error
+  Match.exhaustive
+  // TypeError! Type 'Left<never, number>' is not assignable to type 'never'
+)
+```
+
+### orElse
+
+The `Match.orElse` transformation ends the matching process by providing a fallback value if no specific patterns are matched. This can return either the match (for `Match.value`) or the evaluation function (for `Match.type`).
+
+**Example** (Using `orElse` as a Fallback)
+
+```ts twoslash
+import { Match } from "effect"
+
+const match = Match.type<string | number>().pipe(
+  // Match when the value is "hi"
+  Match.when("hi", (_) => "hello"),
+  // Fallback when no patterns match
+  Match.orElse(() => "I literally do not understand")
+)
+
+console.log(match("hi"))
+// Output: "hello"
+
+console.log(match("hello"))
+// Output: "I literally do not understand"
+```
+
+### option
+
+The `Match.option` transformation wraps the result in an [Option](/docs/data-types/option/). If the match is successful, the result is wrapped in `Some`, if no match is found, it returns `None`.
+
+**Example** (Wrapping Match Result in an Option)
+
+```ts twoslash
+import { Match, Either } from "effect"
+
+const result = Match.value(Either.right(0)).pipe(
+  // Match when the tag is "Right" and extract the value
+  Match.when({ _tag: "Right" }, (_) => _.right),
+  // Wrap the result in an Option
+  Match.option
+)
+
+console.log(result)
+// Output: { _id: 'Option', _tag: 'Some', value: 0 }
+```
+
+### either
+
+The `Match.either` transformation attempts to match a value, returning an [Either](/docs/data-types/either/) in the format `Either<MatchResult, NoMatchResult>`. This way, if a match is successful, the result will be wrapped in `Right`. If it fails, the unmatched value will be wrapped in `Left`.
+
+**Example** (Wrapping Match Result in an Either)
+
+```ts twoslash
+import { Match } from "effect"
+
+const match = Match.type<string>().pipe(
+  // Match "hi" and return the length of the string
+  Match.when("hi", (_) => _.length),
+  // Wrap the result in an Either
+  Match.either
+)
+
+console.log(match("hi"))
+// Output: { _id: 'Either', _tag: 'Right', right: 2 }
+
+console.log(match("shigidigi"))
+// Output: { _id: 'Either', _tag: 'Left', left: 'shigidigi' }
+```

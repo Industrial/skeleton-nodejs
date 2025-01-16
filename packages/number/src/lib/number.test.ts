@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'bun:test'
-import { Effect as Fx, Either, Option } from 'effect'
+import { Either, Effect as Fx, Option } from 'effect'
 
 import {
   decimalPlaces,

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+zellij kill-session test-tsai
+zellij --layout zellij.kdl --session test-tsai

@@ -1,0 +1,7 @@
+.devenv*
+.direnv
+.direnv/
+.pre-commit-config.yaml
+.venv/
+/src/data/**/*
+devenv.local.nix

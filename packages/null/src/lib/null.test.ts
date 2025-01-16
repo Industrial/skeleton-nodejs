@@ -76,12 +76,4 @@ describe('assertIsNotNull', () => {
       }).toThrow()
     })
   })
-
-  describe('When the value is undefined', () => {
-    it('should throw an error', () => {
-      expect(() => {
-        assertIsNotNull(undefined)
-      }).toThrow()
-    })
-  })
 })

@@ -1,7 +1,7 @@
 import './app.css'
 
 import { MetaProvider, Title } from '@solidjs/meta'
-import { Router, type RouteSectionProps } from '@solidjs/router'
+import { type RouteSectionProps, Router } from '@solidjs/router'
 import { FileRoutes } from '@solidjs/start/router'
 import { type JSX, Suspense } from 'solid-js'
 

@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'bun:test'
 import { Effect as Fx } from 'effect'
 
-import { add, between, fromMs, millisecondsUntilNextTimeframe, start, subtract, toMs } from './timeframe.ts'
+import {
+  add,
+  between,
+  fromMs,
+  millisecondsUntilNextTimeframe,
+  start,
+  subtract,
+  toMs,
+} from './timeframe.ts'
 
 describe('timeframe', () => {
   describe('toMs', () => {
@@ -85,7 +93,9 @@ describe('timeframe', () => {
       describe('When the date is 1 second after the start of the timeframe', () => {
         it('should return the milliseconds until the next timeframe', () => {
           const date = new Date('2000-01-01T00:00:01.000Z')
-          const result = Fx.runSync(millisecondsUntilNextTimeframe(timeframe, date))
+          const result = Fx.runSync(
+            millisecondsUntilNextTimeframe(timeframe, date),
+          )
           const expected = 3599000
           expect(result).toStrictEqual(expected)
         })
@@ -94,7 +104,9 @@ describe('timeframe', () => {
       describe('When the date is 1 second before the start of the next timeframe', () => {
         it('should return the milliseconds until the next timeframe', () => {
           const date = new Date('2000-01-01T00:59:59.000Z')
-          const result = Fx.runSync(millisecondsUntilNextTimeframe(timeframe, date))
+          const result = Fx.runSync(
+            millisecondsUntilNextTimeframe(timeframe, date),
+          )
           const expected = 1000
           expect(result).toStrictEqual(expected)
         })
@@ -131,7 +143,10 @@ describe('timeframe', () => {
           const startDate = new Date('2000-01-01T00:00:00.000Z')
           const endDate = new Date('2000-01-01T02:00:00.000Z')
           const result = Fx.runSync(between(timeframe, startDate, endDate))
-          const expected = [new Date('2000-01-01T00:00:00.000Z'), new Date('2000-01-01T01:00:00.000Z')]
+          const expected = [
+            new Date('2000-01-01T00:00:00.000Z'),
+            new Date('2000-01-01T01:00:00.000Z'),
+          ]
           expect(result).toStrictEqual(expected)
         })
       })

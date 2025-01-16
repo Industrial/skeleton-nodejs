@@ -1,18 +1,15 @@
 {
   "dependencies": {
-    "@rollup/wasm-node": "^4.21.2",
+    "@rollup/wasm-node": "^4.30.1",
     "@solidjs/meta": "^0.29.4",
-    "@solidjs/router": "^0.14.3",
-    "@solidjs/start": "^1.0.6",
-    "solid-js": "^1.8.22",
-    "vinxi": "^0.4.2"
+    "@solidjs/router": "^0.15.2",
+    "@solidjs/start": "^1.0.11",
+    "solid-js": "^1.9.4",
+    "vinxi": "^0.5.1"
   },
   "devDependencies": {
-    "@rollup/rollup-linux-x64-musl": "^4.21.2",
-    "npm-check-updates": "^17.1.0"
-  },
-  "engines": {
-    "node": ">=18"
+    "@rollup/rollup-linux-x64-musl": "^4.30.1",
+    "npm-check-updates": "^17.1.13"
   },
   "name": "example-basic",
   "scripts": {
@@ -21,7 +18,7 @@
     "build:haskell:post-link": "cd src/haskell && bash -c \"$(wasm32-wasi-ghc --print-libdir)/post-link.mjs -i dist/MyLib.wasm -o dist/MyLib.js\"",
     "build:vinxi": "vinxi build",
     "dev": "vinxi dev",
-    "lint": "tsc -p . --noEmit && eslint --fix .",
+    "lint": "tsc -p . --noEmit && biome lint .",
     "start": "vinxi start",
     "update-packages": "npm-check-updates -u",
     "version": "vinxi version"

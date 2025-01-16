@@ -1,5 +1,7 @@
+---
 name: Leptos Shuttle API
 
+# yamllint disable-line rule:truthy
 on:
   push:
     paths:

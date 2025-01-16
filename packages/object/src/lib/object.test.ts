@@ -1,5 +1,5 @@
-import { bag, entriesValues, sortedEntries } from '@code9/object'
 import { describe, expect, it } from 'bun:test'
+import { bag, entriesValues, sortedEntries } from '@code9/object'
 
 describe('entriesValues', () => {
   describe('When the array is empty', () => {

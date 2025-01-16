@@ -1,13 +1,6 @@
-import type { Exchange } from 'ccxt'
-import { Either } from 'effect'
-import * as A from 'fp-ts/Array'
-import * as E from 'fp-ts/Either'
-import { pipe } from 'fp-ts/function'
-import * as N from 'fp-ts/number'
-import * as Ord from 'fp-ts/Ord'
-import { contramap } from 'fp-ts/Ord'
-import * as TE from 'fp-ts/TaskEither'
-import fs from 'fs/promises'
+import fs from 'node:fs/promises'
+import type { Exchange, MarketInterface } from 'ccxt'
+import { Array as A, Either as E, Effect as Fx, Order, pipe } from 'effect'
 import type { Opaque } from 'type-fest'
 
 import { loadMarketsE } from './exchange.ts'
@@ -27,11 +20,14 @@ export const filterBase =
   (pairs: Array<Pair>): Array<Pair> =>
     pipe(
       pairs,
-      A.filter((pair) =>
+      A.filter((a) =>
         pipe(
-          getBase(pair),
+          getBase(a),
           E.map(refinement),
-          E.match(() => true, Boolean),
+          E.match({
+            onLeft: () => false,
+            onRight: (x) => x,
+          }),
         ),
       ),
     )
@@ -45,42 +41,62 @@ export const filterQuote =
         pipe(
           getQuote(pair),
           E.map(refinement),
-          E.match(() => true, Boolean),
+          E.match({
+            onLeft: () => false,
+            onRight: (x) => x,
+          }),
         ),
       ),
     )
 
-export const filterByUnwantedBase = (base: Base): boolean => ['3L', '3S', 'UP', 'DOWN'].some((x) => base.endsWith(x))
+export const filterByUnwantedBase = (base: Base): boolean =>
+  ['3L', '3S', 'UP', 'DOWN'].some((x) => base.endsWith(x))
 
-export const getPairs = (exchange: Exchange): TE.TaskEither<Error, Array<Pair>> =>
+export const flattenE = <A>(
+  as: Array<E.Either<A, Error>>,
+): E.Either<Array<A>, Error> =>
+  pipe(
+    as,
+    A.reduce(E.right([] as Array<A>) as E.Either<Array<A>, Error>, (acc, a) => {
+      const x = E.zipWith(acc, a, (as, a) => [...as, a])
+      return x
+    }),
+  )
+
+export const getPairs = (
+  exchange: Exchange,
+): Fx.Effect<Array<Pair>, Error, unknown> =>
   pipe(
     loadMarketsE(exchange),
-    TE.chain((markets) =>
+    Fx.flatMap((markets) =>
       pipe(
-        Object.entries(markets),
+        Object.entries(markets) as Array<[Pair, MarketInterface]>,
         filterActiveMarkets,
         filterSpotMarkets,
         mapToPairs,
-        Either.all,
-        E.map(filterBase(filterByUnwantedBase)),
-        TE.fromEither,
+        flattenE,
       ),
     ),
   )
 
-export const ordByVolume = pipe(
-  N.Ord,
-  Ord.reverse,
-  contramap(([_, volume]: [Pair, Volume]) => volume),
+export const ordByVolume = Order.mapInput(
+  Order.number,
+  ([, volume]: [Pair, Volume]) => volume,
 )
 
-export const sortedPairs = (pairs: Array<Pair>, volumes: Array<Volume>): Array<Pair> =>
+export const sortedPairs = (
+  pairs: Array<Pair>,
+  volumes: Array<Volume>,
+): Array<Pair> =>
   pipe(
     A.zip(pairs, volumes),
     A.sort(ordByVolume),
     A.map(([pair]) => pair),
   )
 
-export const writePairs = async (filePath: string, pairs: Array<Pair>): Promise<void> => {
+export const writePairs = async (
+  filePath: string,
+  pairs: Array<Pair>,
+): Promise<void> => {
   await fs.writeFile(filePath, JSON.stringify({ pairs }, null, 2))
 }

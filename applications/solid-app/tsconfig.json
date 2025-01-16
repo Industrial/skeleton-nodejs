@@ -11,15 +11,11 @@
     "moduleResolution": "node",
     "noEmit": true,
     "paths": {
-      "~/*": [
-        "./src/*"
-      ]
+      "~/*": ["./src/*"]
     },
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
-    "types": [
-      "vinxi/types/client"
-    ]
+    "types": ["vinxi/types/client"]
   }
 }

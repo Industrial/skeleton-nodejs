@@ -1,5 +1,5 @@
 import { Schema } from '@effect/schema'
-import { Effect as Fx, Either, Option } from 'effect'
+import { Either, Effect as Fx, Option } from 'effect'
 
 /**
  * Computes the factorial of a number recursively.
@@ -7,7 +7,8 @@ import { Effect as Fx, Either, Option } from 'effect'
  * @param n - The number to compute the factorial of.
  * @returns The factorial of the given number.
  */
-export const factorial = (n: number): number => (n === 0 ? 1 : n * factorial(n - 1))
+export const factorial = (n: number): number =>
+  n === 0 ? 1 : n * factorial(n - 1)
 
 /**
  * Computes the factorial of a number using iteration.
@@ -17,8 +18,14 @@ export const factorial = (n: number): number => (n === 0 ? 1 : n * factorial(n -
  * @param product - The current product (default is 1, not 0 to correctly compute the factorial).
  * @returns The factorial of the given number.
  */
-export const factorialByIteration = (maxCount = 0, counter = 0, product = 1): number =>
-  counter > maxCount ? product : factorialByIteration(maxCount, counter + 1, counter * product)
+export const factorialByIteration = (
+  maxCount = 0,
+  counter = 0,
+  product = 1,
+): number =>
+  counter > maxCount
+    ? product
+    : factorialByIteration(maxCount, counter + 1, counter * product)
 
 /**
  * Safely divides two numbers.
@@ -27,7 +34,8 @@ export const factorialByIteration = (maxCount = 0, counter = 0, product = 1): nu
  * @param b - The denominator.
  * @returns An option containing the result of the division or none if the denominator is zero.
  */
-export const safeDivide = (a: number, b: number): Option.Option<number> => (b === 0 ? Option.none() : Option.some(a / b))
+export const safeDivide = (a: number, b: number): Option.Option<number> =>
+  b === 0 ? Option.none() : Option.some(a / b)
 
 /**
  * Generates a random number within a specified range.
@@ -36,7 +44,10 @@ export const safeDivide = (a: number, b: number): Option.Option<number> => (b ==
  * @param maximum - The upper bound of the range.
  * @returns An effect that resolves to a random number within the specified range.
  */
-export const getRandomNumber = (minimum: number, maximum: number): Fx.Effect<number, never> =>
+export const getRandomNumber = (
+  minimum: number,
+  maximum: number,
+): Fx.Effect<number, never> =>
   Fx.succeed(Math.floor(Math.random() * (maximum - minimum) + minimum))
 
 /**
@@ -56,7 +67,8 @@ export const decimalPlaces = (x: number): number => {
  * @param x - The number to determine the decimal places of.
  * @returns The number of decimal places in the number's scientific notation.
  */
-export const scientificDecimalPlaces = (x: number): number => Math.abs(Number(String(x).split('e')[1]))
+export const scientificDecimalPlaces = (x: number): number =>
+  Math.abs(Number(String(x).split('e')[1]))
 
 /**
  * Checks if a number is represented in scientific notation.
@@ -64,7 +76,8 @@ export const scientificDecimalPlaces = (x: number): number => Math.abs(Number(St
  * @param x - The number to check.
  * @returns True if the number is in scientific notation, false otherwise.
  */
-export const isScientificNotation = (x: number): boolean => Boolean(/e/u.exec(String(x)))
+export const isScientificNotation = (x: number): boolean =>
+  Boolean(/e/u.exec(String(x)))
 
 /**
  * A schema that checks if a value is an integer.
@@ -80,4 +93,43 @@ export const isInteger = Schema.is(Schema.Int)
 export const getPrecision = (a: number): Either.Either<number, string> =>
   isInteger(a)
     ? Either.left('Not an integer')
-    : Either.right(isScientificNotation(a) ? scientificDecimalPlaces(a) : decimalPlaces(a))
+    : Either.right(
+        isScientificNotation(a) ? scientificDecimalPlaces(a) : decimalPlaces(a),
+      )
+
+/**
+ * Clamps a number between a minimum and maximum value.
+ *
+ * @param value - The number to clamp.
+ * @param min - The minimum value to clamp to.
+ * @param max - The maximum value to clamp to.
+ * @returns The clamped number.
+ */
+export const clamp = (value: number, min: number, max: number): number => {
+  return Math.min(Math.max(value, min), max)
+}
+
+/**
+ * Rounds a number to a specified number of decimal places.
+ *
+ * @param value - The number to round.
+ * @param decimals - The number of decimal places.
+ * @returns The rounded number.
+ */
+export const roundToDecimalPlace = (
+  value: number,
+  decimals: number,
+): number => {
+  const factor = 10 ** decimals
+  return Math.round(value * factor) / factor
+}
+
+/**
+ * Checks if a number is a float.
+ *
+ * @param value - The number to check.
+ * @returns `true` if the number is a float, otherwise `false`.
+ */
+export const isFloat = (value: number): boolean => {
+  return !Number.isInteger(value) && Number.isFinite(value)
+}

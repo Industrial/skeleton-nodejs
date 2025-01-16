@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+weaviate \
+    --host 0.0.0.0 \
+    --scheme http

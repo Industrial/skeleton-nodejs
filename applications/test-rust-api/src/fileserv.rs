@@ -28,7 +28,12 @@ cfg_if! { if #[cfg(feature = "ssr")] {
     async fn get_static_file(uri: Uri, root: &str) -> Result<Response<Body>, (StatusCode, String)> {
         let req = Request::builder().uri(uri.clone()).body(Body::empty()).unwrap();
         match ServeDir::new(root).oneshot(req).await {
-            Ok(res) => Ok(res.map(|body| body.map_err(Into::into).boxed_unsync())),
+            Ok(res) => Ok(res.map(|body| {
+                BoxBody::new(body.map_err(|err| std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    err.to_string()
+                )))
+            })),
             Err(err) => Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
                 format!("Something went wrong: {err}"),

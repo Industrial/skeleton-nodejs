@@ -1,0 +1,11 @@
+---
+package:
+  dependencies:
+    - console
+    - effect
+    - prelude
+  name: my-project
+workspace:
+  extraPackages: {}
+  packageSet:
+    url: https://raw.githubusercontent.com/purescript/package-sets/psc-0.15.15-20241215/packages.json

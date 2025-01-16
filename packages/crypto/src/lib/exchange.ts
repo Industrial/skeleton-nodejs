@@ -1,23 +1,21 @@
-import { Exchange, Ticker } from 'ccxt'
-import * as E from 'fp-ts/Either'
-import { pipe } from 'fp-ts/function'
-import * as TE from 'fp-ts/TaskEither'
+import type { Exchange, Ticker } from 'ccxt'
+import { Effect as Fx, pipe } from 'effect'
 
-import { Market } from './market.ts'
-import { Pair } from './pair.ts'
+import type { Market } from './market.ts'
+import type { Pair } from './pair.ts'
 
-export const loadMarketsE = (exchange: Exchange): TE.TaskEither<Error, Record<Pair, Market>> =>
+export const loadMarketsE = (
+  exchange: Exchange,
+): Fx.Effect<Record<Pair, Market>, Error> =>
   pipe(
-    TE.tryCatch(async () =>
-      exchange.loadMarkets(), E.toError),
-    TE.map((markets) =>
-markets as Record<Pair, Market>),
+    Fx.tryPromise(async () => exchange.loadMarkets()),
+    Fx.map((markets) => markets as Record<Pair, Market>),
   )
 
-export const fetchTickersE = (exchange: Exchange): TE.TaskEither<Error, Record<Pair, Ticker>> =>
+export const fetchTickersE = (
+  exchange: Exchange,
+): Fx.Effect<Record<Pair, Ticker>, Error> =>
   pipe(
-    TE.tryCatch(async () =>
-      exchange.fetchTickers(), E.toError),
-    TE.map((markets) =>
-markets as Record<Pair, Ticker>),
+    Fx.tryPromise(async () => exchange.fetchTickers()),
+    Fx.map((markets) => markets as Record<Pair, Ticker>),
   )
