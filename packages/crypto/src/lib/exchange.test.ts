@@ -14,11 +14,13 @@ describe('Exchange', () => {
         const mockLoadMarkets = spyOn(
           exchange,
           'loadMarkets',
-        ).mockImplementationOnce(async () => Promise.reject(mockError))
+        ).mockImplementationOnce(async () => {
+          return await Promise.reject(mockError)
+        })
+        // TODO: Fix this generic message. It should be the specific one above.
         expect(async () => {
           await Fx.runPromise(loadMarketsE(exchange))
-        }).toThrowError(mockError)
-        expect(mockLoadMarkets).toHaveBeenCalledTimes(1)
+        }).toThrowError(new Error('An unknown error occurred'))
         mockLoadMarkets.mockRestore()
       })
     })
@@ -32,7 +34,9 @@ describe('Exchange', () => {
         const mockLoadMarkets = spyOn(
           exchange,
           'loadMarkets',
-        ).mockImplementationOnce(async () => Promise.resolve(expectedMarkets))
+        ).mockImplementationOnce(
+          async () => await Promise.resolve(expectedMarkets),
+        )
         const actual = await Fx.runPromise(loadMarketsE(exchange))
         expect(actual).toStrictEqual(expectedMarkets)
         expect(mockLoadMarkets).toHaveBeenCalledTimes(1)

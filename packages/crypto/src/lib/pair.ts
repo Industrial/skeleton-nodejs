@@ -33,8 +33,12 @@ export const isCorrectPairFormatE = (
 export const createPair = (base: Base, quote: Quote): E.Either<Pair, Error> =>
   pipe(
     isCorrectBaseE(base),
-    E.flatMap(isCorrectQuoteE),
-    E.map(() => `${base as Base}/${quote as Quote}` as Pair),
+    E.flatMap(() =>
+      pipe(
+        isCorrectQuoteE(quote),
+        E.map(() => `${base as Base}/${quote as Quote}` as Pair),
+      ),
+    ),
   )
 
 export const getBase = (pair: Pair): E.Either<Base, Error> =>

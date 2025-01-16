@@ -1,4 +1,4 @@
-import assert from 'assert'
+import assert from 'node:assert'
 
 /**
  * Determines if a value is null.
@@ -24,7 +24,9 @@ export const isNotNull = <T>(a: T | null): a is T => a !== null
  */
 // Assertions cannot use arrow functions.
 
-export function assertIsNull<T>(value: T | undefined): asserts value is undefined {
+export function assertIsNull<T>(
+  value: T | undefined,
+): asserts value is undefined {
   assert(isNull(value))
 }
 
