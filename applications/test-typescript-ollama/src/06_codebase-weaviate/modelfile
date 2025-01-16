@@ -61,50 +61,50 @@ Here's my solution:
 ### # Add specific examples of Effect.ts patterns
 ### MESSAGE """
 ### Question: How do I handle multiple async operations with proper error handling?
-### 
+###
 ### Let me help you write type-safe, maintainable code using Effect.ts.
-### 
+###
 ### When writing Effect.ts code, I'll:
 ### 1. Use proper type signatures with Effect<A, E, R>
 ### 2. Handle errors explicitly through the error channel
 ### 3. Manage resources safely
 ### 4. Use appropriate Effect combinators
 ### 5. Follow Effect.ts best practices
-### 
+###
 ### Here's my solution:
-### 
+###
 ### ```typescript
 ### import { Effect, pipe } from "effect"
-### 
+###
 ### interface User {
 ###   id: string
 ###   name: string
 ### }
-### 
+###
 ### interface Post {
 ###   id: string
 ###   title: string
 ### }
-### 
+###
 ### // Define error types
 ### class DatabaseError {
 ###   readonly _tag = 'DatabaseError'
 ###   constructor(readonly message: string) {}
 ### }
-### 
+###
 ### // Define effects for our operations
 ### const getUser = (id: string): Effect.Effect<User, DatabaseError, never> =>
 ###   pipe(
 ###     Effect.succeed({ id, name: "test" }),
 ###     Effect.mapError(err => new DatabaseError("Failed to fetch user"))
 ###   )
-### 
+###
 ### const getPosts = (userId: string): Effect.Effect<Post[], DatabaseError, never> =>
 ###   pipe(
 ###     Effect.succeed([{ id: "1", title: "Test Post" }]),
 ###     Effect.mapError(err => new DatabaseError("Failed to fetch posts"))
 ###   )
-### 
+###
 ### // Combine operations with proper error handling
 ### const getUserWithPosts = (userId: string) =>
 ###   pipe(
@@ -124,7 +124,7 @@ Here's my solution:
 ###     Effect.timeout("5 seconds")
 ###   )
 ### ```
-### 
+###
 ### This example demonstrates:
 ### 1. Proper error typing with custom error classes
 ### 2. Parallel execution with Effect.all
@@ -133,43 +133,43 @@ Here's my solution:
 ### 5. Retry and timeout patterns
 ### """
 
-### 
+###
 ### # Add examples of resource management
 ### MESSAGE """
 ### Question: How do I safely manage database connections?
-### 
+###
 ### Let me help you write type-safe, maintainable code using Effect.ts.
-### 
+###
 ### When writing Effect.ts code, I'll:
 ### 1. Use proper type signatures with Effect<A, E, R>
 ### 2. Handle errors explicitly through the error channel
 ### 3. Manage resources safely
 ### 4. Use appropriate Effect combinators
 ### 5. Follow Effect.ts best practices
-### 
+###
 ### Here's my solution:
-### 
+###
 ### ```typescript
 ### import { Effect, Context, pipe } from "effect"
-### 
+###
 ### // Define database connection type
 ### interface DbConnection {
 ###   query: <A>(sql: string) => Effect.Effect<A, DbError, never>
 ###   close: () => Effect.Effect<void, never, never>
 ### }
-### 
+###
 ### // Define error type
 ### class DbError {
 ###   readonly _tag = 'DbError'
 ###   constructor(readonly message: string) {}
 ### }
-### 
+###
 ### // Define database service interface
 ### class Database extends Context.Tag("Database")<
 ###   Database,
 ###   DbConnection
 ### >() {}
-### 
+###
 ### // Create a managed database connection
 ### const makeDatabaseConnection = Effect.acquireRelease(
 ###   // Acquisition
@@ -180,13 +180,13 @@ Here's my solution:
 ###   // Release
 ###   (connection) => connection.close()
 ### )
-### 
+###
 ### // Create a database layer
 ### const DatabaseLive = Effect.layer({
 ###   id: "DatabaseLive",
 ###   build: () => makeDatabaseConnection
 ### })
-### 
+###
 ### // Use the database safely
 ### const program = pipe(
 ###   Effect.service(Database),
@@ -198,7 +198,7 @@ Here's my solution:
 ###   Effect.provideLayer(DatabaseLive)
 ### )
 ### ```
-### 
+###
 ### This example demonstrates:
 ### 1. Resource safety with acquireRelease
 ### 2. Service pattern with Context.Tag
@@ -206,6 +206,6 @@ Here's my solution:
 ### 4. Safe resource cleanup
 ### 5. Proper error handling
 ### """
-### 
+###
 ### # Set temperature for more precise code generation
 ### PARAMETER temperature 0.1

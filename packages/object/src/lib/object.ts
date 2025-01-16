@@ -27,7 +27,8 @@ export type SuffixedKeyObject<Suffix extends string, Value> = {
  * @param entries - The array of entries.
  * @returns An array of values.
  */
-export const entriesValues = <T>(entries: Array<[string, T]>): Array<T> => entries.map(([, value]) => value)
+export const entriesValues = <T>(entries: Array<[string, T]>): Array<T> =>
+  entries.map(([, value]) => value)
 
 /**
  * Returns the entries of an object sorted by their keys.
@@ -36,7 +37,9 @@ export const entriesValues = <T>(entries: Array<[string, T]>): Array<T> => entri
  * @param object - The object to get entries from.
  * @returns An array of entries sorted by keys.
  */
-export const sortedEntries = <T>(object: Record<string, T>): Array<[string, T]> =>
+export const sortedEntries = <T>(
+  object: Record<string, T>,
+): Array<[string, T]> =>
   Object.entries(object).sort((a, b) => a[0].localeCompare(b[0]))
 
 /**
@@ -49,7 +52,12 @@ export const sortedEntries = <T>(object: Record<string, T>): Array<[string, T]> 
  * @param k - The optional key to add.
  * @returns A new object with at most `size` entries.
  */
-export const bag = <T>(size: number, object: Record<string, T>, v?: T, k?: string): Record<string, T> => {
+export const bag = <T>(
+  size: number,
+  object: Record<string, T>,
+  v?: T,
+  k?: string,
+): Record<string, T> => {
   const entries = sortedEntries(k && v ? { ...object, [k]: v } : object)
 
   // We should slice from 0, because when size > entries.length, it becomes

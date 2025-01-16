@@ -1,26 +1,26 @@
-import { HumanMessage } from "@langchain/core/messages";
-import { Ollama } from "@langchain/ollama";
-import { marketData } from "./tools/marketData";
+import { HumanMessage } from '@langchain/core/messages'
+import { Ollama } from '@langchain/ollama'
+import { marketData } from './tools/marketData'
 
-const hostname = "0.0.0.0";
-const port = 11434;
+const hostname = '0.0.0.0'
+const port = 11434
 
 const marketDataJSON = await marketData.invoke({
-	currency: "usd",
-	order: "descending",
-	perPage: 100,
-	page: 1,
-	sparkline: false,
-});
+  currency: 'usd',
+  order: 'descending',
+  perPage: 100,
+  page: 1,
+  sparkline: false,
+})
 
 const model = new Ollama({
-	baseUrl: `http://${hostname}:${port}`,
-	model: "0xroyce/plutus:latest",
-	format: "json",
-});
+  baseUrl: `http://${hostname}:${port}`,
+  model: '0xroyce/plutus:latest',
+  format: 'json',
+})
 
 const stream = await model.stream([
-	new HumanMessage(`
+  new HumanMessage(`
     This is Crypto Market Data:
 
     \`\`\`json
@@ -43,11 +43,11 @@ const stream = await model.stream([
     - Make sure the percentages are whole numbers that sum to 100.
     - Ensure between 10 and 20 tickers are included in the output.
   `),
-]);
+])
 
-const chunks = [];
+const chunks = []
 for await (const chunk of stream) {
-	chunks.push(chunk);
+  chunks.push(chunk)
 }
 
-console.log(chunks.join(""));
+console.log(chunks.join(''))

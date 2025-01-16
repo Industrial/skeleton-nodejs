@@ -1,6 +1,6 @@
 import { Title } from '@solidjs/meta'
 import { HttpStatusCode } from '@solidjs/start'
-import { type JSX } from 'solid-js'
+import type { JSX } from 'solid-js'
 
 export default function NotFound(): JSX.Element {
   return (
@@ -10,7 +10,7 @@ export default function NotFound(): JSX.Element {
       <h1>Page Not Found</h1>
       <p>
         Visit{' '}
-        <a href="https://start.solidjs.com" target="_blank">
+        <a href="https://start.solidjs.com" target="_blank" rel="noreferrer">
           start.solidjs.com
         </a>{' '}
         to learn how to build SolidStart apps.

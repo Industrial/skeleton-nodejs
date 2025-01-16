@@ -4,11 +4,16 @@ export type HTTPServerPort = number
 
 export type HTTPRequestHandler = (pathname: string) => Promise<string>
 
-export type StartHTTPServer = (port: HTTPServerPort, handleRequest: HTTPRequestHandler) => Promise<Server>
+export type StartHTTPServer = (
+  port: HTTPServerPort,
+  handleRequest: HTTPRequestHandler,
+) => Promise<Server>
 
-export const startHTTPServer: StartHTTPServer = async (port = 3000, handleRequest) => {
+export const startHTTPServer: StartHTTPServer = async (port, handleRequest) => {
+  const usedPort = port ?? 3000
+
   // eslint-disable-next-line no-console
-  console.log('startHTTPServer', port, handleRequest)
+  console.log('startHTTPServer', usedPort, handleRequest)
   return Bun.serve({
     fetch: async (req: Request) => {
       // eslint-disable-next-line no-console
@@ -24,6 +29,6 @@ export const startHTTPServer: StartHTTPServer = async (port = 3000, handleReques
       console.error(error)
       return new Response('Internal Server Error', { status: 500 })
     },
-    port,
+    port: usedPort,
   })
 }

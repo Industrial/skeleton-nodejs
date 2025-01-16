@@ -8,7 +8,10 @@ export type TimeUnit = 'd' | 'h' | 'm' | 'ms' | 's'
 describe('convertTime', () => {
   describe('When converting from ms to s', () => {
     it('should convert 1000 milliseconds to 1 second', () => {
-      const actual = pipe(O.fromNullable(1000), O.flatMap(convertTime('ms', 's')))
+      const actual = pipe(
+        O.fromNullable(1000),
+        O.flatMap(convertTime('ms', 's')),
+      )
       if (O.isNone(actual)) {
         throw new Error('None')
       }

@@ -1,10 +1,11 @@
-import { readFile } from 'fs/promises'
+import { readFile } from 'node:fs/promises'
 
 import { wasi } from './wasi'
 
-export type InstanceWithExports<T extends Bun.WebAssembly.Exports> = Bun.WebAssembly.Instance & {
-  exports: T
-}
+export type InstanceWithExports<T extends Bun.WebAssembly.Exports> =
+  Bun.WebAssembly.Instance & {
+    exports: T
+  }
 
 export const loadCompiled = async <T extends Bun.WebAssembly.Exports>(
   wasmUrl: string,

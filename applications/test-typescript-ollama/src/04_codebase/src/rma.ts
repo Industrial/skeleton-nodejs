@@ -1,5 +1,5 @@
-import type { Alpha } from "./ema.ts";
-import { ema } from "./ema.ts";
+import type { Alpha } from './ema.ts'
+import { ema } from './ema.ts'
 
 /**
  * Calculates the Running Moving Average (RMA) using the Exponential Moving Average (EMA) implementation.
@@ -16,6 +16,6 @@ import { ema } from "./ema.ts";
  * const result = await E.runPromise(rma5(values));
  * // result would be equivalent to using EMA with alpha = 1 / length
  */
-export const rmaAlpha: Alpha = (length: number) => 1 / length;
+export const rmaAlpha: Alpha = (length: number) => 1 / length
 
-export const rma = (length: number) => ema(length, rmaAlpha);
+export const rma = (length: number) => ema(length, rmaAlpha)

@@ -1,6 +1,6 @@
+import { readFile } from 'node:fs/promises'
+import { WASI } from 'node:wasi'
 import type { APIEvent } from '@solidjs/start/server'
-import { readFile } from 'fs/promises'
-import { WASI } from 'wasi'
 
 const wasi = new WASI({
   args: [],

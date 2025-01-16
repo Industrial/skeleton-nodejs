@@ -1,5 +1,5 @@
-import { readFile } from 'fs/promises'
-import { WASI } from 'wasi'
+import { readFile } from 'node:fs/promises'
+import { WASI } from 'node:wasi'
 
 const wasi = new WASI({
   args: [],

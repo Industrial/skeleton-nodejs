@@ -5,8 +5,8 @@ import Effect (Effect)
 import Effect.Console (logShow)
 import Prelude
 
--- | `numberLocksPermutations x y` gives you all permutations of length `y` 
--- | using numbers from `0` to `x`. 
+-- | `numberLocksPermutations x y` gives you all permutations of length `y`
+-- | using numbers from `0` to `x`.
 -- |
 -- | ```purescript
 -- | numberLocksPermutations 2 1 == [[0], [1], [2]]

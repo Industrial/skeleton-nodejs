@@ -11,19 +11,20 @@
     };
   };
 
-  outputs = inputs @ {self, ...}: let
-    packageName = "haskell-wasm-framework";
+  outputs = inputs @ {...}: let
+    # packageName = "haskell-wasm-framework";
     systems = ["x86_64-linux" "aarch64-darwin"];
-    forAllSystems = f: inputs.nixpkgs.lib.genAttrs systems (system:
-      f {
-        inherit system;
-        pkgs = import inputs.nixpkgs {
+    forAllSystems = f:
+      inputs.nixpkgs.lib.genAttrs systems (system:
+        f {
           inherit system;
-          config = {
-            allowUnfree = true;
+          pkgs = import inputs.nixpkgs {
+            inherit system;
+            config = {
+              allowUnfree = true;
+            };
           };
-        };
-      });
+        });
   in {
     # packages = forAllSystems ({ system, pkgs, ... }: {
     #   "${packageName}" = pkgs.haskellPackages.callCabal2nix packageName self {

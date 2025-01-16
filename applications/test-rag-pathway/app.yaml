@@ -1,28 +1,29 @@
+---
 $sources:
   - !pw.io.fs.read
     path: data
     format: binary
     with_metadata: true
 
-  # - !pw.xpacks.connectors.sharepoint.read
-  #   url: $SHAREPOINT_URL
-  #   tenant: $SHAREPOINT_TENANT
-  #   client_id: $SHAREPOINT_CLIENT_ID
-  #   cert_path: sharepointcert.pem
-  #   thumbprint: $SHAREPOINT_THUMBPRINT
-  #   root_path: $SHAREPOINT_ROOT
-  #   with_metadata: true
-  #   refresh_interval: 30
+# - !pw.xpacks.connectors.sharepoint.read
+#   url: $SHAREPOINT_URL
+#   tenant: $SHAREPOINT_TENANT
+#   client_id: $SHAREPOINT_CLIENT_ID
+#   cert_path: sharepointcert.pem
+#   thumbprint: $SHAREPOINT_THUMBPRINT
+#   root_path: $SHAREPOINT_ROOT
+#   with_metadata: true
+#   refresh_interval: 30
 
-  # - !pw.io.gdrive.read
-  #   object_id: $DRIVE_ID
-  #   service_user_credentials_file: gdrive_indexer.json
-  #   file_name_pattern:
-  #     - "*.pdf"
-  #     - "*.pptx"
-  #   object_size_limit: null
-  #   with_metadata: true
-  #   refresh_interval: 30
+# - !pw.io.gdrive.read
+#   object_id: $DRIVE_ID
+#   service_user_credentials_file: gdrive_indexer.json
+#   file_name_pattern:
+#     - "*.pdf"
+#     - "*.pptx"
+#   object_size_limit: null
+#   with_metadata: true
+#   refresh_interval: 30
 
 $llm_model: "ollama/mistral"
 
@@ -41,7 +42,7 @@ $embedding_model: "avsolatorio/GIST-small-Embedding-v0"
 $embedder: !pw.xpacks.llm.embedders.SentenceTransformerEmbedder
   model: $embedding_model
   call_kwargs:
-    show_progress_bar: False
+    show_progress_bar: false
 
 $splitter: !pw.xpacks.llm.splitters.TokenCountSplitter
   max_tokens: 400

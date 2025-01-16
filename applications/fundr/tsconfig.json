@@ -4,10 +4,7 @@
     "allowImportingTsExtensions": true,
     "allowJs": true,
     "jsx": "react-jsx",
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
+    "lib": ["ESNext", "DOM"],
     "module": "ESNext",
     "moduleDetection": "force",
     "moduleResolution": "bundler",
@@ -17,9 +14,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "paths": {
-      "~/*": [
-        "./src/*"
-      ]
+      "~/*": ["./src/*"]
     },
     "skipLibCheck": true,
     "strict": true,

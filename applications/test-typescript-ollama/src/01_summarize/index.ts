@@ -1,14 +1,14 @@
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { Ollama } from "@langchain/ollama";
+import { HumanMessage, SystemMessage } from '@langchain/core/messages'
+import { Ollama } from '@langchain/ollama'
 
 const model = new Ollama({
-	baseUrl: "http://0.0.0.0:11434",
-	model: "llama3.2:latest",
-});
+  baseUrl: 'http://0.0.0.0:11434',
+  model: 'llama3.2:latest',
+})
 
 const systemMessage = new SystemMessage(`
   You are a summarization AI specializing in summarizing text.
-`);
+`)
 
 const humanMessage = new HumanMessage(`
   Please summarize the following text, ensuring it is concise and to the point.
@@ -30,13 +30,13 @@ const humanMessage = new HumanMessage(`
   Classification methods for young stellar object (YSO) spectra have been successfully implemented along with simulations and observations (Singh et al., 1998; Ronen et al., 1999; Yip et al., 2004; Ward & Lumsden, 2016). For instance, Ward & Lumsden (2016) demonstrated the potential of dimensionality reduction techniques, such as locally linear embedding (LLE) and principal component analysis (PCA), to efficiently classify large spectral samples based on the presence/absence of emission lines. In this work, we build on this basic idea and show that dimensionality reduction techniques are also robust and helpful in studying chemical evolution in large samples of MYSO spectra. We find that the first eight PCA components of the original spectra retain sufficient physicochemical information to classify the sources comparably to methods based on molecular excitation temperature and column density obtained from manual line extraction and rotational diagram fitting. Thus, reduced-dimensionality spectra can convey information about a source’s chemical evolutionary stage, which is particularly useful in distinguishing between COM-rich and COM-poor sources. This blind, PCA-based approach to source classification is more efficient than the traditional rotational diagram fitting method in terms of human pre-processing time, as it requires little individual source or line inspection and extraction.
 
   Section 2 presents the list of MYSOs, between HMCs and IRDCs, selected for our study and observed by ALMA. Section 3 details the dimensionality reduction and classification methods. Our results are outlined in Sect. 4. We discuss the implications of our results in Sect. 5 and summarise our work in Sect. 6.
-`);
+`)
 
-const stream = await model.stream([systemMessage, humanMessage]);
+const stream = await model.stream([systemMessage, humanMessage])
 
-let output = "";
+let output = ''
 for await (const chunk of stream) {
-	output += chunk;
+  output += chunk
 }
 
-console.log(output);
+console.log(output)

@@ -2,5 +2,5 @@
 set -euo pipefail
 
 weaviate \
-  --host 0.0.0.0 \
-  --scheme http
+    --host 0.0.0.0 \
+    --scheme http
