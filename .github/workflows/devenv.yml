@@ -15,5 +15,11 @@ jobs:
       - uses: cachix/cachix-action@v14
         with:
           name: devenv
-      - name: Install devenv.sh
+      - name: DevEnv / Install
         run: nix profile install nixpkgs#devenv
+      - name: DevEnv / Test
+        run: devenv test
+      - name: DevEnv / NX Lint
+        run: devenv tasks run bun:lint
+      - name: DevEnv / NX Test
+        run: devenv tasks run bun:test

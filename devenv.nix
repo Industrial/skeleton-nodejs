@@ -67,18 +67,19 @@
   # '';
 
   # # https://devenv.sh/tasks/
-  # tasks = {
-  #   "bin:install-local".exec = "bin/install-local";
+  tasks = {
+    "bun:lint".exec = "bun run lint";
+    "bun:test".exec = "bun run test";
 
-  #   "bash:shellHook" = {
-  #     exec = "LD_LIBRARY_PATH=${pkgs.stdenv.cc.cc.lib}/lib/";
-  #     before = ["devenv:enterShell" "devenv:enterTest"];
-  #   };
-
-  #   "devenv:enterShell" = {
-  #     after = ["bin:install-local"];
-  #   };
-  # };
+    # "bin:install-local".exec = "bin/install-local";
+    # "bash:shellHook" = {
+    #   exec = "LD_LIBRARY_PATH=${pkgs.stdenv.cc.cc.lib}/lib/";
+    #   before = ["devenv:enterShell" "devenv:enterTest"];
+    # };
+    # "devenv:enterShell" = {
+    #   after = ["bin:install-local"];
+    # };
+  };
 
   # https://devenv.sh/tests/
   enterTest = ''
