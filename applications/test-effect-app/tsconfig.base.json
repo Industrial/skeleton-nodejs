@@ -12,11 +12,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "NodeNext",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": [],
     "isolatedModules": true,
     "sourceMap": true,
@@ -45,9 +41,7 @@
       }
     ],
     "paths": {
-      "app/*": [
-        "src/*.js"
-      ]
+      "app/*": ["src/*.js"]
     }
   }
 }

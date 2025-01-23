@@ -1,14 +1,14 @@
-import { SqlClient } from "@effect/sql"
-import { Effect, Option, pipe } from "effect"
-import type { AccountId } from "./Domain/Account.js"
-import type { GroupId } from "./Domain/Group.js"
-import { Group, GroupNotFound } from "./Domain/Group.js"
-import { policyRequire } from "./Domain/Policy.js"
-import { GroupsRepo } from "./Groups/Repo.js"
-import { SqlLive } from "./Sql.js"
+import { SqlClient } from '@effect/sql'
+import { Effect, Option, pipe } from 'effect'
+import type { AccountId } from './Domain/Account.js'
+import type { GroupId } from './Domain/Group.js'
+import { Group, GroupNotFound } from './Domain/Group.js'
+import { policyRequire } from './Domain/Policy.js'
+import { GroupsRepo } from './Groups/Repo.js'
+import { SqlLive } from './Sql.js'
 
-export class Groups extends Effect.Service<Groups>()("Groups", {
-  effect: Effect.gen(function*() {
+export class Groups extends Effect.Service<Groups>()('Groups', {
+  effect: Effect.gen(function* () {
     const repo = yield* GroupsRepo
     const sql = yield* SqlClient.SqlClient
 
@@ -17,55 +17,55 @@ export class Groups extends Effect.Service<Groups>()("Groups", {
         repo.insert(
           Group.insert.make({
             ...group,
-            ownerId
-          })
+            ownerId,
+          }),
         ),
-        Effect.withSpan("Groups.create", { attributes: { group } }),
-        policyRequire("Group", "create")
+        Effect.withSpan('Groups.create', { attributes: { group } }),
+        policyRequire('Group', 'create'),
       )
 
     const update = (
       group: Group,
-      update: Partial<typeof Group.jsonUpdate.Type>
+      update: Partial<typeof Group.jsonUpdate.Type>,
     ) =>
       pipe(
         repo.update({
           ...group,
           ...update,
-          updatedAt: undefined
+          updatedAt: undefined,
         }),
-        Effect.withSpan("Groups.update", {
-          attributes: { id: group.id, update }
+        Effect.withSpan('Groups.update', {
+          attributes: { id: group.id, update },
         }),
-        policyRequire("Group", "update")
+        policyRequire('Group', 'update'),
       )
 
     const findById = (id: GroupId) =>
       pipe(
         repo.findById(id),
-        Effect.withSpan("Groups.findById", { attributes: { id } }),
-        policyRequire("Group", "read")
+        Effect.withSpan('Groups.findById', { attributes: { id } }),
+        policyRequire('Group', 'read'),
       )
 
     const with_ = <A, E, R>(
       id: GroupId,
-      f: (group: Group) => Effect.Effect<A, E, R>
+      f: (group: Group) => Effect.Effect<A, E, R>,
     ): Effect.Effect<A, E | GroupNotFound, R> =>
       pipe(
         repo.findById(id),
         Effect.flatMap(
           Option.match({
             onNone: () => new GroupNotFound({ id }),
-            onSome: Effect.succeed
-          })
+            onSome: Effect.succeed,
+          }),
         ),
         Effect.flatMap(f),
         sql.withTransaction,
-        Effect.catchTag("SqlError", (err) => Effect.die(err)),
-        Effect.withSpan("Groups.with", { attributes: { id } })
+        Effect.catchTag('SqlError', (err) => Effect.die(err)),
+        Effect.withSpan('Groups.with', { attributes: { id } }),
       )
 
     return { create, update, findById, with: with_ } as const
   }),
-  dependencies: [SqlLive, GroupsRepo.Default]
+  dependencies: [SqlLive, GroupsRepo.Default],
 }) {}

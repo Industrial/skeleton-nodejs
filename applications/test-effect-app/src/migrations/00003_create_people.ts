@@ -1,7 +1,7 @@
-import { SqlClient } from "@effect/sql"
-import { Effect } from "effect"
+import { SqlClient } from '@effect/sql'
+import { Effect } from 'effect'
 
-export default Effect.gen(function*() {
+export default Effect.gen(function* () {
   const sql = yield* SqlClient.SqlClient
   yield* sql.onDialectOrElse({
     pg: () =>
@@ -29,6 +29,6 @@ export default Effect.gen(function*() {
         updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
         FOREIGN KEY (groupId) REFERENCES groups(id)
       )
-    `
+    `,
   })
 })
