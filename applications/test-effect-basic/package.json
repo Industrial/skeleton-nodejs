@@ -16,16 +16,12 @@
     "codegen": "bun build-utils prepare-v2",
     "check": "tsc -b tsconfig.json",
     "test": "vitest run",
-    "coverage": "vitest run --coverage",
-    "changeset-version": "changeset version && node scripts/version.mjs",
-    "changeset-publish": "bun run build && TEST_DIST= bun vitest && changeset publish"
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "effect": "latest"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.5.0",
-    "@changesets/cli": "^2.27.8",
     "@effect/build-utils": "^0.7.7",
     "@effect/language-service": "^0.1.0",
     "@effect/vitest": "latest",
