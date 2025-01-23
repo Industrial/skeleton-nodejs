@@ -15,8 +15,8 @@
   "scripts": {
     "codegen": "bun build-utils prepare-v2",
     "check": "tsc -b tsconfig.json",
-    "test": "vitest",
-    "coverage": "vitest --coverage",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
     "changeset-version": "changeset version && node scripts/version.mjs",
     "changeset-publish": "bun run build && TEST_DIST= bun vitest && changeset publish"
   },
