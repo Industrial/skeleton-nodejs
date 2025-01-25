@@ -19,6 +19,10 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@effect/platform": "^0.75.1",
+    "@effect/platform-bun": "^0.55.1",
+    "@effect/rpc": "^0.50.1",
+    "@effect/rpc-http": "^0.48.1",
     "effect": "latest"
   },
   "devDependencies": {

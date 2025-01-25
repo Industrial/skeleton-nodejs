@@ -1,3 +1,6 @@
-import * as Effect from 'effect/Effect'
+import { BunRuntime } from '@effect/platform-bun'
+import { Effect } from 'effect'
 
-Effect.runPromise(Effect.log('Hello, World!'))
+const failure = Effect.fail('Uh oh!')
+
+BunRuntime.runMain(failure)
