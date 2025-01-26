@@ -1,10 +1,5 @@
 // @refresh reload
 import { StartServer, createHandler } from '@solidjs/start/server'
-import { Effect, Runtime } from 'effect'
-
-const myEffect = Effect.sync(() => {
-  console.log('Running an effect on the server start')
-})
 
 export default createHandler(() => (
   <StartServer
