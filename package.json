@@ -1,8 +1,11 @@
 {
   "author": "",
   "dependencies": {
+    "@effect/core": "^0.0.16",
+    "@effect/io": "^0.41.2",
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
+    "effect": "^3.12.7",
     "tslib": "^2.6.2",
     "type-fest": "^4.14.0"
   },
