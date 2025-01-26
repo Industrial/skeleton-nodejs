@@ -1,32 +1,32 @@
-import {
-  HttpRouter,
-  HttpServer,
-  HttpServerRequest,
-  HttpServerResponse,
-} from '@effect/platform'
+import { HttpRouter, HttpServer } from '@effect/platform'
 import { BunHttpServer, BunRuntime } from '@effect/platform-bun'
-import { toHttpApp } from '@effect/rpc-http/HttpRpcRouter'
-import { Effect, Layer } from 'effect'
-// import type { Route } from '@effect/platform/HttpRouter'
-// import * as React from 'react'
-// import { renderToPipeableStream } from 'react-dom/server'
-// import { App } from './pages/App.js'
-import { appRouter } from './router.js'
+import { Layer } from 'effect'
+import React from 'react'
+import { App } from './components/App.js'
+import { rpc } from './routes/rpc.js'
+import { ssr } from './routes/ssr.js'
 
-// const { pipe, abort } = renderToPipeableStream(<App />)
+const top = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="module" src="/src/entry-client.tsx"></script>
+  </head>
+  <body>
+    <div id="root">
+      `
 
-// const renderHandler: Route.Handler<never, string> = () => {
-//   return Effect.succeed('Hello, world!')
-// }
+const bottom = `
+    </div>
+  </body>
+</html>
+`
 
 const HttpLive = HttpRouter.empty.pipe(
-  HttpRouter.get(
-    '/',
-    Effect.map(HttpServerRequest.HttpServerRequest, (req) =>
-      HttpServerResponse.text(req.url),
-    ),
-  ),
-  HttpRouter.post('/rpc', toHttpApp(appRouter)),
+  HttpRouter.get('/', ssr(<App />, top, bottom)),
+  HttpRouter.post('/rpc', rpc()),
   HttpServer.serve(),
   HttpServer.withLogAddress,
   Layer.provide(
