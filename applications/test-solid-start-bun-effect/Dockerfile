@@ -22,13 +22,13 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY package.json ./
-RUN npm install
+RUN bun install
 
 # Copy application code
 COPY . .
 
 # Build application
-RUN npm run build
+RUN bun run build
 
 
 # Final stage for app image
@@ -39,4 +39,4 @@ COPY --from=build /app /app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "npm", "run", "start" ]
+CMD [ "bun", "run", "start" ]
