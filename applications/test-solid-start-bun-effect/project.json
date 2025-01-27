@@ -16,6 +16,10 @@
       "cache": true,
       "dependsOn": ["^nx-build", "nx-test"]
     },
+    "nx-start": {
+      "cache": true,
+      "dependsOn": ["nx-build"]
+    },
     "nx-update-packages": {
       "cache": false,
       "dependsOn": []

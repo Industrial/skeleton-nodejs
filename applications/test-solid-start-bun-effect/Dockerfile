@@ -25,8 +25,7 @@ RUN bun install
 COPY . .
 
 # Build application
-RUN bun run build
-
+RUN bun nx run @code9/test-solid-start-bun-effect:nx-build
 
 # Final stage for app image
 FROM base
@@ -36,4 +35,4 @@ COPY --from=build /app /app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "bun", "run", "start" ]
+CMD ["bun" "nx" "run" "@code9/test-solid-start-bun-effect:nx-start"]
