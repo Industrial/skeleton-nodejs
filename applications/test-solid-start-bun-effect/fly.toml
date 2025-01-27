@@ -7,6 +7,7 @@ app = 'skeleton-nodejs'
 primary_region = 'mad'
 
 [build]
+  dockerfile = "applications/test-solid-start-bun-effect/Dockerfile"
 
 [http_service]
   internal_port = 3000
