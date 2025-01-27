@@ -2,9 +2,12 @@
   "name": "example-bare",
   "type": "module",
   "scripts": {
-    "dev": "vinxi dev",
     "build": "vinxi build",
-    "start": "vinxi start"
+    "dev": "vinxi dev",
+    "lint": "tsc -p . --noEmit && biome lint .",
+    "start": "vinxi start",
+    "test": "bun test",
+    "update-packages": "npm-check-updates -u"
   },
   "dependencies": {
     "@solidjs/start": "^1.0.11",

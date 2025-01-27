@@ -20,7 +20,9 @@ describe('Exchange', () => {
         // TODO: Fix this generic message. It should be the specific one above.
         expect(async () => {
           await Fx.runPromise(loadMarketsE(exchange))
-        }).toThrowError(new Error('An unknown error occurred'))
+        }).toThrowError(
+          new Error('An unknown error occurred in Effect.tryPromise'),
+        )
         mockLoadMarkets.mockRestore()
       })
     })

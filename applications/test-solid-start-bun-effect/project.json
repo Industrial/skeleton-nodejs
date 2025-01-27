@@ -1,8 +1,8 @@
 {
-  "name": "@code9/date",
+  "name": "@code9/test-solid-start-bun-effect",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/date/src",
-  "projectType": "library",
+  "sourceRoot": "applications/test-solid-start-bun-effect/src",
+  "projectType": "application",
   "targets": {
     "nx-lint": {
       "cache": true,
@@ -11,6 +11,10 @@
     "nx-test": {
       "cache": true,
       "dependsOn": ["^nx-test", "nx-lint"]
+    },
+    "nx-build": {
+      "cache": true,
+      "dependsOn": ["^nx-build", "nx-test"]
     },
     "nx-update-packages": {
       "cache": false,

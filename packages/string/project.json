@@ -1,9 +1,8 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "name": "@code9/string",
-  "projectType": "library",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/string/src",
-  "tags": [],
+  "projectType": "library",
   "targets": {
     "nx-lint": {
       "cache": true,
@@ -12,10 +11,6 @@
     "nx-test": {
       "cache": true,
       "dependsOn": ["^nx-test", "nx-lint"]
-    },
-    "nx-build": {
-      "cache": true,
-      "dependsOn": ["^nx-build", "nx-test"]
     },
     "nx-update-packages": {
       "cache": false,
