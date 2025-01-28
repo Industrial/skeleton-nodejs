@@ -19,4 +19,4 @@ RUN bun nx run @code9/test-solid-start-bun-effect:nx-build
 USER bun
 EXPOSE 3000
 
-ENTRYPOINT ["bun" "run" "nx" "run" "@code9/test-solid-start-bun-effect:nx-start"]
+CMD ["run" "nx" "run" "@code9/test-solid-start-bun-effect:nx-start"]
