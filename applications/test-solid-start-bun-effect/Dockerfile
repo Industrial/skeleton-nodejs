@@ -4,35 +4,19 @@
 ARG NODE_VERSION=20.18.0
 # Adjust BUN_VERSION as desired
 ARG BUN_VERSION=1.2.0
-FROM oven/bun:${BUN_VERSION} as base
+FROM oven/bun:${BUN_VERSION} AS base
 
 LABEL fly_launch_runtime="Node.js"
 
-# Node.js app lives here
 WORKDIR /app
 
-# Set production environment
-ENV NODE_ENV="production"
-
-# Throw-away build stage to reduce size of final image
-FROM base AS build
-
-# Install node modules
-COPY package.json ./
+COPY package.json /app
 RUN bun install
 
-# Copy application code
 COPY . .
-
-# Build application
 RUN bun nx run @code9/test-solid-start-bun-effect:nx-build
 
-# Final stage for app image
-FROM base
-
-# Copy built application
-COPY --from=build /app /app
-
-# Start the server by default, this can be overwritten at runtime
+USER bun
 EXPOSE 3000
-CMD ["bun" "nx" "run" "@code9/test-solid-start-bun-effect:nx-start"]
+
+ENTRYPOINT ["bun" "run" "nx" "run" "@code9/test-solid-start-bun-effect:nx-start"]

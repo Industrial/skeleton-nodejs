@@ -1,0 +1,6 @@
+/.devenv
+/.direnv
+/.github
+/.nx
+/.vscode
+node_modules
