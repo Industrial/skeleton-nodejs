@@ -1,22 +1,25 @@
 # syntax = docker/dockerfile:1
+FROM node:latest AS base
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=20.18.0
-# Adjust BUN_VERSION as desired
-ARG BUN_VERSION=1.2.0
-FROM oven/bun:${BUN_VERSION} AS base
+LABEL fly_launch_runtime="Bun.js"
 
-LABEL fly_launch_runtime="Node.js"
+RUN npm install -g bun
 
+FROM base AS installer
+COPY packages /app/packages
+RUN find /app/packages \! -name "package.json" -mindepth 2 -maxdepth 2 -print | xargs rm -rf
+COPY package.json bun.lockb /app/
+RUN cd /app && bun install
+
+FROM installer AS builder
 WORKDIR /app
-
-COPY package.json /app
+COPY applications/test-solid-start-bun-effect /app/applications/test-solid-start-bun-effect
+COPY entrypoint.sh /app/entrypoint.sh
 RUN bun install
+RUN bun run nx run @code9/test-solid-start-bun-effect:nx-build
 
-COPY . .
-RUN bun nx run @code9/test-solid-start-bun-effect:nx-build
-
-USER bun
+FROM builder AS runner
 EXPOSE 3000
 
-CMD ["run" "nx" "run" "@code9/test-solid-start-bun-effect:nx-start"]
+ENTRYPOINT []
+CMD ["/app/entrypoint.sh"]
