@@ -1,5 +1,3 @@
-import type ccxt from 'ccxt'
-
 import {
   ace,
   alpaca,
