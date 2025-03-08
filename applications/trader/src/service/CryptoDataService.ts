@@ -1,5 +1,6 @@
 import type { OHLCV } from 'ccxt'
 import { Context, type Effect, Layer } from 'effect'
+import type { ParseError } from 'effect/ParseResult'
 import type { ExchangeId } from '../domain/ExchangeId'
 import type { ExchangeSymbol } from '../domain/ExchangeSymbol'
 import type { Timeframe } from '../domain/Timeframe'
@@ -13,10 +14,9 @@ export interface CryptoDataServiceType {
     timeframe: Timeframe,
     start: Date,
     end: Date,
-  ): Effect.Effect<OHLCV[], Error>
+  ): Effect.Effect<OHLCV[], UnsupportedExchangeError | ParseError>
 }
 
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class CryptoDataService extends Context.Tag('CryptoDataService')<
   CryptoDataServiceType,
   {
@@ -24,9 +24,9 @@ export class CryptoDataService extends Context.Tag('CryptoDataService')<
       exchangeId: ExchangeId,
       exchangeSymbol: ExchangeSymbol,
       timeframe: Timeframe,
-      since: Date,
-      limit: number,
-    ) => Effect.Effect<OHLCV[], UnsupportedExchangeError>
+      start: Date,
+      end: Date,
+    ) => Effect.Effect<OHLCV[], UnsupportedExchangeError | ParseError>
   }
 >() {
   static Live = Layer.succeed(this, CryptoDataServiceLive)

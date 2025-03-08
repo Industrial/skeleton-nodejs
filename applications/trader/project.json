@@ -1,0 +1,21 @@
+{
+  "name": "@code9/trader",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "applications/trader/src",
+  "projectType": "application",
+  "targets": {
+    "nx-lint": {
+      "cache": true,
+      "dependsOn": ["^nx-lint", "^nx-build"]
+    },
+    "nx-test": {
+      "cache": true,
+      "dependsOn": ["^nx-test", "nx-lint"]
+    },
+    "nx-update-packages": {
+      "cache": false,
+      "dependsOn": []
+    }
+  },
+  "tags": []
+}
