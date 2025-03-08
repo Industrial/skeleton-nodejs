@@ -1,5 +1,6 @@
-import { Data, Effect, Schema } from 'effect'
+import { Effect, Schema } from 'effect'
 import type { ParseError } from 'effect/ParseResult'
+import { InvalidTimeframeMillisecondsError } from '../error/InvalidTimeframeMillisecondsError'
 
 export const TimeframeSchema = Schema.Union(
   Schema.Literal('1m'),
@@ -16,18 +17,6 @@ export const TimeframeSchemaValues = TimeframeSchema.members.flatMap(
 )
 
 export type Timeframe = Schema.Schema.Type<typeof TimeframeSchema>
-
-export class InvalidTimeframeError extends Data.TaggedError(
-  'InvalidTimeframeError',
-)<{
-  readonly value: string
-}> {}
-
-export class InvalidTimeframeMillisecondsError extends Data.TaggedError(
-  'InvalidTimeframeMillisecondsError',
-)<{
-  readonly value: number
-}> {}
 
 const TIMEFRAME_MS: { readonly [K in Timeframe]: number } = {
   '1m': 60 * 1000,
