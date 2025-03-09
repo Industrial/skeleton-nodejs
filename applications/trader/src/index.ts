@@ -2,9 +2,12 @@ import { Args, Command } from '@effect/cli'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
 import ccxt from 'ccxt'
 import { Effect, Layer, pipe } from 'effect'
-import type { ExchangeId } from './domain/ExchangeId'
-import type { ExchangeSymbol } from './domain/ExchangeSymbol'
-import { type Timeframe, TimeframeSchemaValues } from './domain/Timeframe'
+import type { ExchangeId } from './domain/market-data/ExchangeId'
+import type { Pair } from './domain/market-data/Pair'
+import {
+  type Timeframe,
+  TimeframeSchemaValues,
+} from './domain/market-data/Timeframe'
 import { CryptoDataService } from './service/CryptoDataService'
 
 const exchangesEntries = Object.entries(ccxt.exchanges).map(([, y]) => [
@@ -29,7 +32,7 @@ const ohlcvCommand = Command.make(
   },
   (args) => {
     const exchangeId: ExchangeId = args.exchange as ExchangeId
-    const symbol: ExchangeSymbol = args.symbol
+    const symbol: Pair = args.symbol
     const timeframe: Timeframe = args.timeframe as Timeframe
     const start = args.start
     const end = args.end

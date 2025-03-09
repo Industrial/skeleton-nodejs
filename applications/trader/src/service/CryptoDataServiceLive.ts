@@ -9,16 +9,16 @@ import {
   type InvalidVolumeError,
   type UnknownError,
   fromCCXT,
-} from '../domain/Candlestick'
-import type { ExchangeId } from '../domain/ExchangeId'
-import type { ExchangeSymbol } from '../domain/ExchangeSymbol'
-import type { Timeframe } from '../domain/Timeframe'
-import { toMilliseconds } from '../domain/Timeframe'
+} from '../domain/market-data/Candlestick'
+import type { ExchangeId } from '../domain/market-data/ExchangeId'
+import type { Pair } from '../domain/market-data/Pair'
+import type { Timeframe } from '../domain/market-data/Timeframe'
+import { toMilliseconds } from '../domain/market-data/Timeframe'
 import { UnsupportedExchangeError } from './CryptoDataService'
 
 const getOHLCV = (
   exchangeId: ExchangeId,
-  symbol: ExchangeSymbol,
+  symbol: Pair,
   timeframe: Timeframe,
   start: Date,
   end: Date,

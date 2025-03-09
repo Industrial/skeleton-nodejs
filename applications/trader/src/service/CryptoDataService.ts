@@ -6,10 +6,10 @@ import type {
   InvalidTimestampError,
   InvalidVolumeError,
   UnknownError,
-} from '../domain/Candlestick'
-import type { ExchangeId } from '../domain/ExchangeId'
-import type { ExchangeSymbol } from '../domain/ExchangeSymbol'
-import type { Timeframe } from '../domain/Timeframe'
+} from '../domain/market-data/Candlestick'
+import type { ExchangeId } from '../domain/market-data/ExchangeId'
+import type { Pair } from '../domain/market-data/Pair'
+import type { Timeframe } from '../domain/market-data/Timeframe'
 import { CryptoDataServiceLive } from './CryptoDataServiceLive'
 
 export class UnsupportedExchangeError extends Data.TaggedError(
@@ -25,7 +25,7 @@ export interface CryptoDataServiceType {
    */
   getOHLCV(
     exchangeId: ExchangeId,
-    exchangeSymbol: ExchangeSymbol,
+    exchangeSymbol: Pair,
     timeframe: Timeframe,
     start: Date,
     end: Date,
@@ -40,7 +40,6 @@ export interface CryptoDataServiceType {
   >
 }
 
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class CryptoDataService extends Context.Tag('CryptoDataService')<
   CryptoDataServiceType,
   CryptoDataServiceType

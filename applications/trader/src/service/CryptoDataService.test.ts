@@ -6,10 +6,10 @@ import {
   InvalidTimestampError,
   InvalidVolumeError,
   UnknownError,
-} from '../domain/Candlestick'
-import type { ExchangeId } from '../domain/ExchangeId'
-import type { ExchangeSymbol } from '../domain/ExchangeSymbol'
-import type { Timeframe } from '../domain/Timeframe'
+} from '../domain/market-data/Candlestick'
+import type { ExchangeId } from '../domain/market-data/ExchangeId'
+import type { Pair } from '../domain/market-data/Pair'
+import type { Timeframe } from '../domain/market-data/Timeframe'
 import {
   CryptoDataService,
   type CryptoDataServiceType,
@@ -20,7 +20,7 @@ import {
 const mockCryptoDataService: CryptoDataServiceType = {
   getOHLCV: (
     exchangeId: ExchangeId,
-    exchangeSymbol: ExchangeSymbol,
+    exchangeSymbol: Pair,
     timeframe: Timeframe,
     start: Date,
     end: Date,
@@ -89,7 +89,7 @@ const TestLayer = Layer.succeed(CryptoDataService, mockCryptoDataService)
 describe('When using the CryptoDataService', () => {
   // Common test variables
   const noDataExchangeId = 'no-data' as ExchangeId
-  const invalidSymbol = '' as ExchangeSymbol
+  const invalidSymbol = '' as Pair
   const invalidTimeframe = 'invalid' as Timeframe
 
   describe('When calling getOHLCV method', () => {
@@ -97,7 +97,7 @@ describe('When using the CryptoDataService', () => {
       const validExchangeId = 'binance' as ExchangeId
 
       describe('When providing a valid exchange symbol', () => {
-        const validSymbol = 'BTC/USDT' as ExchangeSymbol
+        const validSymbol = 'BTC/USDT' as Pair
 
         describe('When providing a valid timeframe', () => {
           const validTimeframe = '1h' as Timeframe
@@ -424,7 +424,7 @@ describe('When using the CryptoDataService', () => {
         const validStart = new Date('2023-01-01T00:00:00Z')
         const validEnd = new Date('2023-01-02T00:00:00Z')
         const validTimeframe = '1h' as Timeframe
-        const validSymbol = 'BTC/USDT' as ExchangeSymbol
+        const validSymbol = 'BTC/USDT' as Pair
 
         // Using the test layer with our mock implementation
         const program = Effect.gen(function* ($) {
@@ -481,7 +481,7 @@ describe('When using the CryptoDataService', () => {
         const validStart = new Date('2023-01-01T00:00:00Z')
         const validEnd = new Date('2023-01-02T00:00:00Z')
         const validTimeframe = '1h' as Timeframe
-        const validSymbol = 'BTC/USDT' as ExchangeSymbol
+        const validSymbol = 'BTC/USDT' as Pair
         const validExchangeId = 'binance' as ExchangeId
 
         // Using the test layer with our mock implementation
@@ -537,7 +537,7 @@ describe('When using the CryptoDataService', () => {
         const validStart = new Date('2023-01-01T00:00:00Z')
         const validEnd = new Date('2023-01-02T00:00:00Z')
         const validTimeframe = '1h' as Timeframe
-        const validSymbol = 'BTC/USDT' as ExchangeSymbol
+        const validSymbol = 'BTC/USDT' as Pair
         const validExchangeId = 'binance' as ExchangeId
 
         // Using the test layer with our mock implementation
@@ -589,7 +589,7 @@ describe('When using the CryptoDataService', () => {
         const validStart = new Date('2023-01-01T00:00:00Z')
         const validEnd = new Date('2023-01-02T00:00:00Z')
         const validTimeframe = '1h' as Timeframe
-        const validSymbol = 'BTC/USDT' as ExchangeSymbol
+        const validSymbol = 'BTC/USDT' as Pair
         const validExchangeId = 'binance' as ExchangeId
 
         // Using the test layer with our mock implementation
@@ -643,7 +643,7 @@ describe('When using the CryptoDataService', () => {
         const validStart = new Date('2023-01-01T00:00:00Z')
         const validEnd = new Date('2023-01-02T00:00:00Z')
         const validTimeframe = '1h' as Timeframe
-        const validSymbol = 'BTC/USDT' as ExchangeSymbol
+        const validSymbol = 'BTC/USDT' as Pair
         const validExchangeId = 'binance' as ExchangeId
 
         // Using the test layer with our mock implementation
@@ -695,7 +695,7 @@ describe('When using the CryptoDataService', () => {
         const validStart = new Date('2023-01-01T00:00:00Z')
         const validEnd = new Date('2023-01-02T00:00:00Z')
         const validTimeframe = '1h' as Timeframe
-        const validSymbol = 'BTC/USDT' as ExchangeSymbol
+        const validSymbol = 'BTC/USDT' as Pair
         const validExchangeId = 'binance' as ExchangeId
 
         // Using the test layer with our mock implementation
