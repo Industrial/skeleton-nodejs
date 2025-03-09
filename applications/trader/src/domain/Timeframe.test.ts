@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'bun:test'
 import { Effect, Either, Schema } from 'effect'
-import { InvalidTimeframeMillisecondsError } from '../error/InvalidTimeframeMillisecondsError'
 import type { Timeframe } from './Timeframe'
 import {
+  InvalidTimeframeMillisecondsError,
   TimeframeSchema,
   TimeframeSchemaValues,
   fromMilliseconds,
