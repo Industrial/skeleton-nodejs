@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { Context, Data, Effect, Exit, Layer } from 'effect'
-import { ParseError, type ParseIssue } from 'effect/ParseResult'
+import { Effect, Exit, Layer } from 'effect'
 import {
   type Candlestick,
   InvalidPriceRelationshipError,
