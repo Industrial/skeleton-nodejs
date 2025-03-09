@@ -5,7 +5,12 @@
  */
 
 import { Data, Effect, Schema } from 'effect'
-import type { ParseError } from 'effect/ParseResult'
+import type { CCXTOHLCVStructure } from './CCXTOHLCVStructure'
+import type { CandlestickStructure } from './CandlestickStructure'
+
+export class UnknownError extends Data.TaggedError('UnknownError')<{
+  readonly message: string
+}> {}
 
 /**
  * Error thrown when candlestick price relationships are invalid.
@@ -25,88 +30,49 @@ export class InvalidVolumeError extends Data.TaggedError('InvalidVolumeError')<{
 }> {}
 
 /**
- * Base structure for candlestick data with price and volume information
+ * Error thrown when candlestick timestamp is invalid (non-positive)
+ * Valid timestamps must be positive numbers representing Unix time in milliseconds
  */
-export interface CandlestickStructure {
-  /** Unix timestamp in milliseconds */
-  timestamp: number
-  /** Opening price of the period */
-  open: number
-  /** Highest price of the period */
-  high: number
-  /** Lowest price of the period */
-  low: number
-  /** Closing price of the period */
-  close: number
-  /** Trading volume of the period */
-  volume: number
-}
+export class InvalidTimestampError extends Data.TaggedError(
+  'InvalidTimestampError',
+)<{
+  readonly message: string
+}> {}
 
 /**
- * CCXT library OHLCV data structure
- * [timestamp, open, high, low, close, volume]
+ * Basic schema for candlestick data structure
  */
-export type CCXTOHLCVStructure = readonly [
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-]
+export const CandlestickBaseSchema = Schema.Struct({
+  timestamp: Schema.Number,
+  open: Schema.Number,
+  high: Schema.Number,
+  low: Schema.Number,
+  close: Schema.Number,
+  volume: Schema.Number,
+})
 
 /**
- * Schema for validating candlestick data
+ * Combined schema for validating candlestick data
  * Ensures:
  * - Timestamp is positive
  * - Volume is non-negative
  * - Price relationships are valid (high >= open/close >= low)
  */
-export const CandlestickSchema = Schema.Struct({
-  timestamp: Schema.Number.pipe(
-    Schema.positive({
-      message: () => 'Timestamp must be positive',
-    }),
-  ),
-  open: Schema.Number,
-  high: Schema.Number,
-  low: Schema.Number,
-  close: Schema.Number,
-  volume: Schema.Number.pipe(
-    Schema.nonNegative({
-      message: () => 'Volume must be non-negative',
-    }),
-  ),
-}).pipe(
-  Schema.filter(
-    (
-      candlestick: CandlestickStructure,
-    ): candlestick is CandlestickStructure => {
-      const { high, low, open, close } = candlestick
-      return (
-        high >= open &&
-        high >= close &&
-        low <= open &&
-        low <= close &&
-        high >= low
-      )
-    },
-    {
-      message: () => 'Invalid price relationship in candlestick',
-      identifier: 'InvalidPriceRelationship',
-    },
-  ),
-)
+export const CandlestickSchema = CandlestickBaseSchema
 
 /** Type representing a validated candlestick */
 export type Candlestick = Schema.Schema.Type<typeof CandlestickSchema>
+
+/** Encoded representation */
+export type CandlestickEncoded = Schema.Schema.Encoded<typeof CandlestickSchema>
 
 /**
  * Creates a validated candlestick from raw data
  * @param params - Raw candlestick data
  * @returns Effect containing either a validated candlestick or an error
  * @throws {InvalidPriceRelationshipError} When price relationships are invalid
- * @throws {InvalidVolumeError} When volume is negative or other validation fails
+ * @throws {InvalidVolumeError} When volume is negative
+ * @throws {InvalidTimestampError} When timestamp is non-positive
  * @example
  * ```ts
  * const result = createCandlestick({
@@ -123,22 +89,65 @@ export const createCandlestick = (
   params: CandlestickStructure,
 ): Effect.Effect<
   Candlestick,
-  InvalidPriceRelationshipError | InvalidVolumeError,
+  | InvalidPriceRelationshipError
+  | InvalidVolumeError
+  | InvalidTimestampError
+  | UnknownError,
   never
 > =>
-  Effect.try({
-    try: () => Schema.decodeSync(CandlestickSchema)(params),
-    catch: (error: unknown) => {
-      const parseError = error as ParseError
-      if (parseError.message?.includes('InvalidPriceRelationship')) {
-        return new InvalidPriceRelationshipError({
-          message: `Invalid price relationship in candlestick: high=${params.high}, low=${params.low}, open=${params.open}, close=${params.close}`,
-        })
-      }
-      return new InvalidVolumeError({
-        message: String(error),
-      })
-    },
+  Effect.gen(function* (_) {
+    // Validate timestamp
+    if (params.timestamp <= 0) {
+      return yield* _(
+        Effect.fail(
+          new InvalidTimestampError({
+            message: `Invalid timestamp in candlestick: timestamp=${params.timestamp}`,
+          }),
+        ),
+      )
+    }
+
+    // Validate volume
+    if (params.volume < 0) {
+      return yield* _(
+        Effect.fail(
+          new InvalidVolumeError({
+            message: 'Volume must be non-negative',
+          }),
+        ),
+      )
+    }
+
+    // Validate price relationships
+    const { high, low, open, close } = params
+    if (
+      high < open ||
+      high < close ||
+      low > open ||
+      low > close ||
+      high < low
+    ) {
+      return yield* _(
+        Effect.fail(
+          new InvalidPriceRelationshipError({
+            message: `Invalid price relationship in candlestick: high=${high}, low=${low}, open=${open}, close=${close}`,
+          }),
+        ),
+      )
+    }
+
+    // If all validations pass, decode the data
+    try {
+      return Schema.decodeSync(CandlestickSchema)(params)
+    } catch (error) {
+      return yield* _(
+        Effect.fail(
+          new UnknownError({
+            message: String(error),
+          }),
+        ),
+      )
+    }
   })
 
 /**
@@ -146,7 +155,8 @@ export const createCandlestick = (
  * @param ohlcv - CCXT OHLCV array [timestamp, open, high, low, close, volume]
  * @returns Effect containing either a validated candlestick or an error
  * @throws {InvalidPriceRelationshipError} When price relationships are invalid
- * @throws {InvalidVolumeError} When volume is negative or other validation fails
+ * @throws {InvalidVolumeError} When volume is negative
+ * @throws {InvalidTimestampError} When timestamp is non-positive
  * @example
  * ```ts
  * const result = fromCCXT([
@@ -163,7 +173,10 @@ export const fromCCXT = (
   ohlcv: CCXTOHLCVStructure,
 ): Effect.Effect<
   Candlestick,
-  InvalidPriceRelationshipError | InvalidVolumeError,
+  | InvalidPriceRelationshipError
+  | InvalidVolumeError
+  | InvalidTimestampError
+  | UnknownError,
   never
 > =>
   createCandlestick({
