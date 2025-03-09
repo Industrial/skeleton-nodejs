@@ -28,9 +28,12 @@ import {
   BacktestResultSchema,
 } from '../domain/backtesting/BacktestResult'
 import type { Position } from '../domain/backtesting/Position'
+import { PositionSchema } from '../domain/backtesting/Position'
 import { PositionStatus } from '../domain/backtesting/PositionStatus'
 import type { Trade } from '../domain/backtesting/Trade'
+import { TradeDirection, TradeSchema } from '../domain/backtesting/Trade'
 import type { Candlestick } from '../domain/market-data/Candlestick'
+import { SignalDirection } from '../domain/strategy/Signal'
 import type { Signal } from '../domain/strategy/Signal'
 import type { Strategy } from '../domain/strategy/Strategy'
 import { BacktestingError } from './BacktestingService'
@@ -89,17 +92,203 @@ const processSignals = (
 
       // Initialize state
       let currentState = initialState
+      const openPositions = new Map<string, Position>() // Track open positions by ID
+      const trades: Trade[] = []
+      const closedPositions: Position[] = []
+      const { v4: uuidv4 } = yield* _(Effect.sync(() => require('uuid')))
 
       // Process each signal with corresponding candlestick
       for (let i = 0; i < signals.length; i++) {
         const signal = signals[i]
         const candlestick = candlesticks[i]
 
-        // Process the signal (in a real implementation, this would be more complex)
-        // This is a simplified placeholder implementation
-        if (signal) {
-          // Update state based on signal
-          // This is where position opening/closing logic would go
+        if (!signal || !candlestick) continue
+
+        // Process the signal based on its direction
+        switch (signal.direction) {
+          case 'buy': {
+            // Check if we can open a new position based on parameters
+            if (
+              parameters.maxConcurrentPositions > 0 &&
+              openPositions.size >= parameters.maxConcurrentPositions
+            ) {
+              // Skip if we've reached the maximum number of concurrent positions
+              break
+            }
+
+            // Calculate position size based on the sizing method
+            let positionSize = 0
+            const availableCapital = currentState.availableCapital
+
+            switch (parameters.positionSizingMethod) {
+              case PositionSizingMethod.Fixed:
+                // Fixed size in units
+                positionSize = parameters.positionSizeValue
+                break
+              case PositionSizingMethod.PercentageOfCapital:
+                // Percentage of available capital
+                positionSize =
+                  (availableCapital * parameters.positionSizeValue) /
+                  100 /
+                  signal.price
+                break
+              case PositionSizingMethod.RiskBased:
+                // Risk-based sizing (simplified)
+                positionSize =
+                  (availableCapital * parameters.positionSizeValue) /
+                  100 /
+                  signal.price
+                break
+              case PositionSizingMethod.Kelly:
+                // Kelly criterion (simplified)
+                positionSize =
+                  (availableCapital * parameters.positionSizeValue) /
+                  100 /
+                  signal.price
+                break
+            }
+
+            // Apply slippage to the price (buy at a slightly higher price)
+            const slippageAdjustedPrice =
+              signal.price * (1 + parameters.slippageRate)
+
+            // Calculate fees
+            const fees =
+              slippageAdjustedPrice * positionSize * parameters.feeRate
+
+            // Create a buy trade
+            const buyTrade = Schema.decodeSync(TradeSchema)({
+              id: uuidv4(),
+              direction: TradeDirection.Buy,
+              price: slippageAdjustedPrice,
+              volume: positionSize,
+              timestamp: candlestick.timestamp,
+              fees,
+              metadata: {
+                signalStrength: signal.strength,
+                candlestick: {
+                  open: candlestick.open,
+                  high: candlestick.high,
+                  low: candlestick.low,
+                  close: candlestick.close,
+                  volume: candlestick.volume,
+                },
+              },
+            })
+
+            // Add the trade to our list
+            trades.push(buyTrade)
+
+            // Create a new position
+            const positionId = uuidv4()
+            const newPosition = Schema.decodeSync(PositionSchema)({
+              id: positionId,
+              status: PositionStatus.Open,
+              direction: TradeDirection.Buy,
+              entryPrice: slippageAdjustedPrice,
+              size: positionSize,
+              openTimestamp: candlestick.timestamp,
+              entryTrade: buyTrade,
+              metadata: {
+                signalMetadata: signal.metadata,
+              },
+            })
+
+            // Add to open positions
+            openPositions.set(positionId, newPosition)
+
+            // Update available capital
+            const cost = slippageAdjustedPrice * positionSize + fees
+            currentState = {
+              ...currentState,
+              availableCapital: availableCapital - cost,
+              openPositions: Array.from(openPositions.values()),
+            }
+            break
+          }
+          case 'sell': {
+            // Close any open positions if we have a sell signal
+            if (openPositions.size > 0) {
+              // In a real implementation, we might be more selective about which positions to close
+              // For simplicity, we'll close the oldest position first
+              const positionsArray = Array.from(openPositions.values())
+              const oldestPosition = positionsArray.reduce((oldest, current) =>
+                oldest.openTimestamp < current.openTimestamp ? oldest : current,
+              )
+
+              // Apply slippage to the price (sell at a slightly lower price)
+              const slippageAdjustedPrice =
+                signal.price * (1 - parameters.slippageRate)
+
+              // Calculate fees
+              const fees =
+                slippageAdjustedPrice * oldestPosition.size * parameters.feeRate
+
+              // Create a sell trade
+              const sellTrade = Schema.decodeSync(TradeSchema)({
+                id: uuidv4(),
+                direction: TradeDirection.Sell,
+                price: slippageAdjustedPrice,
+                volume: oldestPosition.size,
+                timestamp: candlestick.timestamp,
+                fees,
+                metadata: {
+                  signalStrength: signal.strength,
+                  candlestick: {
+                    open: candlestick.open,
+                    high: candlestick.high,
+                    low: candlestick.low,
+                    close: candlestick.close,
+                    volume: candlestick.volume,
+                  },
+                },
+              })
+
+              // Add the trade to our list
+              trades.push(sellTrade)
+
+              // Close the position
+              const closedPosition = Schema.decodeSync(PositionSchema)({
+                ...oldestPosition,
+                status: PositionStatus.Closed,
+                exitPrice: slippageAdjustedPrice,
+                closeTimestamp: candlestick.timestamp,
+                exitTrade: sellTrade,
+              })
+
+              // Remove from open positions and add to closed positions
+              openPositions.delete(oldestPosition.id)
+              closedPositions.push(closedPosition)
+
+              // Calculate profit/loss
+              const entryValue = oldestPosition.entryPrice * oldestPosition.size
+              const exitValue = slippageAdjustedPrice * oldestPosition.size
+              const totalFees =
+                (oldestPosition.entryTrade?.fees || 0) + sellTrade.fees
+              const profitLoss = exitValue - entryValue - totalFees
+
+              // Update equity and available capital
+              const newEquity = currentState.equity + profitLoss
+              const newAvailableCapital =
+                currentState.availableCapital + exitValue - fees
+
+              currentState = {
+                ...currentState,
+                equity: newEquity,
+                availableCapital: newAvailableCapital,
+                openPositions: Array.from(openPositions.values()),
+                closedPositions: [
+                  ...currentState.closedPositions,
+                  closedPosition,
+                ],
+                trades: [...currentState.trades, sellTrade],
+              }
+            }
+            break
+          }
+          // For 'none' signals, we don't take any action
+          default:
+            break
         }
 
         // Update equity curve
@@ -113,9 +302,11 @@ const processSignals = (
 
         // Calculate drawdown
         const currentDrawdown =
-          ((currentState.peakEquity - currentState.equity) /
-            currentState.peakEquity) *
-          100
+          currentState.peakEquity > 0
+            ? ((currentState.peakEquity - currentState.equity) /
+                currentState.peakEquity) *
+              100
+            : 0
         currentState = {
           ...currentState,
           drawdownCurve: [
@@ -133,8 +324,106 @@ const processSignals = (
         }
       }
 
-      // Close any remaining open positions
-      // This would be implemented in a real service
+      // Close any remaining open positions at the last price
+      if (openPositions.size > 0 && candlesticks.length > 0) {
+        const lastCandlestick = candlesticks[candlesticks.length - 1]
+        const lastPrice = lastCandlestick.close
+
+        for (const position of openPositions.values()) {
+          // Apply slippage to the price (sell at a slightly lower price)
+          const slippageAdjustedPrice =
+            lastPrice * (1 - parameters.slippageRate)
+
+          // Calculate fees
+          const fees =
+            slippageAdjustedPrice * position.size * parameters.feeRate
+
+          // Create a sell trade
+          const sellTrade = Schema.decodeSync(TradeSchema)({
+            id: uuidv4(),
+            direction: TradeDirection.Sell,
+            price: slippageAdjustedPrice,
+            volume: position.size,
+            timestamp: lastCandlestick.timestamp,
+            fees,
+            metadata: {
+              forcedClose: true,
+              candlestick: {
+                open: lastCandlestick.open,
+                high: lastCandlestick.high,
+                low: lastCandlestick.low,
+                close: lastCandlestick.close,
+                volume: lastCandlestick.volume,
+              },
+            },
+          })
+
+          // Add the trade to our list
+          trades.push(sellTrade)
+
+          // Close the position
+          const closedPosition = Schema.decodeSync(PositionSchema)({
+            ...position,
+            status: PositionStatus.Closed,
+            exitPrice: slippageAdjustedPrice,
+            closeTimestamp: lastCandlestick.timestamp,
+            exitTrade: sellTrade,
+          })
+
+          // Add to closed positions
+          closedPositions.push(closedPosition)
+
+          // Calculate profit/loss
+          const entryValue = position.entryPrice * position.size
+          const exitValue = slippageAdjustedPrice * position.size
+          const totalFees = (position.entryTrade?.fees || 0) + sellTrade.fees
+          const profitLoss = exitValue - entryValue - totalFees
+
+          // Update equity and available capital
+          currentState = {
+            ...currentState,
+            equity: currentState.equity + profitLoss,
+            availableCapital: currentState.availableCapital + exitValue - fees,
+          }
+        }
+
+        // Update final state
+        currentState = {
+          ...currentState,
+          openPositions: [],
+          closedPositions: [
+            ...currentState.closedPositions,
+            ...closedPositions,
+          ],
+          trades: [...currentState.trades, ...trades],
+        }
+
+        // Update final equity curve and drawdown
+        if (candlesticks.length > 0) {
+          const lastTimestamp = candlesticks[candlesticks.length - 1].timestamp
+          currentState = {
+            ...currentState,
+            equityCurve: [
+              ...currentState.equityCurve,
+              [lastTimestamp, currentState.equity],
+            ],
+          }
+
+          const finalDrawdown =
+            currentState.peakEquity > 0
+              ? ((currentState.peakEquity - currentState.equity) /
+                  currentState.peakEquity) *
+                100
+              : 0
+          currentState = {
+            ...currentState,
+            drawdownCurve: [
+              ...currentState.drawdownCurve,
+              [lastTimestamp, finalDrawdown],
+            ],
+          }
+        }
+      }
 
       return currentState
     } catch (error) {
@@ -180,9 +469,19 @@ const runBacktest = (
       const startTime = Date.now()
 
       // Generate signals from the strategy
-      // In a real implementation, this would call the strategy's signal generation method
-      // For now, we'll create an empty array of signals
-      const signals: Signal[] = []
+      console.log(`Generating signals using ${strategy.name} strategy...`)
+      const signals = yield* _(
+        strategy.analyze(candlesticks).pipe(
+          Effect.mapError(
+            (error) =>
+              new BacktestingError({
+                message: `Failed to generate signals: ${String(error)}`,
+                cause: error,
+              }),
+          ),
+        ),
+      )
+      console.log(`Generated ${signals.length} signals`)
 
       // Create initial state
       const initialState = yield* _(
@@ -190,6 +489,7 @@ const runBacktest = (
       )
 
       // Process signals
+      console.log('Processing signals and simulating trades...')
       const finalState = yield* _(
         processSignals({
           signals,
@@ -203,6 +503,90 @@ const runBacktest = (
       const endTime = Date.now()
       const executionTime = endTime - startTime
 
+      // Calculate performance metrics
+      const trades = finalState.trades
+      const positions = [
+        ...Array.from(finalState.openPositions),
+        ...Array.from(finalState.closedPositions),
+      ]
+
+      // Calculate basic metrics
+      const totalReturn = finalState.equity - parameters.initialCapital
+      const totalReturnPercentage =
+        (totalReturn / parameters.initialCapital) * 100
+      const numberOfTrades = trades.length
+
+      // Calculate winning and losing trades
+      let winningTrades = 0
+      let losingTrades = 0
+      let totalProfit = 0
+      let totalLoss = 0
+      let consecutiveWins = 0
+      let consecutiveLosses = 0
+      let maxConsecutiveWins = 0
+      let maxConsecutiveLosses = 0
+      let totalHoldingPeriod = 0
+
+      // Calculate max drawdown
+      let maxDrawdown = 0
+      let maxDrawdownPercentage = 0
+      if (finalState.drawdownCurve.length > 0) {
+        maxDrawdownPercentage = Math.max(
+          ...finalState.drawdownCurve.map(([, drawdown]) => drawdown),
+        )
+        maxDrawdown = (maxDrawdownPercentage / 100) * parameters.initialCapital
+      }
+
+      // Process closed positions to calculate metrics
+      for (const position of positions) {
+        if (position.status === PositionStatus.Closed && position.exitPrice) {
+          const entryValue = position.entryPrice * position.size
+          const exitValue = position.exitPrice * position.size
+          const entryFees = position.entryTrade?.fees || 0
+          const exitFees = position.exitTrade?.fees || 0
+          const totalFees = entryFees + exitFees
+          const profitLoss = exitValue - entryValue - totalFees
+
+          if (profitLoss > 0) {
+            winningTrades++
+            totalProfit += profitLoss
+            consecutiveWins++
+            consecutiveLosses = 0
+            maxConsecutiveWins = Math.max(maxConsecutiveWins, consecutiveWins)
+          } else {
+            losingTrades++
+            totalLoss += Math.abs(profitLoss)
+            consecutiveLosses++
+            consecutiveWins = 0
+            maxConsecutiveLosses = Math.max(
+              maxConsecutiveLosses,
+              consecutiveLosses,
+            )
+          }
+
+          // Calculate holding period
+          if (position.openTimestamp && position.closeTimestamp) {
+            const holdingPeriod =
+              position.closeTimestamp - position.openTimestamp
+            totalHoldingPeriod += holdingPeriod
+          }
+        }
+      }
+
+      // Calculate derived metrics
+      const winRate =
+        numberOfTrades > 0 ? (winningTrades / numberOfTrades) * 100 : 0
+      const averageProfit = winningTrades > 0 ? totalProfit / winningTrades : 0
+      const averageLoss = losingTrades > 0 ? totalLoss / losingTrades : 0
+      const profitFactor =
+        totalLoss > 0
+          ? totalProfit / totalLoss
+          : totalProfit > 0
+            ? Number.POSITIVE_INFINITY
+            : 0
+      const averageHoldingPeriod =
+        positions.length > 0 ? totalHoldingPeriod / positions.length : 0
+
       // Create backtest result
       const backtestResult = Schema.decodeSync(BacktestResultSchema)({
         id: uuidv4(),
@@ -210,25 +594,22 @@ const runBacktest = (
         description,
         parameters,
         trades: Array.from(finalState.trades),
-        positions: [
-          ...Array.from(finalState.openPositions),
-          ...Array.from(finalState.closedPositions),
-        ],
+        positions,
         metrics: {
-          totalReturn: 0,
-          totalReturnPercentage: 0,
-          numberOfTrades: finalState.trades.length,
-          winningTrades: 0,
-          losingTrades: 0,
-          winRate: 0,
-          averageProfit: 0,
-          averageLoss: 0,
-          profitFactor: 0,
-          maxDrawdown: 0,
-          maxDrawdownPercentage: 0,
-          maxConsecutiveWins: 0,
-          maxConsecutiveLosses: 0,
-          averageHoldingPeriod: 0,
+          totalReturn,
+          totalReturnPercentage,
+          numberOfTrades,
+          winningTrades,
+          losingTrades,
+          winRate,
+          averageProfit,
+          averageLoss,
+          profitFactor,
+          maxDrawdown,
+          maxDrawdownPercentage,
+          maxConsecutiveWins,
+          maxConsecutiveLosses,
+          averageHoldingPeriod,
         },
         startTimestamp: candlesticks[0]?.timestamp || Date.now(),
         endTimestamp:
@@ -238,11 +619,23 @@ const runBacktest = (
         metadata: {
           equityCurve: finalState.equityCurve,
           drawdownCurve: finalState.drawdownCurve,
+          strategy: {
+            name: strategy.name,
+            description: strategy.description,
+            parameters: strategy.parameters,
+          },
         },
       })
 
       // Log summary
       console.log(`Backtest completed: ${backtestResult.name}`)
+      console.log(
+        `Total return: ${totalReturn.toFixed(2)} (${totalReturnPercentage.toFixed(2)}%)`,
+      )
+      console.log(`Win rate: ${winRate.toFixed(2)}%`)
+      console.log(`Profit factor: ${profitFactor.toFixed(2)}`)
+      console.log(`Max drawdown: ${maxDrawdownPercentage.toFixed(2)}%`)
+      console.log(`Total trades: ${numberOfTrades}`)
 
       return backtestResult
     } catch (error) {
