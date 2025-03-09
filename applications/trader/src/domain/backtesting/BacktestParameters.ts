@@ -4,16 +4,7 @@
  * Provides configuration options for backtesting trading strategies.
  */
 
-import { Data, Effect, Schema } from 'effect'
-
-/**
- * Error thrown when backtest parameters are invalid
- */
-export class InvalidBacktestParametersError extends Data.TaggedError(
-  'InvalidBacktestParametersError',
-)<{
-  readonly message: string
-}> {}
+import { Schema } from 'effect'
 
 /**
  * Enum for position sizing methods
@@ -31,6 +22,33 @@ export enum PositionSizingMethod {
   /** Kelly criterion sizing */
   Kelly = 'kelly',
 }
+
+/**
+ * Schema for position sizing method
+ */
+export const PositionSizingMethodSchema = Schema.Enums(PositionSizingMethod)
+
+/**
+ * Type for validated position sizing method
+ */
+export type PositionSizingMethodType = Schema.Schema.Type<
+  typeof PositionSizingMethodSchema
+>
+
+/**
+ * Schema for backtest parameters metadata
+ */
+export const BacktestParametersMetadataSchema = Schema.Record({
+  key: Schema.String,
+  value: Schema.Unknown,
+})
+
+/**
+ * Type for validated backtest parameters metadata
+ */
+export type BacktestParametersMetadataType = Schema.Schema.Type<
+  typeof BacktestParametersMetadataSchema
+>
 
 /**
  * Schema for backtest parameters
@@ -58,7 +76,7 @@ export const BacktestParametersSchema = Schema.Struct({
   ),
 
   /** Position sizing method */
-  positionSizingMethod: Schema.Enums(PositionSizingMethod),
+  positionSizingMethod: PositionSizingMethodSchema,
 
   /** Position size value (interpretation depends on positionSizingMethod) */
   positionSizeValue: Schema.Number.pipe(
@@ -78,9 +96,7 @@ export const BacktestParametersSchema = Schema.Struct({
   ),
 
   /** Optional metadata for additional parameters */
-  metadata: Schema.optional(
-    Schema.Record({ key: Schema.String, value: Schema.Unknown }),
-  ),
+  metadata: Schema.optional(BacktestParametersMetadataSchema),
 })
 
 /**
@@ -91,203 +107,79 @@ export type BacktestParameters = Schema.Schema.Type<
 >
 
 /**
- * Interface for backtest parameters
+ * Schema for backtest parameters input
  */
-export interface BacktestParametersInput {
+export const BacktestParametersInputSchema = Schema.Struct({
   /** Initial capital for the backtest */
-  initialCapital: number
+  initialCapital: Schema.Number.pipe(
+    Schema.positive({
+      message: () => 'Initial capital must be positive',
+    }),
+  ),
+
   /** Trading fee rate (as a decimal, e.g., 0.001 for 0.1%) */
-  feeRate: number
+  feeRate: Schema.Number.pipe(
+    Schema.nonNegative({
+      message: () => 'Fee rate must be non-negative',
+    }),
+  ),
+
   /** Slippage rate (as a decimal, e.g., 0.001 for 0.1%) */
-  slippageRate: number
+  slippageRate: Schema.Number.pipe(
+    Schema.nonNegative({
+      message: () => 'Slippage rate must be non-negative',
+    }),
+  ),
+
   /** Position sizing method */
-  positionSizingMethod: PositionSizingMethod
+  positionSizingMethod: PositionSizingMethodSchema,
+
   /** Position size value (interpretation depends on positionSizingMethod) */
-  positionSizeValue: number
+  positionSizeValue: Schema.Number.pipe(
+    Schema.positive({
+      message: () => 'Position size value must be positive',
+    }),
+  ),
+
   /** Whether to reinvest profits */
-  reinvestProfits: boolean
+  reinvestProfits: Schema.Boolean,
+
   /** Maximum number of concurrent positions (0 for unlimited) */
-  maxConcurrentPositions: number
+  maxConcurrentPositions: Schema.Number.pipe(
+    Schema.nonNegative({
+      message: () => 'Maximum concurrent positions must be non-negative',
+    }),
+  ),
+
   /** Optional metadata for additional parameters */
-  metadata?: Record<string, unknown>
-}
+  metadata: Schema.optional(BacktestParametersMetadataSchema),
+})
 
 /**
- * Creates validated backtest parameters
- * @param params Backtest parameters input
- * @returns Effect containing the validated backtest parameters
- * @throws {InvalidBacktestParametersError} When parameters are invalid
+ * Type for backtest parameters input
  */
-export const createBacktestParameters = (
-  params: BacktestParametersInput,
-): Effect.Effect<BacktestParameters, InvalidBacktestParametersError, never> =>
-  Effect.gen(function* (_) {
-    // Validate initial capital
-    if (params.initialCapital <= 0) {
-      return yield* _(
-        Effect.fail(
-          new InvalidBacktestParametersError({
-            message: 'Initial capital must be positive',
-          }),
-        ),
-      )
-    }
-
-    // Validate fee rate
-    if (params.feeRate < 0) {
-      return yield* _(
-        Effect.fail(
-          new InvalidBacktestParametersError({
-            message: 'Fee rate must be non-negative',
-          }),
-        ),
-      )
-    }
-
-    // Validate slippage rate
-    if (params.slippageRate < 0) {
-      return yield* _(
-        Effect.fail(
-          new InvalidBacktestParametersError({
-            message: 'Slippage rate must be non-negative',
-          }),
-        ),
-      )
-    }
-
-    // Validate position size value
-    if (params.positionSizeValue <= 0) {
-      return yield* _(
-        Effect.fail(
-          new InvalidBacktestParametersError({
-            message: 'Position size value must be positive',
-          }),
-        ),
-      )
-    }
-
-    // Validate position sizing method specific constraints
-    if (
-      params.positionSizingMethod ===
-        PositionSizingMethod.PercentageOfCapital &&
-      params.positionSizeValue > 100
-    ) {
-      return yield* _(
-        Effect.fail(
-          new InvalidBacktestParametersError({
-            message: 'Percentage of capital cannot exceed 100%',
-          }),
-        ),
-      )
-    }
-
-    // Validate max concurrent positions
-    if (params.maxConcurrentPositions < 0) {
-      return yield* _(
-        Effect.fail(
-          new InvalidBacktestParametersError({
-            message: 'Maximum concurrent positions must be non-negative',
-          }),
-        ),
-      )
-    }
-
-    // If all validations pass, decode the data
-    try {
-      return Schema.decodeSync(BacktestParametersSchema)(params)
-    } catch (error) {
-      return yield* _(
-        Effect.fail(
-          new InvalidBacktestParametersError({
-            message: `Invalid backtest parameters: ${String(error)}`,
-          }),
-        ),
-      )
-    }
-  })
+export type BacktestParametersInput = Schema.Schema.Type<
+  typeof BacktestParametersInputSchema
+>
 
 /**
- * Creates default backtest parameters
- * @returns Effect containing the default backtest parameters
+ * Schema for default backtest parameters
  */
-export const createDefaultBacktestParameters = (): Effect.Effect<
-  BacktestParameters,
-  InvalidBacktestParametersError,
-  never
-> =>
-  createBacktestParameters({
-    initialCapital: 10000,
-    feeRate: 0.001, // 0.1%
-    slippageRate: 0.001, // 0.1%
-    positionSizingMethod: PositionSizingMethod.PercentageOfCapital,
-    positionSizeValue: 10, // 10% of capital
-    reinvestProfits: true,
-    maxConcurrentPositions: 0, // unlimited
-  })
+export const DefaultBacktestParametersSchema = Schema.Struct({
+  initialCapital: Schema.Literal(10000),
+  feeRate: Schema.Literal(0.001), // 0.1%
+  slippageRate: Schema.Literal(0.001), // 0.1%
+  positionSizingMethod: Schema.Literal(
+    PositionSizingMethod.PercentageOfCapital,
+  ),
+  positionSizeValue: Schema.Literal(10), // 10% of capital
+  reinvestProfits: Schema.Literal(true),
+  maxConcurrentPositions: Schema.Literal(0), // unlimited
+})
 
 /**
- * Calculate the position size based on the backtest parameters
- * @param parameters Backtest parameters
- * @param availableCapital Available capital
- * @param price Current price
- * @param stopLoss Optional stop loss price (for risk-based sizing)
- * @returns The calculated position size
+ * Type for default backtest parameters
  */
-export const calculatePositionSize = (
-  parameters: BacktestParameters,
-  availableCapital: number,
-  price: number,
-  stopLoss?: number,
-): number => {
-  switch (parameters.positionSizingMethod) {
-    case PositionSizingMethod.Fixed: {
-      return parameters.positionSizeValue
-    }
-
-    case PositionSizingMethod.PercentageOfCapital: {
-      const capitalToRisk =
-        (availableCapital * parameters.positionSizeValue) / 100
-      return capitalToRisk / price
-    }
-
-    case PositionSizingMethod.RiskBased: {
-      if (!stopLoss || stopLoss <= 0) {
-        // Fall back to percentage of capital if no stop loss
-        const fallbackCapital =
-          (availableCapital * parameters.positionSizeValue) / 100
-        return fallbackCapital / price
-      }
-
-      const riskPercentage = parameters.positionSizeValue
-      const capitalRisked = (availableCapital * riskPercentage) / 100
-      const priceDifference = Math.abs(price - stopLoss)
-      const riskPerUnit = priceDifference / price
-
-      return capitalRisked / (price * riskPerUnit)
-    }
-
-    case PositionSizingMethod.Kelly: {
-      // Simple Kelly implementation (assumes 50% win rate if not provided)
-      const winRate = (parameters.metadata?.winRate as number) || 0.5
-      const winLossRatio = (parameters.metadata?.winLossRatio as number) || 1
-
-      // Kelly formula: f* = (p * b - q) / b
-      // where f* is the fraction of capital to bet
-      // p is the probability of winning
-      // q is the probability of losing (1 - p)
-      // b is the win/loss ratio
-
-      const kellyFraction =
-        (winRate * winLossRatio - (1 - winRate)) / winLossRatio
-      const adjustedKelly =
-        Math.max(0, Math.min(kellyFraction, 1)) * parameters.positionSizeValue
-      const kellyCapital = (availableCapital * adjustedKelly) / 100
-
-      return kellyCapital / price
-    }
-
-    default: {
-      return 0
-    }
-  }
-}
+export type DefaultBacktestParameters = Schema.Schema.Type<
+  typeof DefaultBacktestParametersSchema
+>

@@ -4,7 +4,7 @@
  * Represents a single buy or sell action with price, volume, and timestamp.
  */
 
-import { Data, Effect, Schema } from 'effect'
+import { Schema } from 'effect'
 
 /**
  * Enum for trade directions
@@ -18,18 +18,34 @@ export enum TradeDirection {
 }
 
 /**
- * Error thrown when trade parameters are invalid
+ * Schema for trade direction
  */
-export class InvalidTradeError extends Data.TaggedError('InvalidTradeError')<{
-  readonly message: string
-}> {}
+export const TradeDirectionSchema = Schema.Enums(TradeDirection)
+
+/**
+ * Type for validated trade direction
+ */
+export type TradeDirectionType = Schema.Schema.Type<typeof TradeDirectionSchema>
+
+/**
+ * Schema for trade metadata
+ */
+export const TradeMetadataSchema = Schema.Record({
+  key: Schema.String,
+  value: Schema.Unknown,
+})
+
+/**
+ * Type for validated trade metadata
+ */
+export type TradeMetadataType = Schema.Schema.Type<typeof TradeMetadataSchema>
 
 /**
  * Schema for trade data
  */
 export const TradeSchema = Schema.Struct({
   /** Direction of the trade (buy or sell) */
-  direction: Schema.Enums(TradeDirection),
+  direction: TradeDirectionSchema,
 
   /** Price at which the trade was executed */
   price: Schema.Number.pipe(
@@ -63,9 +79,7 @@ export const TradeSchema = Schema.Struct({
   id: Schema.optional(Schema.String),
 
   /** Optional metadata for additional trade information */
-  metadata: Schema.optional(
-    Schema.Record({ key: Schema.String, value: Schema.Unknown }),
-  ),
+  metadata: Schema.optional(TradeMetadataSchema),
 })
 
 /**
@@ -74,184 +88,140 @@ export const TradeSchema = Schema.Struct({
 export type Trade = Schema.Schema.Type<typeof TradeSchema>
 
 /**
- * Interface for trade parameters
+ * Schema for trade input parameters
  */
-export interface TradeParams {
+export const TradeInputSchema = Schema.Struct({
   /** Direction of the trade (buy or sell) */
-  direction: TradeDirection
+  direction: TradeDirectionSchema,
+
   /** Price at which the trade was executed */
-  price: number
+  price: Schema.Number.pipe(
+    Schema.positive({
+      message: () => 'Price must be positive',
+    }),
+  ),
+
   /** Volume of the trade (quantity) */
-  volume: number
+  volume: Schema.Number.pipe(
+    Schema.positive({
+      message: () => 'Volume must be positive',
+    }),
+  ),
+
   /** Timestamp when the trade was executed */
-  timestamp: number
+  timestamp: Schema.Number.pipe(
+    Schema.positive({
+      message: () => 'Timestamp must be positive',
+    }),
+  ),
+
   /** Trading fees for this trade */
-  fees: number
+  fees: Schema.Number.pipe(
+    Schema.nonNegative({
+      message: () => 'Fees must be non-negative',
+    }),
+  ),
+
   /** Optional identifier for the trade */
-  id?: string
+  id: Schema.optional(Schema.String),
+
   /** Optional metadata for additional trade information */
-  metadata?: Record<string, unknown>
-}
+  metadata: Schema.optional(TradeMetadataSchema),
+})
 
 /**
- * Creates a validated trade
- * @param params Trade parameters
- * @returns Effect containing the validated trade
- * @throws {InvalidTradeError} When trade parameters are invalid
- * @example
- * ```ts
- * const trade = createTrade({
- *   direction: TradeDirection.Buy,
- *   price: 50000,
- *   volume: 0.1,
- *   timestamp: Date.now(),
- *   fees: 0.001
- * })
- * ```
+ * Type for trade input parameters
  */
-export const createTrade = (
-  params: TradeParams,
-): Effect.Effect<Trade, InvalidTradeError, never> =>
-  Effect.gen(function* (_) {
-    // Validate price
-    if (params.price <= 0) {
-      return yield* _(
-        Effect.fail(
-          new InvalidTradeError({
-            message: 'Price must be positive',
-          }),
-        ),
-      )
-    }
-
-    // Validate volume
-    if (params.volume <= 0) {
-      return yield* _(
-        Effect.fail(
-          new InvalidTradeError({
-            message: 'Volume must be positive',
-          }),
-        ),
-      )
-    }
-
-    // Validate timestamp
-    if (params.timestamp <= 0) {
-      return yield* _(
-        Effect.fail(
-          new InvalidTradeError({
-            message: 'Timestamp must be positive',
-          }),
-        ),
-      )
-    }
-
-    // Validate fees
-    if (params.fees < 0) {
-      return yield* _(
-        Effect.fail(
-          new InvalidTradeError({
-            message: 'Fees must be non-negative',
-          }),
-        ),
-      )
-    }
-
-    // If all validations pass, decode the data
-    try {
-      return Schema.decodeSync(TradeSchema)(params)
-    } catch (error) {
-      return yield* _(
-        Effect.fail(
-          new InvalidTradeError({
-            message: `Invalid trade parameters: ${String(error)}`,
-          }),
-        ),
-      )
-    }
-  })
+export type TradeInput = Schema.Schema.Type<typeof TradeInputSchema>
 
 /**
- * Creates a buy trade
- * @param price Price at which to buy
- * @param volume Volume to buy
- * @param timestamp Timestamp of the trade
- * @param options Additional options (fees, id, metadata)
- * @returns Effect containing the validated buy trade
+ * Schema for buy trade input parameters
  */
-export const createBuyTrade = (
-  price: number,
-  volume: number,
-  timestamp: number,
-  options?: {
-    fees?: number
-    id?: string
-    metadata?: Record<string, unknown>
-  },
-): Effect.Effect<Trade, InvalidTradeError, never> =>
-  createTrade({
-    direction: TradeDirection.Buy,
-    price,
-    volume,
-    timestamp,
-    fees: options?.fees ?? 0,
-    id: options?.id,
-    metadata: options?.metadata,
-  })
+export const BuyTradeInputSchema = Schema.Struct({
+  /** Price at which to buy */
+  price: Schema.Number.pipe(
+    Schema.positive({
+      message: () => 'Price must be positive',
+    }),
+  ),
+
+  /** Volume to buy */
+  volume: Schema.Number.pipe(
+    Schema.positive({
+      message: () => 'Volume must be positive',
+    }),
+  ),
+
+  /** Timestamp of the trade */
+  timestamp: Schema.Number.pipe(
+    Schema.positive({
+      message: () => 'Timestamp must be positive',
+    }),
+  ),
+
+  /** Optional fees */
+  fees: Schema.optional(
+    Schema.Number.pipe(
+      Schema.nonNegative({
+        message: () => 'Fees must be non-negative',
+      }),
+    ),
+  ),
+
+  /** Optional identifier */
+  id: Schema.optional(Schema.String),
+
+  /** Optional metadata */
+  metadata: Schema.optional(TradeMetadataSchema),
+})
 
 /**
- * Creates a sell trade
- * @param price Price at which to sell
- * @param volume Volume to sell
- * @param timestamp Timestamp of the trade
- * @param options Additional options (fees, id, metadata)
- * @returns Effect containing the validated sell trade
+ * Type for buy trade input parameters
  */
-export const createSellTrade = (
-  price: number,
-  volume: number,
-  timestamp: number,
-  options?: {
-    fees?: number
-    id?: string
-    metadata?: Record<string, unknown>
-  },
-): Effect.Effect<Trade, InvalidTradeError, never> =>
-  createTrade({
-    direction: TradeDirection.Sell,
-    price,
-    volume,
-    timestamp,
-    fees: options?.fees ?? 0,
-    id: options?.id,
-    metadata: options?.metadata,
-  })
+export type BuyTradeInput = Schema.Schema.Type<typeof BuyTradeInputSchema>
 
 /**
- * Calculate the cost of a trade (price * volume)
- * @param trade The trade to calculate cost for
- * @returns The cost of the trade
+ * Schema for sell trade input parameters
  */
-export const calculateTradeCost = (trade: Trade): number => {
-  return trade.price * trade.volume
-}
+export const SellTradeInputSchema = Schema.Struct({
+  /** Price at which to sell */
+  price: Schema.Number.pipe(
+    Schema.positive({
+      message: () => 'Price must be positive',
+    }),
+  ),
+
+  /** Volume to sell */
+  volume: Schema.Number.pipe(
+    Schema.positive({
+      message: () => 'Volume must be positive',
+    }),
+  ),
+
+  /** Timestamp of the trade */
+  timestamp: Schema.Number.pipe(
+    Schema.positive({
+      message: () => 'Timestamp must be positive',
+    }),
+  ),
+
+  /** Optional fees */
+  fees: Schema.optional(
+    Schema.Number.pipe(
+      Schema.nonNegative({
+        message: () => 'Fees must be non-negative',
+      }),
+    ),
+  ),
+
+  /** Optional identifier */
+  id: Schema.optional(Schema.String),
+
+  /** Optional metadata */
+  metadata: Schema.optional(TradeMetadataSchema),
+})
 
 /**
- * Calculate the fee amount for a trade
- * @param trade The trade to calculate fees for
- * @returns The fee amount
+ * Type for sell trade input parameters
  */
-export const calculateTradeFees = (trade: Trade): number => {
-  return calculateTradeCost(trade) * trade.fees
-}
-
-/**
- * Calculate the total cost of a trade including fees
- * @param trade The trade to calculate total cost for
- * @returns The total cost including fees
- */
-export const calculateTotalTradeCost = (trade: Trade): number => {
-  const cost = calculateTradeCost(trade)
-  const fees = calculateTradeFees(trade)
-  return trade.direction === TradeDirection.Buy ? cost + fees : cost - fees
-}
+export type SellTradeInput = Schema.Schema.Type<typeof SellTradeInputSchema>
