@@ -23,9 +23,9 @@
   "name": "skeleton-nodejs",
   "private": true,
   "scripts": {
-    "build": "bun nx run-many -t build",
-    "lint": "bun nx run-many -t lint",
-    "test": "bun test",
+    "build": "bun nx run-many -t nx-build",
+    "lint": "bun nx run-many -t nx-lint",
+    "test": "bun nx run-many -t nx-test",
     "update-packages": "bun nx run-many -t update-packages"
   },
   "type": "module",
