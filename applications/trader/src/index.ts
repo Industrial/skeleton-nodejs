@@ -36,14 +36,33 @@ const ohlcvCommand = Command.make(
 
     return Effect.gen(function* () {
       const crypto = yield* CryptoDataService
-      const result = yield* crypto.getOHLCV(
+      const candlesticks = yield* crypto.getOHLCV(
         exchangeId,
         symbol,
         timeframe,
         start,
         end,
       )
-      console.log('result', result)
+
+      // We can now work directly with domain models
+      console.log(`Retrieved ${candlesticks.length} candlesticks`)
+
+      // Example of using domain properties
+      if (candlesticks.length > 0) {
+        const first = candlesticks[0]
+        const last = candlesticks[candlesticks.length - 1]
+        console.log(
+          `First candlestick: ${new Date(first.timestamp).toISOString()}`,
+        )
+        console.log(
+          `Last candlestick: ${new Date(last.timestamp).toISOString()}`,
+        )
+        console.log(
+          `Price range: ${Math.min(
+            ...candlesticks.map((c) => c.low),
+          )} - ${Math.max(...candlesticks.map((c) => c.high))}`,
+        )
+      }
     })
   },
 )

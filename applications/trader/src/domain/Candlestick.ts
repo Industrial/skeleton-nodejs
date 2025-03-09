@@ -4,8 +4,8 @@
  * Provides validation and type-safe handling of OHLCV (Open, High, Low, Close, Volume) data.
  */
 
+import type { OHLCV } from 'ccxt'
 import { Data, Effect, Schema } from 'effect'
-import type { CCXTOHLCVStructure } from './CCXTOHLCVStructure'
 import type { CandlestickStructure } from './CandlestickStructure'
 
 export class UnknownError extends Data.TaggedError('UnknownError')<{
@@ -170,7 +170,7 @@ export const createCandlestick = (
  * ```
  */
 export const fromCCXT = (
-  ohlcv: CCXTOHLCVStructure,
+  ohlcv: OHLCV,
 ): Effect.Effect<
   Candlestick,
   | InvalidPriceRelationshipError
@@ -180,10 +180,10 @@ export const fromCCXT = (
   never
 > =>
   createCandlestick({
-    timestamp: ohlcv[0],
-    open: ohlcv[1],
-    high: ohlcv[2],
-    low: ohlcv[3],
-    close: ohlcv[4],
-    volume: ohlcv[5],
+    timestamp: Number(ohlcv[0]),
+    open: Number(ohlcv[1]),
+    high: Number(ohlcv[2]),
+    low: Number(ohlcv[3]),
+    close: Number(ohlcv[4]),
+    volume: Number(ohlcv[5]),
   })
