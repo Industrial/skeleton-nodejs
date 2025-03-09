@@ -27,6 +27,10 @@
         activate = {
           enable = true;
         };
+        install = {
+          enable = true;
+          compile = true;
+        };
       };
     };
     javascript = {
@@ -89,6 +93,24 @@
 
   pre-commit = {
     hooks = {
+      # Custom NX hooks
+      nx-lint-affected = {
+        enable = true;
+        name = "nx-lint-affected";
+        description = "Run NX lint on affected projects";
+        entry = "bun nx affected --target nx-lint";
+        pass_filenames = false;
+        stages = ["pre-commit"];
+      };
+      nx-test-affected = {
+        enable = true;
+        name = "nx-test-affected";
+        description = "Run NX tests on affected projects";
+        entry = "bun nx affected --target nx-test";
+        pass_filenames = false;
+        stages = ["pre-push"];
+      };
+
       # Nix
       alejandra = {
         enable = true;

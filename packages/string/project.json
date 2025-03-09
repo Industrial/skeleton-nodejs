@@ -13,10 +13,6 @@
       "cache": true,
       "dependsOn": ["^nx-test", "nx-lint"]
     },
-    "nx-build": {
-      "cache": true,
-      "dependsOn": ["^nx-build", "nx-test"]
-    },
     "nx-update-packages": {
       "cache": false,
       "dependsOn": []

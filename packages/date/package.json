@@ -17,6 +17,7 @@
   "name": "@code9/date",
   "scripts": {
     "lint": "tsc -p . --noEmit && biome lint .",
+    "test": "bun test",
     "update-packages": "npm-check-updates -u"
   },
   "type": "module",

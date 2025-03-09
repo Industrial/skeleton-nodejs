@@ -17,6 +17,7 @@
   },
   "scripts": {
     "lint": "tsc -p . --noEmit && biome lint .",
+    "test": "bun test",
     "update-packages": "npm-check-updates -u"
   },
   "dependencies": {
