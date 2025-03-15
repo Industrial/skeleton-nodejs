@@ -6,9 +6,13 @@
 
 import type { OHLCV } from 'ccxt'
 import { Data, Effect, Schema } from 'effect'
-import type { CandlestickStructure } from './CandlestickStructure'
 
-export class UnknownError extends Data.TaggedError('UnknownError')<{
+/**
+ * Error thrown when strategy parameters are invalid
+ */
+export class InvalidCandlestickError extends Data.TaggedError(
+  'InvalidCandlestickError',
+)<{
   readonly message: string
 }> {}
 
@@ -86,13 +90,13 @@ export type CandlestickEncoded = Schema.Schema.Encoded<typeof CandlestickSchema>
  * ```
  */
 export const createCandlestick = (
-  params: CandlestickStructure,
+  params: Candlestick,
 ): Effect.Effect<
   Candlestick,
+  | InvalidCandlestickError
   | InvalidPriceRelationshipError
-  | InvalidVolumeError
   | InvalidTimestampError
-  | UnknownError,
+  | InvalidVolumeError,
   never
 > =>
   Effect.gen(function* (_) {
@@ -136,14 +140,16 @@ export const createCandlestick = (
       )
     }
 
-    // If all validations pass, decode the data
+    // Validate using the schema
     try {
-      return Schema.decodeSync(CandlestickSchema)(params)
-    } catch (error) {
+      const decoded = Schema.decodeSync(CandlestickSchema)(params)
+
+      return decoded
+    } catch (error: unknown) {
       return yield* _(
         Effect.fail(
-          new UnknownError({
-            message: String(error),
+          new InvalidCandlestickError({
+            message: `Invalid strategy parameters: ${String(error)}`,
           }),
         ),
       )
@@ -173,10 +179,10 @@ export const fromCCXT = (
   ohlcv: OHLCV,
 ): Effect.Effect<
   Candlestick,
+  | InvalidCandlestickError
   | InvalidPriceRelationshipError
-  | InvalidVolumeError
   | InvalidTimestampError
-  | UnknownError,
+  | InvalidVolumeError,
   never
 > =>
   createCandlestick({

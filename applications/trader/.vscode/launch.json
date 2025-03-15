@@ -59,6 +59,17 @@
       "name": "Attach Bun",
       "url": "ws://localhost:6499/",
       "stopOnEntry": false
+    },
+    {
+      "type": "bun",
+      "internalConsoleOptions": "neverOpen",
+      "request": "launch",
+      "name": "Debug Bun Test",
+      "program": "bun",
+      "args": ["test"],
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "watchMode": false
     }
   ]
 }

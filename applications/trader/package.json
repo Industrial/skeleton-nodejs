@@ -1,5 +1,5 @@
 {
-  "name": "trader",
+  "name": "@code9/trader",
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
@@ -27,7 +27,8 @@
     "biome": "^0.3.3",
     "ccxt": "^4.4.65",
     "effect": "^3.13.7",
-    "nats": "^2.29.2"
+    "nats": "^2.29.2",
+    "telegraf": "^4.16.3"
   },
   "trustedDependencies": ["@parcel/watcher", "ccxt", "core-js", "protobufjs"]
 }

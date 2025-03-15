@@ -53,7 +53,7 @@ Using DDD, the system is split into distinct domains with clear responsibilities
 1. **CCXT Service**
    - **Role**: Fetches historical candlestick data from a CEX.
    - **Domain**: Market Data Domain.
-   - **Description**: Uses the CCXT library to query a CEX (e.g., Binance) for candlestick data based on a symbol (e.g., BTC/USDT) and timeframe (e.g., 1h).
+   - **Description**: Uses the CCXT library to query a CEX (e.g., Binance) for candlestick data based on a pair (e.g., BTC/USDT) and timeframe (e.g., 1h).
    - **Output**: A list of `Candlestick` entities passed to the Backtesting Engine.
 
 2. **NATS Service**

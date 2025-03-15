@@ -7,7 +7,7 @@
 import { Schema } from 'effect'
 import type { Candlestick } from '../market-data/Candlestick'
 import type { Signal } from '../strategy/Signal'
-import type { Strategy } from '../strategy/Strategy'
+import { type Strategy, StrategyBaseSchema } from '../strategy/Strategy'
 import type { BacktestParameters } from './BacktestParameters'
 import { BacktestParametersSchema } from './BacktestParameters'
 import type { BacktestResult } from './BacktestResult'
@@ -193,7 +193,8 @@ export type UpdateEquityCurveInput = Schema.Schema.Type<
  */
 export const RunBacktestInputSchema = Schema.Struct({
   /** Trading strategy to test */
-  strategy: Schema.Any, // We'll validate this separately
+  // strategy: Schema.Any, // We'll validate this separately
+  strategy: StrategyBaseSchema,
 
   /** Historical price data */
   candlesticks: Schema.Array(Schema.Any), // We'll validate this separately

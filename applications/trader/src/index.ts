@@ -1,32 +1,17 @@
 import { Args, Command } from '@effect/cli'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
-import ccxt from 'ccxt'
 import { Effect, Layer, pipe } from 'effect'
 import type { BacktestParameters } from './domain/backtesting/BacktestParameters'
 import { PositionSizingMethod } from './domain/backtesting/BacktestParameters'
-import type { ExchangeId } from './domain/market-data/ExchangeId'
-import type { Pair } from './domain/market-data/Pair'
-import {
-  type Timeframe,
-  TimeframeSchemaValues,
-} from './domain/market-data/Timeframe'
 import { PriceType } from './domain/strategy/Indicator'
 import type { Strategy } from './domain/strategy/Strategy'
 import {
   MovingAverageType,
   createMovingAverageCrossoverStrategy,
 } from './domain/strategy/strategies/MovingAverageCrossover'
+import { AppConfigService } from './service/AppConfigService'
 import { BacktestingService } from './service/BacktestingService'
 import { CryptoDataService } from './service/CryptoDataService'
-
-const exchangesEntries = Object.entries(ccxt.exchanges).map(([, y]) => [
-  y,
-  y,
-]) as Array<[string, string]>
-
-const timeframeEntries = TimeframeSchemaValues.map((x) => [x, x]) as Array<
-  [string, string]
->
 
 const positionSizingMethodEntries = Object.entries(PositionSizingMethod).map(
   ([, value]) => [value, value],
@@ -44,29 +29,25 @@ const maTypeEntries = Object.entries(MovingAverageType).map(([, value]) => [
 const ohlcvCommand = Command.make(
   'ohlcv',
   {
-    exchange: Args.choice(exchangesEntries, {
-      name: 'exchangeId',
-    }),
-    symbol: Args.text({ name: 'exchangeSymbol' }),
-    timeframe: Args.choice(timeframeEntries, { name: 'timeframe' }),
     start: Args.date({ name: 'start' }),
     end: Args.date({ name: 'end' }),
   },
   (args) => {
-    const exchangeId: ExchangeId = args.exchange as ExchangeId
-    const symbol: Pair = args.symbol
-    const timeframe: Timeframe = args.timeframe as Timeframe
-    const start = args.start
-    const end = args.end
+    const { start, end } = args
 
-    return Effect.gen(function* () {
-      const crypto = yield* CryptoDataService
-      const candlesticks = yield* crypto.getOHLCV(
-        exchangeId,
-        symbol,
-        timeframe,
-        start,
-        end,
+    return Effect.gen(function* (_) {
+      const appConfigService = yield* _(AppConfigService)
+      const appConfig = yield* _(appConfigService.loadConfig())
+
+      const crypto = yield* _(CryptoDataService)
+      const candlesticks = yield* _(
+        crypto.getOHLCV(
+          appConfig.exchange,
+          appConfig.pair,
+          appConfig.timeframe,
+          start,
+          end,
+        ),
       )
 
       // We can now work directly with domain models
@@ -95,13 +76,8 @@ const ohlcvCommand = Command.make(
 const backtestCommand = Command.make(
   'backtest',
   {
-    exchange: Args.choice(exchangesEntries, {
-      name: 'exchangeId',
-    }),
-    symbol: Args.text({ name: 'exchangeSymbol' }),
-    timeframe: Args.choice(timeframeEntries, { name: 'timeframe' }),
-    start: Args.date({ name: 'start' }),
-    end: Args.date({ name: 'end' }),
+    start: Args.date({ name: 'startDate' }),
+    end: Args.date({ name: 'endDate' }),
     strategy: Args.choice(strategyEntries, { name: 'strategy' }),
     initialCapital: Args.text({ name: 'initialCapital' }),
     feeRate: Args.text({ name: 'feeRate' }),
@@ -125,38 +101,40 @@ const backtestCommand = Command.make(
     }),
   },
   (args) => {
-    const exchangeId: ExchangeId = args.exchange as ExchangeId
-    const symbol: Pair = args.symbol
-    const timeframe: Timeframe = args.timeframe as Timeframe
-    const start = args.start
-    const end = args.end
-    const strategyName = args.strategy
-    const initialCapital = Number.parseFloat(args.initialCapital || '10000')
-    const feeRate = Number.parseFloat(args.feeRate || '0.001')
-    const slippageRate = Number.parseFloat(args.slippageRate || '0.001')
-    const positionSizingMethod =
-      (args.positionSizingMethod as PositionSizingMethod) ||
-      PositionSizingMethod.PercentageOfCapital
-    const positionSizeValue = Number.parseFloat(args.positionSizeValue || '10')
-    const reinvestProfits = args.reinvestProfits ?? true
-    const maxConcurrentPositions = Number.parseInt(
-      args.maxConcurrentPositions || '0',
-      10,
-    )
-    const fastPeriod = Number.parseInt(args.fastPeriod || '12', 10)
-    const slowPeriod = Number.parseInt(args.slowPeriod || '26', 10)
-    const maType =
-      (args.maType as MovingAverageType) || MovingAverageType.Simple
-    const name = args.name || 'Backtest'
-    const description = args.description || 'Backtest run'
+    return Effect.gen(function* (_) {
+      const appConfigService = yield* _(AppConfigService)
+      const appConfig = yield* _(appConfigService.loadConfig())
 
-    return Effect.gen(function* () {
+      const start = args.start
+      const end = args.end
+      const strategyName = args.strategy
+      const initialCapital = Number.parseFloat(args.initialCapital || '10000')
+      const feeRate = Number.parseFloat(args.feeRate || '0.001')
+      const slippageRate = Number.parseFloat(args.slippageRate || '0.001')
+      const positionSizingMethod =
+        (args.positionSizingMethod as PositionSizingMethod) ||
+        PositionSizingMethod.PercentageOfCapital
+      const positionSizeValue = Number.parseFloat(
+        args.positionSizeValue || '10',
+      )
+      const reinvestProfits = args.reinvestProfits ?? true
+      const maxConcurrentPositions = Number.parseInt(
+        args.maxConcurrentPositions || '0',
+        10,
+      )
+      const fastPeriod = Number.parseInt(args.fastPeriod || '12', 10)
+      const slowPeriod = Number.parseInt(args.slowPeriod || '26', 10)
+      const maType =
+        (args.maType as MovingAverageType) || MovingAverageType.Simple
+      const name = args.name || 'Backtest'
+      const description = args.description || 'Backtest run'
+
       // Get market data
       const crypto = yield* CryptoDataService
       const candlesticks = yield* crypto.getOHLCV(
-        exchangeId,
-        symbol,
-        timeframe,
+        appConfig.exchange,
+        appConfig.pair,
+        appConfig.timeframe,
         start,
         end,
       )

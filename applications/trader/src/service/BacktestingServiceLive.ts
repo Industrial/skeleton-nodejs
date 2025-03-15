@@ -11,11 +11,8 @@ import {
   BacktestStateSchema,
   type ProcessSignalsInput,
   ProcessSignalsInputSchema,
-  type RunBacktestInput,
   RunBacktestInputSchema,
-  type RunParameterSweepInput,
   RunParameterSweepInputSchema,
-  type RunWalkForwardOptimizationInput,
   RunWalkForwardOptimizationInputSchema,
 } from '../domain/backtesting/Backtest'
 import {
@@ -33,8 +30,6 @@ import { PositionStatus } from '../domain/backtesting/PositionStatus'
 import type { Trade } from '../domain/backtesting/Trade'
 import { TradeDirection, TradeSchema } from '../domain/backtesting/Trade'
 import type { Candlestick } from '../domain/market-data/Candlestick'
-import { SignalDirection } from '../domain/strategy/Signal'
-import type { Signal } from '../domain/strategy/Signal'
 import type { Strategy } from '../domain/strategy/Strategy'
 import { BacktestingError } from './BacktestingService'
 
@@ -469,7 +464,9 @@ const runBacktest = (
       const startTime = Date.now()
 
       // Generate signals from the strategy
-      console.log(`Generating signals using ${strategy.name} strategy...`)
+      console.log(
+        `Generating signals using ${validatedInput.strategy.name} strategy...`,
+      )
       const signals = yield* _(
         strategy.analyze(candlesticks).pipe(
           Effect.mapError(

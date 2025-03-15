@@ -14,7 +14,18 @@ describe('Timeframe', () => {
     describe('When validating timeframe values', () => {
       it('should accept valid timeframe values', () => {
         /* Test that valid timeframe values are accepted */
-        const validTimeframes = ['1m', '3m', '5m', '15m', '1h', '4h', '1d']
+        const validTimeframes = [
+          '1m',
+          '3m',
+          '5m',
+          '15m',
+          '30m',
+          '1h',
+          '2h',
+          '4h',
+          '8h',
+          '1d',
+        ]
 
         for (const timeframe of validTimeframes) {
           const result = Effect.runSync(
@@ -28,7 +39,7 @@ describe('Timeframe', () => {
 
       it('should reject invalid timeframe values', () => {
         /* Test that invalid timeframe values are rejected */
-        const invalidTimeframes = ['2m', '10m', '2h', '12h', '2d', 'invalid']
+        const invalidTimeframes = ['2m', '10m', '5h', '12h', '2d', 'invalid']
 
         for (const timeframe of invalidTimeframes) {
           const result = Effect.runSync(
@@ -44,7 +55,18 @@ describe('Timeframe', () => {
     describe('When accessing TimeframeSchemaValues', () => {
       it('should contain all valid timeframe literals', () => {
         /* Test that TimeframeSchemaValues contains all valid timeframe literals */
-        const expectedTimeframes = ['1m', '3m', '5m', '15m', '1h', '4h', '1d']
+        const expectedTimeframes = [
+          '1m',
+          '3m',
+          '5m',
+          '15m',
+          '30m',
+          '1h',
+          '2h',
+          '4h',
+          '8h',
+          '1d',
+        ]
 
         for (const timeframe of expectedTimeframes) {
           expect(TimeframeSchemaValues).toContain(timeframe)
@@ -53,7 +75,7 @@ describe('Timeframe', () => {
 
       it('should have the correct number of values', () => {
         /* Test that TimeframeSchemaValues has the correct number of values */
-        expect(TimeframeSchemaValues.length).toBe(7)
+        expect(TimeframeSchemaValues.length).toBe(10)
       })
     })
   })
@@ -92,6 +114,14 @@ describe('Timeframe', () => {
         })
       })
 
+      describe('When converting 30m timeframe', () => {
+        it('should return 1800000 milliseconds', () => {
+          /* Test that 30m converts to 1800000 milliseconds */
+          const result = Effect.runSync(toMilliseconds('30m'))
+          expect(result).toBe(30 * 60 * 1000)
+        })
+      })
+
       describe('When converting 1h timeframe', () => {
         it('should return 3600000 milliseconds', () => {
           /* Test that 1h converts to 3600000 milliseconds */
@@ -100,11 +130,27 @@ describe('Timeframe', () => {
         })
       })
 
+      describe('When converting 2h timeframe', () => {
+        it('should return 7200000 milliseconds', () => {
+          /* Test that 2h converts to 7200000 milliseconds */
+          const result = Effect.runSync(toMilliseconds('2h'))
+          expect(result).toBe(2 * 60 * 60 * 1000)
+        })
+      })
+
       describe('When converting 4h timeframe', () => {
         it('should return 14400000 milliseconds', () => {
           /* Test that 4h converts to 14400000 milliseconds */
           const result = Effect.runSync(toMilliseconds('4h'))
           expect(result).toBe(4 * 60 * 60 * 1000)
+        })
+      })
+
+      describe('When converting 8h timeframe', () => {
+        it('should return 28800000 milliseconds', () => {
+          /* Test that 8h converts to 28800000 milliseconds */
+          const result = Effect.runSync(toMilliseconds('8h'))
+          expect(result).toBe(8 * 60 * 60 * 1000)
         })
       })
 
@@ -162,6 +208,14 @@ describe('Timeframe', () => {
         })
       })
 
+      describe('When converting 1800000 milliseconds', () => {
+        it('should return 30m timeframe', () => {
+          /* Test that 1800000 milliseconds converts to 30m */
+          const result = Effect.runSync(fromMilliseconds(30 * 60 * 1000))
+          expect(result).toBe('30m')
+        })
+      })
+
       describe('When converting 3600000 milliseconds', () => {
         it('should return 1h timeframe', () => {
           /* Test that 3600000 milliseconds converts to 1h */
@@ -170,11 +224,27 @@ describe('Timeframe', () => {
         })
       })
 
+      describe('When converting 7200000 milliseconds', () => {
+        it('should return 2h timeframe', () => {
+          /* Test that 7200000 milliseconds converts to 2h */
+          const result = Effect.runSync(fromMilliseconds(2 * 60 * 60 * 1000))
+          expect(result).toBe('2h')
+        })
+      })
+
       describe('When converting 14400000 milliseconds', () => {
         it('should return 4h timeframe', () => {
           /* Test that 14400000 milliseconds converts to 4h */
           const result = Effect.runSync(fromMilliseconds(4 * 60 * 60 * 1000))
           expect(result).toBe('4h')
+        })
+      })
+
+      describe('When converting 28800000 milliseconds', () => {
+        it('should return 8h timeframe', () => {
+          /* Test that 28800000 milliseconds converts to 8h */
+          const result = Effect.runSync(fromMilliseconds(8 * 60 * 60 * 1000))
+          expect(result).toBe('8h')
         })
       })
 
@@ -245,13 +315,16 @@ describe('Timeframe', () => {
           '3m',
           '5m',
           '15m',
+          '30m',
           '1h',
+          '2h',
           '4h',
+          '8h',
           '1d',
         ]
 
         // This test passes at compile time if the type constraint works correctly
-        expect(validTimeframes.length).toBe(7)
+        expect(validTimeframes.length).toBe(10)
       })
 
       it('should not allow invalid timeframe values', () => {
