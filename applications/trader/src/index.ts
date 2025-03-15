@@ -34,11 +34,9 @@ const ohlcvCommand = Command.make(
   },
   (args) => {
     const { start, end } = args
-
     return Effect.gen(function* (_) {
       const appConfigService = yield* _(AppConfigService)
       const appConfig = yield* _(appConfigService.loadConfig())
-
       const crypto = yield* _(CryptoDataService)
       const candlesticks = yield* _(
         crypto.getOHLCV(
@@ -49,10 +47,8 @@ const ohlcvCommand = Command.make(
           end,
         ),
       )
-
       // We can now work directly with domain models
       console.log(`Retrieved ${candlesticks.length} candlesticks`)
-
       // Example of using domain properties
       if (candlesticks.length > 0) {
         const first = candlesticks[0]
@@ -76,8 +72,8 @@ const ohlcvCommand = Command.make(
 const backtestCommand = Command.make(
   'backtest',
   {
-    start: Args.date({ name: 'startDate' }),
-    end: Args.date({ name: 'endDate' }),
+    start: Args.date({ name: 'start' }),
+    end: Args.date({ name: 'end' }),
     strategy: Args.choice(strategyEntries, { name: 'strategy' }),
     initialCapital: Args.text({ name: 'initialCapital' }),
     feeRate: Args.text({ name: 'feeRate' }),
