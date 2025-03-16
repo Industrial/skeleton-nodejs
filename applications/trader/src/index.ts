@@ -2,7 +2,7 @@ import { Args, Command } from '@effect/cli'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
 import { Effect, Layer, pipe } from 'effect'
 import type { BacktestParameters } from './domain/backtesting/BacktestParameters'
-import { PositionSizingMethod } from './domain/backtesting/BacktestParameters'
+import { PositionSizingMethod } from './domain/backtesting/PositionSizingMethod'
 import { PriceType } from './domain/strategy/Indicator'
 import type { Strategy } from './domain/strategy/Strategy'
 import {

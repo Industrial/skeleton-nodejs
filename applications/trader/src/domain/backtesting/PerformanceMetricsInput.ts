@@ -1,16 +1,10 @@
-/**
- * @module PerformanceMetrics
- * @description Domain model for performance metrics in backtesting.
- * Provides calculations and types for evaluating trading strategy performance.
- */
-
 import { Schema } from 'effect'
 import { PerformanceMetricsMetadataSchema } from './PerformanceMetricsMetadata'
 
 /**
- * Schema for performance metrics data
+ * Schema for performance metrics input parameters
  */
-export const PerformanceMetricsSchema = Schema.Struct({
+export const PerformanceMetricsInputSchema = Schema.Struct({
   /** Total return (profit/loss) in absolute terms */
   totalReturn: Schema.Number,
 
@@ -72,8 +66,8 @@ export const PerformanceMetricsSchema = Schema.Struct({
 })
 
 /**
- * Type for validated performance metrics
+ * Type for performance metrics input parameters
  */
-export type PerformanceMetrics = Schema.Schema.Type<
-  typeof PerformanceMetricsSchema
+export type PerformanceMetricsInput = Schema.Schema.Type<
+  typeof PerformanceMetricsInputSchema
 >

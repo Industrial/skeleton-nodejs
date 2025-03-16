@@ -1,17 +1,11 @@
-/**
- * @module BacktestParameters
- * @description Domain model for backtest parameters.
- * Provides configuration options for backtesting trading strategies.
- */
-
 import { Schema } from 'effect'
 import { BacktestParametersMetadataSchema } from './BacktestParametersMetadata'
 import { PositionSizingMethodSchema } from './PositionSizingMethod'
 
 /**
- * Schema for backtest parameters
+ * Schema for backtest parameters input
  */
-export const BacktestParametersSchema = Schema.Struct({
+export const BacktestParametersInputSchema = Schema.Struct({
   /** Initial capital for the backtest */
   initialCapital: Schema.Number.pipe(
     Schema.positive({
@@ -58,8 +52,8 @@ export const BacktestParametersSchema = Schema.Struct({
 })
 
 /**
- * Type for validated backtest parameters
+ * Type for backtest parameters input
  */
-export type BacktestParameters = Schema.Schema.Type<
-  typeof BacktestParametersSchema
+export type BacktestParametersInput = Schema.Schema.Type<
+  typeof BacktestParametersInputSchema
 >

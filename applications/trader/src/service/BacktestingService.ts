@@ -12,7 +12,7 @@ import type { Position } from '../domain/backtesting/Position'
 import type { Trade } from '../domain/backtesting/Trade'
 import type { Candlestick } from '../domain/market-data/Candlestick'
 import type { Strategy } from '../domain/strategy/Strategy'
-import { BacktestingServiceLive } from './BacktestingServiceLive'
+import * as BacktestingServiceLive from './BacktestingServiceLive'
 
 /**
  * Error thrown when backtesting operations fail

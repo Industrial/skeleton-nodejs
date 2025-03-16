@@ -1,9 +1,3 @@
-/**
- * @module Position
- * @description Domain model for trading positions in backtesting.
- * Represents an open or closed trading position with entry and exit details.
- */
-
 import { Schema } from 'effect'
 import { PositionMetadataSchema } from './PositionMetadata'
 import { PositionStatusSchema } from './PositionStatus'
@@ -11,9 +5,9 @@ import { TradeSchema } from './Trade'
 import { TradeDirectionSchema } from './TradeDirection'
 
 /**
- * Schema for position data
+ * Schema for position input parameters
  */
-export const PositionSchema = Schema.Struct({
+export const PositionInputSchema = Schema.Struct({
   /** Unique identifier for the position */
   id: Schema.String,
 
@@ -73,6 +67,6 @@ export const PositionSchema = Schema.Struct({
 })
 
 /**
- * Type for validated position
+ * Type for position input parameters
  */
-export type Position = Schema.Schema.Type<typeof PositionSchema>
+export type PositionInput = Schema.Schema.Type<typeof PositionInputSchema>

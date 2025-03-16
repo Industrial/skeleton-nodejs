@@ -5,13 +5,9 @@
  */
 
 import { Schema } from 'effect'
-import type { BacktestParameters } from './BacktestParameters'
 import { BacktestParametersSchema } from './BacktestParameters'
-import type { PerformanceMetrics } from './PerformanceMetrics'
 import { PerformanceMetricsSchema } from './PerformanceMetrics'
-import type { Position } from './Position'
 import { PositionSchema } from './Position'
-import type { Trade } from './Trade'
 import { TradeSchema } from './Trade'
 
 /**

@@ -6,29 +6,29 @@
 
 import { Effect, Schema } from 'effect'
 import { v4 as uuidv4 } from 'uuid'
-import {
-  type BacktestState,
-  BacktestStateSchema,
-  type ProcessSignalsInput,
-  ProcessSignalsInputSchema,
-  RunBacktestInputSchema,
-  RunParameterSweepInputSchema,
-  RunWalkForwardOptimizationInputSchema,
-} from '../domain/backtesting/Backtest'
-import {
-  type BacktestParameters,
-  DefaultBacktestParametersSchema,
-} from '../domain/backtesting/BacktestParameters'
-import { PositionSizingMethod } from '../domain/backtesting/BacktestParameters'
+import type { BacktestParameters } from '../domain/backtesting/BacktestParameters'
 import {
   type BacktestResult,
   BacktestResultSchema,
 } from '../domain/backtesting/BacktestResult'
+import {
+  type BacktestState,
+  BacktestStateSchema,
+} from '../domain/backtesting/BacktestState'
+import { DefaultBacktestParametersSchema } from '../domain/backtesting/DefaultBacktestParameters'
 import type { Position } from '../domain/backtesting/Position'
 import { PositionSchema } from '../domain/backtesting/Position'
+import { PositionSizingMethod } from '../domain/backtesting/PositionSizingMethod'
 import { PositionStatus } from '../domain/backtesting/PositionStatus'
-import type { Trade } from '../domain/backtesting/Trade'
-import { TradeDirection, TradeSchema } from '../domain/backtesting/Trade'
+import {
+  type ProcessSignalsInput,
+  ProcessSignalsInputSchema,
+} from '../domain/backtesting/ProcessSignalsInputSchema'
+import { RunBacktestInputSchema } from '../domain/backtesting/RunBacktestInput'
+import { RunParameterSweepInputSchema } from '../domain/backtesting/RunParameterSweepInput'
+import { RunWalkForwardOptimizationInputSchema } from '../domain/backtesting/RunWalkForwardOptimizationInput'
+import { type Trade, TradeSchema } from '../domain/backtesting/Trade'
+import { TradeDirection } from '../domain/backtesting/TradeDirection'
 import type { Candlestick } from '../domain/market-data/Candlestick'
 import type { Strategy } from '../domain/strategy/Strategy'
 import { BacktestingError } from './BacktestingService'
@@ -41,7 +41,7 @@ const backtestResultsStorage = new Map<string, BacktestResult>()
  * @param initialCapital Initial capital for the backtest
  * @returns The initial backtest state
  */
-const createInitialState = (
+export const createInitialState = (
   initialCapital: number,
 ): Effect.Effect<BacktestState, BacktestingError, never> =>
   Effect.gen(function* (_) {
@@ -76,7 +76,7 @@ const createInitialState = (
  * @param input Process signals input
  * @returns The final backtest state after processing all signals
  */
-const processSignals = (
+export const processSignals = (
   input: ProcessSignalsInput,
 ): Effect.Effect<BacktestState, BacktestingError, never> =>
   Effect.gen(function* (_) {
@@ -442,7 +442,7 @@ const processSignals = (
  * @param description Optional description for the backtest
  * @returns Effect containing the backtest result
  */
-const runBacktest = (
+export const runBacktest = (
   strategy: Strategy,
   candlesticks: Candlestick[],
   parameters: BacktestParameters,
@@ -655,7 +655,7 @@ const runBacktest = (
  * @param namePrefix Optional prefix for backtest names
  * @returns Effect containing an array of backtest results
  */
-const runParameterSweep = (
+export const runParameterSweep = (
   strategy: Strategy,
   candlesticks: Candlestick[],
   parametersList: BacktestParameters[],
@@ -705,7 +705,7 @@ const runParameterSweep = (
  * @param namePrefix Optional prefix for backtest names
  * @returns Effect containing the optimized backtest result
  */
-const runWalkForwardOptimization = (
+export const runWalkForwardOptimization = (
   strategy: Strategy,
   candlesticks: Candlestick[],
   parametersList: BacktestParameters[],
@@ -774,7 +774,7 @@ const runWalkForwardOptimization = (
  * @param result The backtest result
  * @returns Array of trades
  */
-const getTrades = (result: BacktestResult): Trade[] => {
+export const getTrades = (result: BacktestResult): Trade[] => {
   return Array.from(result.trades)
 }
 
@@ -783,7 +783,7 @@ const getTrades = (result: BacktestResult): Trade[] => {
  * @param result The backtest result
  * @returns Array of positions
  */
-const getPositions = (result: BacktestResult): Position[] => {
+export const getPositions = (result: BacktestResult): Position[] => {
   return Array.from(result.positions)
 }
 
@@ -792,7 +792,7 @@ const getPositions = (result: BacktestResult): Position[] => {
  * @param result The backtest result
  * @returns Array of [timestamp, equity] tuples
  */
-const getEquityCurve = (result: BacktestResult): [number, number][] => {
+export const getEquityCurve = (result: BacktestResult): [number, number][] => {
   return Array.from(result.metadata?.equityCurve as [number, number][]) || []
 }
 
@@ -801,7 +801,9 @@ const getEquityCurve = (result: BacktestResult): [number, number][] => {
  * @param result The backtest result
  * @returns Array of [timestamp, drawdown percentage] tuples
  */
-const getDrawdownCurve = (result: BacktestResult): [number, number][] => {
+export const getDrawdownCurve = (
+  result: BacktestResult,
+): [number, number][] => {
   return Array.from(result.metadata?.drawdownCurve as [number, number][]) || []
 }
 
@@ -810,7 +812,7 @@ const getDrawdownCurve = (result: BacktestResult): [number, number][] => {
  * @param result The backtest result to save
  * @returns Effect containing the saved backtest result ID
  */
-const saveBacktestResult = (
+export const saveBacktestResult = (
   result: BacktestResult,
 ): Effect.Effect<string, BacktestingError, never> =>
   Effect.gen(function* (_) {
@@ -835,7 +837,7 @@ const saveBacktestResult = (
  * @param id The ID of the backtest result to load
  * @returns Effect containing the loaded backtest result
  */
-const loadBacktestResult = (
+export const loadBacktestResult = (
   id: string,
 ): Effect.Effect<BacktestResult, BacktestingError, never> =>
   Effect.gen(function* (_) {
@@ -868,7 +870,7 @@ const loadBacktestResult = (
  * List all saved backtest results
  * @returns Effect containing an array of backtest result IDs and names
  */
-const listBacktestResults = (): Effect.Effect<
+export const listBacktestResults = (): Effect.Effect<
   Array<{ id: string; name: string }>,
   BacktestingError,
   never
@@ -897,7 +899,7 @@ const listBacktestResults = (): Effect.Effect<
  * @param id The ID of the backtest result to delete
  * @returns Effect containing a boolean indicating success
  */
-const deleteBacktestResult = (
+export const deleteBacktestResult = (
   id: string,
 ): Effect.Effect<boolean, BacktestingError, never> =>
   Effect.gen(function* (_) {
@@ -915,20 +917,3 @@ const deleteBacktestResult = (
       )
     }
   })
-
-/**
- * Live implementation of the BacktestingService
- */
-export const BacktestingServiceLive = {
-  runBacktest,
-  runParameterSweep,
-  runWalkForwardOptimization,
-  getTrades,
-  getPositions,
-  getEquityCurve,
-  getDrawdownCurve,
-  saveBacktestResult,
-  loadBacktestResult,
-  listBacktestResults,
-  deleteBacktestResult,
-}
