@@ -26,6 +26,27 @@ export const TimeframeSchemaValues = TimeframeSchema.members.flatMap(
 
 export type Timeframe = Schema.Schema.Type<typeof TimeframeSchema>
 
+/**
+ * Error thrown when an invalid timeframe is provided
+ */
+export class InvalidTimeframeError extends Data.TaggedError(
+  'InvalidTimeframeError',
+)<{
+  readonly value: string
+}> {}
+
+/**
+ * Validates a string as a timeframe
+ * @param timeframe The timeframe string to validate
+ * @returns Effect containing the validated timeframe
+ */
+export const validateTimeframe = (
+  timeframe: string,
+): Effect.Effect<Timeframe, InvalidTimeframeError, never> =>
+  Effect.catchAll(Schema.decode(TimeframeSchema)(timeframe as Timeframe), () =>
+    Effect.fail(new InvalidTimeframeError({ value: timeframe })),
+  )
+
 const TIMEFRAME_MS: { readonly [K in Timeframe]: number } = {
   '1m': 60 * 1000,
   '3m': 3 * 60 * 1000,

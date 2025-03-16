@@ -1,6 +1,6 @@
 import { Args, Command } from '@effect/cli'
 import { BunContext, BunRuntime } from '@effect/platform-bun'
-import { Effect, Layer, pipe } from 'effect'
+import { Effect } from 'effect'
 import type { BacktestParameters } from './domain/backtesting/BacktestParameters'
 import { PositionSizingMethod } from './domain/backtesting/PositionSizingMethod'
 import { PriceType } from './domain/strategy/Indicator'
@@ -208,14 +208,11 @@ const cli = Command.run(mainCommand, {
   version: 'v1.0.0',
 })
 
-pipe(
-  Effect.suspend(() => cli(process.argv)),
-  // @ts-ignore
-  Effect.provide(
-    Layer.merge(
-      Layer.merge(BunContext.layer, CryptoDataService.Live),
-      BacktestingService.Live,
-    ),
-  ),
-  BunRuntime.runMain,
+const runnable = Effect.suspend(() => cli(process.argv)).pipe(
+  Effect.provide(AppConfigService.Live),
+  Effect.provide(BacktestingService.Live),
+  Effect.provide(BunContext.layer),
+  Effect.provide(CryptoDataService.Live),
 )
+
+BunRuntime.runMain(runnable)

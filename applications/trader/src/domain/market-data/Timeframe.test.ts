@@ -2,11 +2,13 @@ import { describe, expect, it } from 'bun:test'
 import { Effect, Either, Schema } from 'effect'
 import type { Timeframe } from './Timeframe'
 import {
+  InvalidTimeframeError,
   InvalidTimeframeMillisecondsError,
   TimeframeSchema,
   TimeframeSchemaValues,
   fromMilliseconds,
   toMilliseconds,
+  validateTimeframe,
 } from './Timeframe'
 
 describe('Timeframe', () => {
@@ -302,6 +304,62 @@ describe('Timeframe', () => {
             )
           }
         })
+      })
+    })
+  })
+
+  describe('When using validateTimeframe', () => {
+    describe('When validating valid timeframe strings', () => {
+      it('should return the validated timeframe', () => {
+        /* Test that validateTimeframe returns the validated timeframe for valid inputs */
+        const validTimeframes = [
+          '1m',
+          '3m',
+          '5m',
+          '15m',
+          '30m',
+          '1h',
+          '2h',
+          '4h',
+          '8h',
+          '1d',
+        ]
+
+        for (const timeframe of validTimeframes) {
+          const result = Effect.runSync(
+            Effect.either(validateTimeframe(timeframe)),
+          )
+          expect(Either.isRight(result)).toBe(true)
+          if (Either.isRight(result)) {
+            expect(result.right).toBe(timeframe)
+          }
+        }
+      })
+    })
+
+    describe('When validating invalid timeframe strings', () => {
+      it('should return an InvalidTimeframeError', () => {
+        /* Test that validateTimeframe returns an InvalidTimeframeError for invalid inputs */
+        const invalidTimeframes = [
+          '',
+          'invalid',
+          '2m',
+          '10m',
+          '5h',
+          '12h',
+          '2d',
+        ]
+
+        for (const timeframe of invalidTimeframes) {
+          const result = Effect.runSync(
+            Effect.either(validateTimeframe(timeframe)),
+          )
+          expect(Either.isLeft(result)).toBe(true)
+          if (Either.isLeft(result)) {
+            expect(result.left).toBeInstanceOf(InvalidTimeframeError)
+            expect((result.left as InvalidTimeframeError).value).toBe(timeframe)
+          }
+        }
       })
     })
   })

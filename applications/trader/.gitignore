@@ -44,6 +44,7 @@ _.pid
 _.seed
 bower_components
 build/Release
+config.json
 coverage
 dist
 jspm_packages/

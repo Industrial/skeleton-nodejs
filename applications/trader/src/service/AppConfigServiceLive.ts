@@ -2,10 +2,11 @@ import * as fs from 'node:fs'
 import { Config, ConfigProvider, Effect, Schema } from 'effect'
 import type { ConfigError } from 'effect/ConfigError'
 import type { ParseError } from 'effect/ParseResult'
-import type { AppConfig } from '../domain/config/AppConfig'
-import { AppConfigSchema } from '../domain/config/AppConfig'
-import type { ExchangeId } from '../domain/market-data/ExchangeId'
-import type { Timeframe } from '../domain/market-data/Timeframe'
+import {
+  type AppConfig,
+  type InvalidAppConfigError,
+  createAppConfig,
+} from '../domain/config/AppConfig'
 import { ConfigLoadError } from './AppConfigService'
 
 /**
@@ -14,11 +15,12 @@ import { ConfigLoadError } from './AppConfigService'
  */
 export const loadConfig = (): Effect.Effect<
   AppConfig,
-  ConfigLoadError | ParseError | ConfigError,
+  ConfigLoadError | ParseError | ConfigError | InvalidAppConfigError,
   never
 > => {
   return Effect.gen(function* (_) {
     try {
+      // Load raw config data from sources
       const jsonProvider = ConfigProvider.fromJson(
         JSON.parse(fs.readFileSync('config.json', 'utf-8')),
       )
@@ -28,23 +30,23 @@ export const loadConfig = (): Effect.Effect<
         () => envProvider,
       )
 
-      const appConfig = yield* Effect.withConfigProvider(configProvider)(
+      // Extract raw values
+      const rawConfig = yield* Effect.withConfigProvider(configProvider)(
         Effect.gen(function* (_) {
-          const exchange = (yield* Config.string('exchange')) as ExchangeId
+          const exchange = yield* Config.string('exchange')
           const pair = yield* Config.string('pair')
-          const timeframe = (yield* Config.string('timeframe')) as Timeframe
+          const timeframe = yield* Config.string('timeframe')
 
-          const decodedSchema = yield* Schema.decode(AppConfigSchema)({
-            exchange,
-            pair,
-            timeframe,
-          })
-
-          return decodedSchema
+          return { exchange, pair, timeframe }
         }),
       )
 
-      return appConfig
+      // Use domain model function to create and validate AppConfig
+      return yield* createAppConfig(
+        rawConfig.exchange,
+        rawConfig.pair,
+        rawConfig.timeframe,
+      )
     } catch (error) {
       return yield* Effect.fail(
         new ConfigLoadError({
