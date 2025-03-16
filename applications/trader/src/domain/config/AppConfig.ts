@@ -14,7 +14,11 @@ export class InvalidAppConfigError extends Data.TaggedError(
 
 export const AppConfigSchema = Schema.Struct({
   exchange: ExchangeIdSchema,
-  pair: Schema.String,
+  pair: Schema.String.pipe(
+    Schema.nonEmptyString({
+      message: () => 'pair should not be an empty string',
+    }),
+  ),
   timeframe: TimeframeSchema,
 })
 
