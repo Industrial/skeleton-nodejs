@@ -37,16 +37,22 @@ export const loadConfig = (): Effect.Effect<
           const pair = yield* Config.string('pair')
           const timeframe = yield* Config.string('timeframe')
 
-          return { exchange, pair, timeframe }
+          return {
+            exchange,
+            pair,
+            timeframe,
+          }
         }),
       )
 
       // Use domain model function to create and validate AppConfig
-      return yield* createAppConfig(
+      const appConfig = yield* createAppConfig(
         rawConfig.exchange,
         rawConfig.pair,
         rawConfig.timeframe,
       )
+
+      return appConfig
     } catch (error) {
       return yield* Effect.fail(
         new ConfigLoadError({
