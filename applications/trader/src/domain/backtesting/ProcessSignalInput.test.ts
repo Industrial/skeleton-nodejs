@@ -2,7 +2,10 @@ import { describe, expect, it } from 'bun:test'
 import { Schema } from 'effect'
 import { PositionSizingMethod } from './PositionSizingMethod'
 import { PositionStatus } from './PositionStatus'
-import { ProcessSignalInputSchema } from './ProcessSignalInput'
+import {
+  type ProcessSignalInput,
+  ProcessSignalInputSchema,
+} from './ProcessSignalInput'
 import { TradeDirection } from './TradeDirection'
 
 describe('ProcessSignalInput', () => {
@@ -42,8 +45,8 @@ describe('ProcessSignalInput', () => {
       openPositions: [sampleOpenPosition],
       closedPositions: [],
       trades: [sampleTrade],
-      equityCurve: [[1609459200000, 10000]],
-      drawdownCurve: [[1609459200000, 0]],
+      equityCurve: [[1609459200000, 10000] as const],
+      drawdownCurve: [[1609459200000, 0] as const],
       peakEquity: 10500,
     }
 
@@ -158,7 +161,7 @@ describe('ProcessSignalInput', () => {
 
       expect(() => {
         Schema.decodeSync(ProcessSignalInputSchema)(
-          missingSignal as unknown as Record<string, unknown>,
+          missingSignal as unknown as ProcessSignalInput,
         )
       }).toThrow()
 
@@ -171,7 +174,7 @@ describe('ProcessSignalInput', () => {
 
       expect(() => {
         Schema.decodeSync(ProcessSignalInputSchema)(
-          missingCandlestick as unknown as Record<string, unknown>,
+          missingCandlestick as unknown as ProcessSignalInput,
         )
       }).toThrow()
 
@@ -184,7 +187,7 @@ describe('ProcessSignalInput', () => {
 
       expect(() => {
         Schema.decodeSync(ProcessSignalInputSchema)(
-          missingParameters as unknown as Record<string, unknown>,
+          missingParameters as unknown as ProcessSignalInput,
         )
       }).toThrow()
 
@@ -197,7 +200,7 @@ describe('ProcessSignalInput', () => {
 
       expect(() => {
         Schema.decodeSync(ProcessSignalInputSchema)(
-          missingState as unknown as Record<string, unknown>,
+          missingState as unknown as ProcessSignalInput,
         )
       }).toThrow()
     })

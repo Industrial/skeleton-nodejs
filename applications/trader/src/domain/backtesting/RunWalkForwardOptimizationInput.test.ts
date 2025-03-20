@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'bun:test'
 import { Schema } from 'effect'
 import { PositionSizingMethod } from './PositionSizingMethod'
-import { RunWalkForwardOptimizationInputSchema } from './RunWalkForwardOptimizationInput'
+import {
+  type RunWalkForwardOptimizationInput,
+  RunWalkForwardOptimizationInputSchema,
+} from './RunWalkForwardOptimizationInput'
 
 describe('RunWalkForwardOptimizationInput', () => {
   describe('RunWalkForwardOptimizationInputSchema', () => {
@@ -37,15 +40,13 @@ describe('RunWalkForwardOptimizationInput', () => {
     }
 
     const sampleStrategy = {
-      id: 'ma-crossover',
       name: 'Moving Average Crossover',
       description: 'Simple MA crossover strategy',
-      version: '1.0.0',
       parameters: {
         fastPeriod: 10,
         slowPeriod: 20,
       },
-      generateSignals: () => [], // Mock function
+      indicators: [], // Required by StrategyBaseSchema
     }
 
     const sampleCandlesticks = [
@@ -219,7 +220,7 @@ describe('RunWalkForwardOptimizationInput', () => {
 
       expect(() => {
         Schema.decodeSync(RunWalkForwardOptimizationInputSchema)(
-          missingStrategy as unknown as Record<string, unknown>,
+          missingStrategy as unknown as RunWalkForwardOptimizationInput,
         )
       }).toThrow()
 
@@ -233,7 +234,7 @@ describe('RunWalkForwardOptimizationInput', () => {
 
       expect(() => {
         Schema.decodeSync(RunWalkForwardOptimizationInputSchema)(
-          missingCandlesticks as unknown as Record<string, unknown>,
+          missingCandlesticks as unknown as RunWalkForwardOptimizationInput,
         )
       }).toThrow()
 
@@ -247,7 +248,7 @@ describe('RunWalkForwardOptimizationInput', () => {
 
       expect(() => {
         Schema.decodeSync(RunWalkForwardOptimizationInputSchema)(
-          missingParametersList as unknown as Record<string, unknown>,
+          missingParametersList as unknown as RunWalkForwardOptimizationInput,
         )
       }).toThrow()
 
@@ -261,7 +262,7 @@ describe('RunWalkForwardOptimizationInput', () => {
 
       expect(() => {
         Schema.decodeSync(RunWalkForwardOptimizationInputSchema)(
-          missingInSamplePercentage as unknown as Record<string, unknown>,
+          missingInSamplePercentage as unknown as RunWalkForwardOptimizationInput,
         )
       }).toThrow()
 
@@ -275,7 +276,7 @@ describe('RunWalkForwardOptimizationInput', () => {
 
       expect(() => {
         Schema.decodeSync(RunWalkForwardOptimizationInputSchema)(
-          missingNumFolds as unknown as Record<string, unknown>,
+          missingNumFolds as unknown as RunWalkForwardOptimizationInput,
         )
       }).toThrow()
     })

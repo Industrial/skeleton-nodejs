@@ -17,15 +17,13 @@ describe('RunBacktestInput', () => {
     }
 
     const sampleStrategy = {
-      id: 'ma-crossover',
       name: 'Moving Average Crossover',
       description: 'Simple MA crossover strategy',
-      version: '1.0.0',
       parameters: {
         fastPeriod: 10,
         slowPeriod: 20,
       },
-      generateSignals: () => [], // Mock function
+      indicators: [], // Required by StrategyBaseSchema
     }
 
     const sampleCandlesticks = [
@@ -85,16 +83,14 @@ describe('RunBacktestInput', () => {
 
     it('should validate input with different strategy', () => {
       const differentStrategy = {
-        id: 'rsi-strategy',
         name: 'RSI Strategy',
         description: 'Strategy based on RSI indicator',
-        version: '1.0.0',
         parameters: {
           period: 14,
           overbought: 70,
           oversold: 30,
         },
-        generateSignals: () => [], // Mock function
+        indicators: [], // Required by StrategyBaseSchema
       }
 
       const validInput = {
@@ -108,6 +104,13 @@ describe('RunBacktestInput', () => {
     })
 
     it('should reject input with missing required fields', () => {
+      // Define a valid input type reference
+      const validInputType = {
+        strategy: sampleStrategy,
+        candlesticks: sampleCandlesticks,
+        parameters: sampleParameters,
+      }
+
       // Missing strategy
       const missingStrategy = {
         candlesticks: sampleCandlesticks,
@@ -115,9 +118,8 @@ describe('RunBacktestInput', () => {
       }
 
       expect(() => {
-        Schema.decodeSync(RunBacktestInputSchema)(
-          missingStrategy as unknown as Record<string, unknown>,
-        )
+        // @ts-ignore - Intentionally testing with missing required field
+        Schema.decodeSync(RunBacktestInputSchema)(missingStrategy)
       }).toThrow()
 
       // Missing candlesticks
@@ -127,9 +129,8 @@ describe('RunBacktestInput', () => {
       }
 
       expect(() => {
-        Schema.decodeSync(RunBacktestInputSchema)(
-          missingCandlesticks as unknown as Record<string, unknown>,
-        )
+        // @ts-ignore - Intentionally testing with missing required field
+        Schema.decodeSync(RunBacktestInputSchema)(missingCandlesticks)
       }).toThrow()
 
       // Missing parameters
@@ -139,9 +140,8 @@ describe('RunBacktestInput', () => {
       }
 
       expect(() => {
-        Schema.decodeSync(RunBacktestInputSchema)(
-          missingParameters as unknown as Record<string, unknown>,
-        )
+        // @ts-ignore - Intentionally testing with missing required field
+        Schema.decodeSync(RunBacktestInputSchema)(missingParameters)
       }).toThrow()
     })
 

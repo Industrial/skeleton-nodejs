@@ -2,7 +2,10 @@ import { describe, expect, it } from 'bun:test'
 import { Schema } from 'effect'
 import { PositionStatus } from './PositionStatus'
 import { TradeDirection } from './TradeDirection'
-import { UpdateEquityCurveInputSchema } from './UpdateEquityCurveInput'
+import {
+  type UpdateEquityCurveInput,
+  UpdateEquityCurveInputSchema,
+} from './UpdateEquityCurveInput'
 
 describe('UpdateEquityCurveInput', () => {
   describe('UpdateEquityCurveInputSchema', () => {
@@ -31,8 +34,8 @@ describe('UpdateEquityCurveInput', () => {
       openPositions: [sampleOpenPosition],
       closedPositions: [],
       trades: [sampleTrade],
-      equityCurve: [[1609459200000, 10000]],
-      drawdownCurve: [[1609459200000, 0]],
+      equityCurve: [[1609459200000, 10000] as const],
+      drawdownCurve: [[1609459200000, 0] as const],
       peakEquity: 10500,
     }
 
@@ -111,7 +114,7 @@ describe('UpdateEquityCurveInput', () => {
 
       expect(() => {
         Schema.decodeSync(UpdateEquityCurveInputSchema)(
-          missingState as unknown as Record<string, unknown>,
+          missingState as unknown as UpdateEquityCurveInput,
         )
       }).toThrow()
 
@@ -122,7 +125,7 @@ describe('UpdateEquityCurveInput', () => {
 
       expect(() => {
         Schema.decodeSync(UpdateEquityCurveInputSchema)(
-          missingTimestamp as unknown as Record<string, unknown>,
+          missingTimestamp as unknown as UpdateEquityCurveInput,
         )
       }).toThrow()
     })

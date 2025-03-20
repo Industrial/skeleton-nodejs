@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'bun:test'
 import { Schema } from 'effect'
 import { PositionSizingMethod } from './PositionSizingMethod'
-import { RunParameterSweepInputSchema } from './RunParameterSweepInput'
+import {
+  type RunParameterSweepInput,
+  RunParameterSweepInputSchema,
+} from './RunParameterSweepInput'
 
 describe('RunParameterSweepInput', () => {
   describe('RunParameterSweepInputSchema', () => {
@@ -37,15 +40,13 @@ describe('RunParameterSweepInput', () => {
     }
 
     const sampleStrategy = {
-      id: 'ma-crossover',
       name: 'Moving Average Crossover',
       description: 'Simple MA crossover strategy',
-      version: '1.0.0',
       parameters: {
         fastPeriod: 10,
         slowPeriod: 20,
       },
-      generateSignals: () => [], // Mock function
+      indicators: [], // Required by StrategyBaseSchema
     }
 
     const sampleCandlesticks = [
@@ -141,7 +142,7 @@ describe('RunParameterSweepInput', () => {
 
       expect(() => {
         Schema.decodeSync(RunParameterSweepInputSchema)(
-          missingStrategy as unknown as Record<string, unknown>,
+          missingStrategy as unknown as RunParameterSweepInput,
         )
       }).toThrow()
 
@@ -153,7 +154,7 @@ describe('RunParameterSweepInput', () => {
 
       expect(() => {
         Schema.decodeSync(RunParameterSweepInputSchema)(
-          missingCandlesticks as unknown as Record<string, unknown>,
+          missingCandlesticks as unknown as RunParameterSweepInput,
         )
       }).toThrow()
 
@@ -165,7 +166,7 @@ describe('RunParameterSweepInput', () => {
 
       expect(() => {
         Schema.decodeSync(RunParameterSweepInputSchema)(
-          missingParametersList as unknown as Record<string, unknown>,
+          missingParametersList as unknown as RunParameterSweepInput,
         )
       }).toThrow()
     })

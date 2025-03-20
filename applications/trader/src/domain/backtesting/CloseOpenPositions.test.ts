@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import { Schema } from 'effect'
-import { CloseOpenPositionsInputSchema } from './CloseOpenPositions'
+import {
+  type CloseOpenPositionsInput,
+  CloseOpenPositionsInputSchema,
+} from './CloseOpenPositions'
 import { PositionSizingMethod } from './PositionSizingMethod'
 import { PositionStatus } from './PositionStatus'
 import { TradeDirection } from './TradeDirection'
@@ -42,8 +45,8 @@ describe('CloseOpenPositions', () => {
       openPositions: [sampleOpenPosition],
       closedPositions: [],
       trades: [sampleTrade],
-      equityCurve: [[1609459200000, 10000]],
-      drawdownCurve: [[1609459200000, 0]],
+      equityCurve: [[1609459200000, 10000] as const],
+      drawdownCurve: [[1609459200000, 0] as const],
       peakEquity: 10500,
     }
 
@@ -121,7 +124,7 @@ describe('CloseOpenPositions', () => {
 
       expect(() => {
         Schema.decodeSync(CloseOpenPositionsInputSchema)(
-          missingState as unknown as Record<string, unknown>,
+          missingState as unknown as CloseOpenPositionsInput,
         )
       }).toThrow()
 
@@ -133,7 +136,7 @@ describe('CloseOpenPositions', () => {
 
       expect(() => {
         Schema.decodeSync(CloseOpenPositionsInputSchema)(
-          missingLastCandlestick as unknown as Record<string, unknown>,
+          missingLastCandlestick as unknown as CloseOpenPositionsInput,
         )
       }).toThrow()
 
@@ -145,7 +148,7 @@ describe('CloseOpenPositions', () => {
 
       expect(() => {
         Schema.decodeSync(CloseOpenPositionsInputSchema)(
-          missingParameters as unknown as Record<string, unknown>,
+          missingParameters as unknown as CloseOpenPositionsInput,
         )
       }).toThrow()
     })
